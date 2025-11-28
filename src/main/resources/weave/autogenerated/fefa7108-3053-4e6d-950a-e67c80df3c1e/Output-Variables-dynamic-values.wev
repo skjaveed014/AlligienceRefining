@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_fefa7108_3053_4e6d_950a_e67c80df3c1e_Output_Variables_dynamic_values = {|
+  "Factor-value": Number, 
+  P101: Number, 
+  P102: String, 
+  P103: String, 
+  P104: String, 
+  P105: String
+|}
+

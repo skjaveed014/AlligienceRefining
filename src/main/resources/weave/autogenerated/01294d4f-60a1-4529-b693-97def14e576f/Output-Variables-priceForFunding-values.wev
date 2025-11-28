@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_01294d4f_60a1_4529_b693_97def14e576f_Output_Variables_priceForFunding_values = Any
+

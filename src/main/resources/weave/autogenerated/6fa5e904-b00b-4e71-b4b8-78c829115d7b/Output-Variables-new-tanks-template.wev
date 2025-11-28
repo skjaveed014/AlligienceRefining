@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_6fa5e904_b00b_4e71_b4b8_78c829115d7b_Output_Variables_new_tanks_template = {|
+  index: Null, 
+  values: Null
+|}
+

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_6fa5e904_b00b_4e71_b4b8_78c829115d7b_Output_Variables_tanksInPDF = Array<{|  Tank: String,   Product: String,   "Gauge(Date) (Time)": String,   "Gauge(Ft In 16)": String,   GrossProduct: String,   NetProduct: String,   Temp: String,   Density: String,   TotalWater: String,   TruckCount: String,   LastNetProduct: String,   Available: String,   DeltaNetProduct: String,   AvailableCapacity: String,   TotalCapacity: String|}>
+

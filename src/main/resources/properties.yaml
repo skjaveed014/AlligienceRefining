@@ -1,0 +1,49 @@
+graphApi.emailId: jshaik@mdwhub.com
+graphApi.auth.protocol: "HTTPS"
+graphApi.auth.host: "login.microsoftonline.com"
+graphApi.auth.port: "443"
+graphApi.auth.clientId: "4c5cf168-670d-4681-96f6-01b98b8fd79e"
+graphApi.auth.clientSecret: "7Gk8Q~LlwETRGls.54RDQ2TyXDqKNUNIKw5~TbwC"
+graphApi.auth.scope: "https://graph.microsoft.com/.default"
+graphApi.auth.grantType: "client_credentials"
+
+http.graphApi.protocol: "HTTPS"
+http.graphApi.host: graph.microsoft.com
+http.graphApi.port: "443"
+http.path.addTableRow: "/rows/add"
+http.path.addTableColumn: "/columns/add"
+http.path.rowCount: "/rows/count"
+http.path.columnsCount: "/columns/count"
+http.path.usedRange: "/range/usedRange"
+
+
+
+idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
+idp.port: "443"
+idp.protocol: "HTTPS"
+idp.clientId: "58e295be816e4999858a7ebf507b11ce"
+idp.clientSecret: "5f004Bd0F1F0445299f43b1Be34a6443"
+
+
+workbook.inventory_&_sales.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
+workbook.tis.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
+workbook.mtd.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
+workbook.tms6.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
+workbook.stockholders-Lookup.workbookId: "Stockholders-Lookup"
+workbook.pricesForFunding.workbookId: "01NVG26FWFXVCMQY7BCNHIM4QFYVBNDEIQ"
+workbook.freepoint.workbookId: ""
+
+
+inventory.sheetName: "Inventory"
+mtd.sheetName: "MTD"
+tis.sheetName: "TIS"
+tms6.sheetName: "TMS6"
+
+inventory.tableName: "InventoryTable"
+mtd.tableName: "MTD_Table"
+tis.tableName: "TIS_Table"
+tms6.tableName: "TMS6_Table"
+tms6.exports.tableName: "TMS6_Exports_Table"
+tms6.receipts.tableName: "TMS6_Receipts_Table"
+stockholdersLookup.tableName: "Stockholders_LookUp_Table"
+  

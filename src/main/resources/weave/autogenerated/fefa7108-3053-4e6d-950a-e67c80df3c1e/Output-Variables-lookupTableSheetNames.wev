@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_fefa7108_3053_4e6d_950a_e67c80df3c1e_Output_Variables_lookupTableSheetNames = Any
+

@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_28c44a93_62fc_454a_a0cf_d4be01fec7dd_Output_Variables_count = Any
+

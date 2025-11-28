@@ -1,0 +1,43 @@
+%dw 2.0
+
+type auto_8cfc678f_1df8_4f0b_8aad_ba1c1516b014_Output_Variables_data = {|
+  RefineryName: String, 
+  ReportGenerated: String, 
+  DateAndTime: String, 
+  Products: {|
+    "JP-8 ANTI-ICE": Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    ATB: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    Crude: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    "DHT FEED": Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    Ethanol: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    "Full Range Reformate": Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    GASOLINE: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    ISOMERATE: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    JET: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    "JET A": Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    JPTS: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    LPG: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    "NHT-FEED": Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    SLOP: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>, 
+    ULSD: Array<{|      Tank: String,       Product: String,       Gauge: String,       Temp: String,       Density: String,       GrossProduct: String    |}>
+  |}, 
+  Subtotal: {|
+    "JP-8 ANTI-ICE": String, 
+    ATB: String, 
+    Crude: String, 
+    "DHT FEED": String, 
+    Ethanol: String, 
+    "Full Range Reformate": String, 
+    GASOLINE: String, 
+    ISOMERATE: String, 
+    JET: String, 
+    "JET A": String, 
+    JPTS: String, 
+    LPG: String, 
+    "NHT-FEED": String, 
+    SLOP: String, 
+    ULSD: String
+  |}, 
+  GrandTotal: {| GrossProduct: String |}
+|}
+

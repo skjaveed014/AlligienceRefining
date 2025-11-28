@@ -1,0 +1,1292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="email-to-inventory-Sub_Flow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >
+		<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="9090b2cd-03a4-44e6-982c-9935e6cb714b" name="read-email-to-idp-extraction-Sub_Flow"/>
+		<flow-ref doc:name="calling get-tis-data-by-date-Sub_Flow" doc:id="97b230b6-0049-45ab-b3e9-ec63e8a1a45b" name="get-tis-data-by-date-Sub_Flow"/>
+		<flow-ref doc:name="calling get-tms6-data-Sub_Flow" doc:id="21471ec3-1137-4273-84d3-53a3f6d33030" name="get-tms6-data-Sub_Flow" />
+		<ee:transform doc:name="date-checking" doc:id="a8510a31-cd3c-4afe-aaf0-7b9ca578a4f8">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="date-checking"><![CDATA[%dw 2.0
+output application/json
+ 
+fun isStartDateOfMonth(date: Date) = date.day == 1
+ 
+fun getPreviousMonthLastDate(date: Date) =
+    (date as String {format: "yyyy-MM-01"} as Date) - |P1D|
+ 
+fun getCurrentMonthStartDate(date: Date) =
+    date as String {format: "yyyy-MM-01"} as Date
+ 
+fun getDaysInMonth(date: Date) =
+    ((date as String {format: "yyyy-MM-01"} as Date) + |P1M| - |P1D|).day
+ 
+var inputDate = attributes.queryParams."InventoryDate"
+var parsedDate = inputDate as Date {format: "dd-MMM-yyyy"}
+var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
+var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
+var daysInMonth = getDaysInMonth(parsedDate)
+ 
+---
+{
+    "originalDate": parsedDate,
+    "isStartDateOfMonth": isStartDateOfMonth(parsedDate),
+    "daysInMonth": daysInMonth,
+    "previousMonthLastDate": previousMonthLastDate as String {format: "d-MMM-yy"},
+    "StartDate": currentMonthStartDate as String {format: "d-MMM-yy"},
+    "date": parsedDate as String {format: "M/d/yy"},
+    "monthYear": parsedDate as String {format: "MMM"},
+    "weekday": parsedDate as String {format: "EEEE"}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling Inventory-common-Sub_Flow" doc:id="3543b4ff-f691-4e96-8fad-b8b67b8e3857" name="Inventory-common-Sub_Flow" />
+	</sub-flow>
+	<sub-flow name="freepoint-to-invoice-Sub_Flow" doc:id="46955b5e-8d26-4215-b401-cc4acd864df0" >
+		<flow-ref doc:name="calling differential-values-Sub_Flow" doc:id="d107efed-a7b3-4cc8-89c3-5bc375f4fe83" name="differential-values-Sub_Flow"/>
+		<flow-ref doc:name="calling priceForFunding-Sub_Flow" doc:id="ef856dac-71ff-4274-a598-c218795ce629" name="priceForFunding-Sub_Flow"/>
+		<flow-ref doc:name="Flow Reference" doc:id="108aa77c-6aab-4860-8e07-5100d207c954" name="freepoint-worksheet-main-subflow"/>
+	</sub-flow>
+	<!-- [STUDIO:"TIS-Sheet-Sub_Flow"]<sub-flow name="TIS-Sheet-Sub_Flow" doc:id="a418788c-da24-420d-9013-ec92d90d6682">
+		<set-variable value="#[attributes.queryParams.InventoryDate&#93;" doc:name="InventoryDate" doc:id="85aeba42-9faf-4d30-af89-e45952022954" variableName="InventoryDate" />
+		<ee:transform doc:name="idp-response-data" doc:id="1fd78bb9-2eb1-403c-9f41-6394ad477385">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="idp-response-data" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars."idp-response-data"&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="tis-data" doc:id="490970ce-9087-42b7-918c-e482a260c860">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="tis-data"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+    InventoryDate: vars."Inventorydate",
+    Products: vars."idp-response-data"."Elmendorf"."Products" ++ vars."idp-response-data"."TSAR"."Products",
+    Elmendorf_GrandTotal: vars."idp-response-data"."Elmendorf"."GrandTotal"."GrossProductTotal",
+    TSAR_GrandTotal: vars."idp-response-data"."TSAR"."GrandTotal"."GrossProductTotal"
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="filtered-data and total-pdf-tanks" doc:id="51dba5be-cc9b-46fb-b338-d1611ec68590">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="filtered-tis-data"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+    InventoryDate: vars."tis-data"."Products"."InventoryDate",
+    Products: vars."tis-data"."Products" mapObject ((productList, productName) -> 
+        (productName): productList map ((item) -> {
+            Tank: item.Tank,
+            Product: item.Product,
+            GrossProduct: item.GrossProduct
+        })
+    )
+}
+&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="tanksCountInPDF"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+sizeOf(flatten(vars."tis-data"."Products" pluck ((value, key) -> value)))
+&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="tanksInPDF"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+flatten(vars."tis-data"."Products" pluck ((value, key) -> value.Tank))
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling token-subflow" doc:id="7d666de2-507b-485b-90ca-c4a2079eb924" name="token" />
+		<try doc:name="Try" doc:id="43f5114e-fe39-49d2-a3c1-571104daefcf">
+			<http:request method="GET" doc:name="checks for date present in sheet or not" doc:id="39a19c19-8e6d-4962-8fa3-9b782d3f76db" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId')++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;InventoryDate&quot; as String&#93;">
+				<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+			</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="c38d24c8-165c-41a3-9bc6-f51504ad36ee" variableName="flag" />
+			<set-variable value="#[payload.id&#93;" doc:name="col-id to update" doc:id="2c8ee811-7f9c-4e64-9b47-cb8230cb480e" variableName="col-id" />
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="437553a6-9c09-48ac-a604-85b323011988" type="HTTP:NOT_FOUND">
+					<logger level="INFO" doc:name="Logger" doc:id="b1f3ba27-6be5-461e-b07b-871391f394ab" message="&#45;&#45;&#45;&#45;-ItemNotFound&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="2a65a642-d849-4e68-a17c-95179974f085" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<http:request method="GET" doc:name="gets column count" doc:id="36c45577-40a9-414d-ae2d-018692f8b219" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/count&quot;&#93;">
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="columnCountAndExcelColumn" doc:id="92c7dd90-e6b2-4931-9f9b-ee79b4d9858f">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="columnCountAndExcelColumn"><![CDATA[%dw 2.0
+output application/json
+var columnCount= payload."value"
+var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+fun toExcelColumn(n) =
+    if (n <= 0) "" 
+    else do {
+        var rem = (n - 1) mod 26
+        var quotient = floor((n - 1) / 26)
+        &#45;&#45;-
+        toExcelColumn(quotient) ++ letters[(rem) as Number&#93;
+    }
+
+&#45;&#45;-
+{ 
+  PresentColumnNumber: columnCount,
+  PresentColumn: toExcelColumn(columnCount),
+  NextColumnNumber: columnCount +1 ,
+  NextColumn: toExcelColumn(columnCount + 1)
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="get tank template column index=" doc:id="f86cb60a-450f-492c-961d-487fe762d9fc" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/itemAt(index=0)/range&quot;&#93;">
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="payload" doc:id="7398103c-1fb7-44aa-a65e-f9e94cc6190c">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload.text&#93;&#93;></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="changed-formulas" ><![CDATA[%dw 2.0
+output application/json
+
+var from1 = "A"
+var flag= vars.flag
+var nextCol = vars.columnCountAndExcelColumn.NextColumn
+var presentCol = vars.columnCountAndExcelColumn.PresentColumn
+var data = payload.formulas[sizeOf(payload.formulas)-2 to sizeOf(payload.formulas)-1&#93;
+
+&#45;&#45;-
+{
+  values: data map ((row) ->
+  if(flag=="update")
+    row map ((cell) ->
+      if (cell is String and sizeOf(cell) > 0 and cell[0&#93; == "=")
+        cell replace (("(?:" ++ from1 ++ ")(?=\\d|\\\$)") as Regex) with presentCol
+      else cell
+    )
+    else row map ((cell) ->
+      if (cell is String and sizeOf(cell) > 0 and cell[0&#93; == "=")
+        cell replace (("(?:" ++ from1 ++ ")(?=\\d|\\\$)") as Regex) with nextCol
+      else cell
+    )
+  )
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling variables flow" doc:id="77a6bbdb-968c-4a52-9fec-bfa0046e2ec6" name="variables" />
+		<choice doc:name="checks for the new tanks" doc:id="5fc2946e-4510-4cdd-8e13-38eb47c23ee0">
+			<when expression='#[sizeOf(vars."new-tanks") &gt; 0&#93;'>
+				<ee:transform doc:name="new-tanks-template" doc:id="32eafda7-a89c-4605-97ee-29fbc2c2f317">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="new-tanks-template"><![CDATA[%dw 2.0
+output application/json
+var tanks = vars."new-tanks"
+var productsdata = vars."filtered-tis-data"."Products"
+var colCount= payload."value"
+&#45;&#45;-
+{	index: vars."row-index",
+    values: tanks map (t) -> do {
+        var product = flatten(
+            productsdata pluck ((items, key) ->
+                (items filter ((i) -> i.Tank == t)) map ((i) -> key)
+            )
+        )
+        &#45;&#45;-
+        [t, if (sizeOf(product) > 0) product[0&#93; else ""&#93; 
+        ++ (0 to (colCount - 2 - 1) map ((i) -> "0.0"))
+    }
+}&#93;&#93;></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<http:request method="POST" doc:name="adds new tanks template to table" doc:id="13d60bf7-1776-4656-8a13-4f7cb9184f48" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/rows/add&quot;&#93;">
+					<http:body><![CDATA[#[vars."new-tanks-template"&#93;&#93;&#93;></http:body>
+					<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+				<set-variable value='#[Tanks: vars."tis-template".Tanks ++ [vars."new-tanks"&#93;&#93;' doc:name="adding new-tanks-to-tis-template" doc:id="f3f6267c-a977-4bac-9bae-0dfe2fb90afe" variableName="tis-template" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="d38ce081-2b16-469d-81c6-4bd0476d1fcd" message="&#45;&#45;&#45;&#45;No New Tanks&#45;&#45;&#45;&#45;-" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="tis-request-data" doc:id="1b6e9ac7-5067-4b44-92f3-5fad50c2ba65">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="tis-request-data"><![CDATA[%dw 2.0
+output application/json
+var template = flatten(vars."tis-template"."Tanks")
+var data = vars."filtered-tis-data"."Products"
+var date= vars."InventoryDate" as Date {format: "dd-MMM-yyyy"}
+
+var coldata= {
+    "values":  template map (t) -> do {
+    // Remove this line → var tank = t[0&#93;
+    var match = flatten(
+        data pluck ((v, k) ->
+            (v filter (item) -> item.Tank == t) map ((item) -> item.GrossProduct)
+        )
+    ) filter ((item) -> item != null)
+    &#45;&#45;-
+    if (sizeOf(match) > 0) [match[0&#93;&#93; else ["0.0"&#93;
+}
+}
+
+&#45;&#45;-
+values: [[date&#93;&#93; ++ coldata.values ++ [[""&#93;,[""&#93;,[vars."changed-formulas".values[0&#93;[0&#93;&#93;, [vars."changed-formulas".values[1&#93;[0&#93;&#93;&#93;&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="update or insert" doc:id="48e8d2fa-96e0-4da9-9b6f-773d580fdf30">
+			<when expression='#[vars.flag == "update"&#93;'>
+				<http:request method="PATCH" doc:name="tis-patch" doc:id="895b250f-fba7-4c77-ac19-7094268dac4a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/columns/&quot; ++ vars.&quot;col-id&quot;&#93;">
+					<http:body><![CDATA[#[vars."tis-request-data"&#93;&#93;&#93;></http:body>
+					<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+			</when>
+			<otherwise>
+				<http:request method="POST" doc:name="tis-post" doc:id="00003564-ab64-4328-961f-b6c4dafe48b9" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/columns/add&quot;&#93;">
+					<http:body><![CDATA[#[vars."tis-request-data"&#93;&#93;&#93;></http:body>
+					<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+			</otherwise>
+		</choice>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"TMS6-Sub_Flow"]<sub-flow name="TMS6-Sub_Flow" doc:id="d480aeeb-47fa-4d66-8bfa-dc7e24de5df3" >
+		<ee:transform doc:name="tms6-data" doc:id="e484768e-3cf2-4a74-bab9-80f4668b478c" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="InventoryDate" ><![CDATA[attributes.queryParams.InventoryDate&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="tms6Data" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="newTanks" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(payload.products default [&#93;)
+    filter ((item) -> item != null)
+    map ((item) -> item.tank)
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling token subflow" doc:id="00f58b76-7ce0-4937-9f95-d434fd5063f9" name="token"/>
+		<set-variable value='#[["TMS6_Table", "TMS6_Receipts_Table", "TMS6_Exports_Table"&#93;&#93;' doc:name="tables" doc:id="267a9166-3a8c-4386-872f-800ad27eef29" variableName="tables"/>
+		<ee:transform doc:name="var receipts-data" doc:id="0eb037e7-991d-45af-991f-0ed2e6d30746" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="receiptsData" ><![CDATA[%dw 2.0
+output application/json
+// receipts data nothing but the stockAdjust values
+&#45;&#45;-
+vars.tms6Data.products
+    filter ((item) -> item.stockAdjust != "0")
+    map ((p) -> {
+        tank: p.tank,
+        productName: p.productName,
+        volume:p.volume,
+        stockAdjust: p.stockAdjust
+    })
+
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="1a5cef1f-87fe-4567-99ab-b4c9642dcac0" collection="#[vars.tables&#93;">
+			<set-variable value="#[payload&#93;" doc:name="tableName" doc:id="fbcb3288-acd3-40aa-83e2-5a2831e62432" variableName="tableName"/>
+			<choice doc:name="Choice" doc:id="954bc5f7-c5ab-4396-890b-acdbc1ec6ada" >
+				<when expression='#[payload=="TMS6_Exports_Table"&#93;'>
+					<flow-ref doc:name="calling tms6-exports-data-Sub_Flow" doc:id="e976d1bc-c559-467e-8720-6a64690663f7" name="tms6-exports-data-Sub_Flow"/>
+				</when>
+				<otherwise >
+					<logger level="INFO" doc:name="Logger" doc:id="8b5ccbda-f52a-4a90-98b4-f287f2e65f1b" />
+				</otherwise>
+			</choice>
+			<ee:transform doc:name="respective table-data" doc:id="51d682b7-67e8-4ebc-88f9-b9ef9fb49b71">
+			<ee:message>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="data" ><![CDATA[%dw 2.0
+output application/json
+// This transform message will take data either tms6Data or receipts data or exports data
+&#45;&#45;-
+if(payload != "TMS6_Exports_Table") 
+	(
+		if(payload=="TMS6_Table") vars.tms6Data.products 
+		else if(payload=="TMS6_Receipts_Table") vars.receiptsData  
+		else null 
+		    filter ((item) -> item.stockAdjust != "0")
+		    map ((p) -> {
+		        tank: p.tank,
+		        productName: p.productName,
+		        volume:p.volume,
+		        stockAdjust: p.stockAdjust
+		    })
+    )
+    else vars.exportTanks
+
+&#93;&#93;></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+			<http:request method="GET" doc:name="gets existTanks " doc:id="3726aeb9-5425-4089-abb9-c2fa0d108e8a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tms6.workbookId') ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/1&quot;&#93;" target="existTanks" targetValue='#[flatten((payload.values) - (payload.values[0&#93;))&#93;'>
+			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer" ++ vars.token
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+			<ee:transform doc:name="newTanks" doc:id="8c06578f-d84f-4423-81b9-21566bbf3b6f">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="newTanks"><![CDATA[%dw 2.0
+output application/json
+// This will look for the new tanks came in pdfs with comparing to tms6 sheet
+//var existTanks = vars.existTanks
+&#45;&#45;-
+vars.data filter (p) -> not (vars.existTanks contains (p.tank as String))&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+			<flow-ref doc:name="calling check-for-new-tanks-and-post-new-tanks-data-Sub_Flow" doc:id="9d71540a-fd32-4c27-848a-c223c5323d3d" name="check-for-new-tanks-and-post-new-tanks-data-Sub_Flow" />
+			<flow-ref doc:name="calling post-tms6-Sub_Flow" doc:id="0d07f0d3-5641-4d69-a54d-b4cf0088d67c" name="post-tms6-Sub_Flow" />
+		</foreach>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"check-for-new-tanks-and-post-new-tanks-data-Sub_Flow"]<sub-flow name="check-for-new-tanks-and-post-new-tanks-data-Sub_Flow" doc:id="236a832f-81cf-4a58-9614-53efca84b350" >
+		<choice doc:name="Choice" doc:id="0c56307c-fe2c-4cf9-9fa2-f3408ad1663a" >
+			<when expression="#[!isEmpty(vars.newTanks)&#93;">
+				<http:request method="GET" doc:name="get column count" doc:id="6b19e806-779f-4d5d-bec5-e7d9ef7e5861" target="columnCount" targetValue="#[payload.value&#93;" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tms6.workbookId') ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/count&quot;&#93;" config-ref="HTTP_Graph_API_configuration">
+					<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+					<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer" ++ vars.token
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+				<ee:transform doc:name="newTanks data in rows" doc:id="e145431b-456c-4d9f-858e-8ab2eece566a">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="rowPayload"><![CDATA[%dw 2.0
+output application/json
+// This gives output of the new products for the previous dates
+
+// input
+var newTanks = vars.newTanks
+
+// total number of columns
+var columnCount = vars.columnCount
+
+// main logic
+&#45;&#45;-
+(if (columnCount > 2)
+    newTanks map ((item) ->
+        [item.tank, item.productName&#93; ++ (1 to (columnCount - 2) map ((n) -> "0"))
+    )
+else 
+    newTanks map ((item) ->
+        [item.tank, item.productName&#93;
+    )
+)  map(item)-> {values:[item&#93;}&#93;&#93;></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<foreach doc:name="For Each" doc:id="757cd9f4-7f82-4c7d-b9f5-8c66cdc4b248" collection="#[vars.rowPayload&#93;">
+					<set-variable value="#[vars.existTanks ++ [payload.values[0&#93;[0&#93;&#93;&#93;" doc:name="add new tanks to existTanks" doc:id="5f454bf1-5062-45f3-9bd6-8eb63ecd9cad" variableName="existTanks" />
+					<http:request method="POST" doc:name="adding new product Row" doc:id="275f552b-a851-4015-9eb5-7bd44ad13554" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tms6.workbookId') ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/rows/add&quot;&#93;">
+						<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer " ++ vars.token
+}&#93;&#93;&#93;></http:headers>
+					</http:request>
+				</foreach>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="fc40ab8e-8ed5-47a1-a478-7b81f0b881eb" />
+			</otherwise>
+		</choice>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"post-tms6-Sub_Flow"]<sub-flow name="post-tms6-Sub_Flow" doc:id="8d9e77fe-a8a3-457d-9b30-71e6956b6654">
+		<ee:transform doc:name="order set" doc:id="761b8947-643c-4e56-9034-145a6e2bd1b7">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="orderSet"><![CDATA[%dw 2.0
+output application/json
+
+// This gives output of products in json by comparing the existTanks and if present
+// assing value to that tank from the data if not found then null will be asigned
+
+// tank order
+var order = vars.existTanks
+
+// normalize function — remove leading zeros and handle nulls
+fun normalize(t) = (upper(t default "")) replace /^0+/ with ""
+
+// reorder only the top-level products
+&#45;&#45;-
+{
+    date: vars."InventoryDate",
+    products: order map (t) -> do {
+        var match = (vars.data default [&#93;) filter (p) -> 
+                        p != null and normalize(p.tank) == normalize(t)
+        &#45;&#45;-
+        if (!isEmpty(match))
+            match[0&#93;
+        else 
+            {
+                tank: t,
+                productName: null,
+                volume: null,
+                stockAdjust: null
+            }
+    }
+  
+}
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="column payload" doc:id="14393d59-99aa-4599-8de5-eb32b8eb360f">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="columnPayload"><![CDATA[%dw 2.0
+output application/json
+// values for the request data with out headers
+&#45;&#45;-
+{
+	name: vars.InventoryDate,
+	values: 
+		(if (vars.tableName == "TMS6_Table") 
+			(vars.orderSet.products.*volume) 
+		else if (vars.tableName == "TMS6_Exports_Table") 
+			(vars.orderSet.products.*volume) 
+		else 
+			(vars.orderSet.products.*stockAdjust) )map (v) -> [v&#93;
+}
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="request-data" doc:id="d3bde329-70f6-486d-bc4d-9de2693df042" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="request-data" ><![CDATA[%dw 2.0
+output application/json
+// Actual Request data to do post call to the table
+
+var header= [[vars.columnPayload.name&#93;&#93;
+var data = vars.columnPayload.values
+&#45;&#45;-
+{
+    values: (header ++ data)
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="tms6 post-columns" doc:id="1532262e-d0bd-46b9-bb67-b0afddc6a009" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tms6.workbookId') ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;&#93;" config-ref="HTTP_Graph_API_configuration">
+			<http:body><![CDATA[#[vars."request-data"&#93;&#93;&#93;></http:body>
+			<http:headers><![CDATA[#[output application/java
+&#45;&#45;-
+{
+	"Authorization" : "Bearer" ++ vars.token
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"tms6-exports-data-Sub_Flow"]<sub-flow name="tms6-exports-data-Sub_Flow" doc:id="897c1b4b-5e35-4f3b-89c1-44f69497facd" >
+		<http:request method="GET" doc:name="get-stockholder-lookup-values" doc:id="44afb832-05a0-4061-82c6-346c495926aa" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.stockholders-Lookup.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('stockholdersLookup.tableName') ++ &quot;/rows?$select=values&quot;&#93;" target="stockholder-lookup-values" targetValue="#[payload.value&#93;">
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer " ++ vars.token
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="stockholdersPDFData" doc:id="095eb7db-fdb8-4e5b-a9d1-f58ef17d49a6" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="exportStockHoldersFromLookUp" ><![CDATA[vars."stockholder-lookup-values"
+    filter ((item) -> (item.values[0&#93; contains "Export"))
+    map ((item) -> item.values[0&#93;[0&#93;)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="var exportsData" doc:id="0d7cf55e-1ba6-4c7b-88dd-db38fff3d5c4" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="exportsData" ><![CDATA[%dw 2.0
+output application/json
+//  exported data by stockholders lookup names
+
+
+var exportStockHoldersFromLookUp = vars.exportStockHoldersFromLookUp
+var stockholdersPDFData = vars.tms6Data.StockHolders
+
+// Extract only the stockholder name part, cleaned
+fun cleanName(name) =
+    trim((name splitBy " ")[2 to -1&#93; joinBy " ")
+
+&#45;&#45;-
+stockholdersPDFData
+    filterObject ((value, key) ->
+        sizeOf(
+            exportStockHoldersFromLookUp filter ((exp) ->
+                upper(cleanName(exp)) == upper(trim(key))
+            )
+        ) > 0
+    )
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="var exportTankSetData" doc:id="d1af80e7-58ef-486f-8466-e94b20bcb122" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="exportTankSetData" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+flatten(
+    vars.exportsData pluck ((value, key) ->
+        value map ((item) -> {
+            stockholder: key,
+            tank: item.tank,
+            productName: item.productName,
+            volume: item.volume
+        })
+    )
+)
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="exportTanks" doc:id="e9f514df-b760-42ff-bd27-637b93281542">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="exportTanks"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.exportTankSetData
+    groupBy ((item) -> item.tank)
+    pluck ((tankGroup, tankId) -> {
+        tank: tankId,
+        productName: (tankGroup[0&#93;.productName), // same product name for all same-tank items
+        volume: (tankGroup.*volume map ((v) -> v as Number)) reduce ((a, b) -> a + b)
+    })
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"IDP-Inventory-Sub_Flow"]<sub-flow name="IDP-Inventory-Sub_Flow" doc:id="dc56a93e-d9d3-4a2c-b4ee-742fbbd64cf0" >
+		<ee:transform doc:name="idp-response-data" doc:id="66891bed-f169-4739-a077-c9ceb9de9b12">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="idp-response-data"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars."idp-response-data"&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="aggregated-tis-data(idp)" doc:id="320420c8-458a-40b8-9995-d045438b907c">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="aggregated-tis-data"><![CDATA[%dw 2.0
+output application/json
+var Elmendorf_subtotals=  vars."idp-response-data"."Elmendorf"."Subtotal" mapObject ((value, key, index) ->"Crude-SAR":value.GrossProduct )
+var TSAR_subtotals= vars."idp-response-data"."TSAR"."Subtotal" mapObject ((value, key, index) -> (key):value.GrossProduct)
+var Elmendorf_GrandTotal= vars."idp-response-data"."Elmendorf"."GrandTotal"."GrossProductTotal"
+var SAR_GrandTotal= vars."idp-response-data"."TSAR"."GrandTotal"."GrossProductTotal"
+&#45;&#45;-
+TSAR_subtotals ++ Elmendorf_subtotals ++ 
+{
+    "SAR_GrandTotal": SAR_GrandTotal,
+    "Elmendorf_GrandTotal": Elmendorf_GrandTotal
+    
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling Inventory-common-Sub_Flow" doc:id="2ddf5f63-58d7-4396-815d-62a456cdc7b9" name="Inventory-common-Sub_Flow"/>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"TIS-To-Inventory-POST-Sub_Flow"]<sub-flow name="TIS-To-Inventory-POST-Sub_Flow" doc:id="8cfc678f-1df8-4f0b-8aad-ba1c1516b014" >
+		<set-variable value='#[attributes.queryParams."InventoryDate"&#93;' doc:name="InventoryDate" doc:id="d3067098-ba4a-424b-b464-ed9d5431062c" variableName="InventoryDate" />
+		<set-variable value="#[payload&#93;" doc:name="idp-response-data" doc:id="4a5f6306-8e0a-46fa-9a93-25a79ee12324" variableName="idp-response-data"/>
+		<flow-ref doc:name="calling token subflow" doc:id="2e56edf9-d390-42c2-b7a6-5f025fd246a2" name="token" />
+		<http:request method="GET" doc:name="get tis product column" doc:id="0a475f7b-615a-4b3e-b242-2899f74e639a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Product&quot;&#93;" target="tis-product-column" targetValue="#[payload.values&#93;">
+			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get-tis-values-by-date" doc:id="ea6e62d2-67b2-46fb-b52a-b763a551ea68" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.tis.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;InventoryDate&quot; as String&#93;" target="tis-values" targetValue="#[payload.values&#93;">
+			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="tis-raw-data in key and value pair" doc:id="55638f47-dbd4-4fb3-a09f-524a4e170d6f">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="tis-raw-data"><![CDATA[%dw 2.0
+output application/json
+var products= vars."tis-product-column"
+var data = vars."tis-values"
+&#45;&#45;-
+(products[1 to sizeOf(products) - 1&#93; map ((p, i) ->
+    {(p[0&#93;): data[i + 1&#93;[0&#93;}
+)) reduce ((acc, item) -> acc ++ item)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="aggregated-tis-data(tis)" doc:id="fd414ebd-5322-4e45-b380-2953c445e80c">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="aggregated-tis-data"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+(vars."tis-raw-data" pluck (v, k) -> {
+  Product: k,
+  value: if (v is String and v == "-") 0 else (v as Number default 0)
+})
+groupBy $.Product
+mapObject ((arr, key) -> (key): ((arr map $.value) reduce ($$ + $) default 0))&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Inventory-common-Sub_Flow" doc:id="ebf9a89d-b398-40af-8ff1-6c42e6669a5d" name="Inventory-common-Sub_Flow"/>
+		<ee:transform doc:name="date-checking" doc:id="3b2f0fc7-f1d0-4261-85e2-95cc769dc1d7" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="date-checking" ><![CDATA[%dw 2.0
+output application/json
+ 
+fun isStartDateOfMonth(date: Date) = date.day == 1
+ 
+fun getPreviousMonthLastDate(date: Date) =
+    (date as String {format: "yyyy-MM-01"} as Date) - |P1D|
+ 
+fun getCurrentMonthStartDate(date: Date) =
+    date as String {format: "yyyy-MM-01"} as Date
+ 
+fun getDaysInMonth(date: Date) =
+    ((date as String {format: "yyyy-MM-01"} as Date) + |P1M| - |P1D|).day
+ 
+var inputDate = attributes.queryParams."InventoryDate"
+var parsedDate = inputDate as Date {format: "dd-MMM-yyyy"}
+var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
+var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
+var daysInMonth = getDaysInMonth(parsedDate)
+ 
+&#45;&#45;-
+{
+    "originalDate": parsedDate,
+    "isStartDateOfMonth": isStartDateOfMonth(parsedDate),
+    "daysInMonth": daysInMonth,
+    "previousMonthLastDate": previousMonthLastDate as String {format: "d-MMM-yy"},
+    "StartDate": currentMonthStartDate as String {format: "d-MMM-yy"},
+    "date": parsedDate as String {format: "M/d/yy"},
+    "monthYear": parsedDate as String {format: "MMM"},
+    "weekday": parsedDate as String {format: "EEEE"}
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"Inventory-common-Sub_Flow"]<sub-flow name="Inventory-common-Sub_Flow" doc:id="6517a73b-5979-4dbf-9727-5f12034db24e">
+		<ee:transform doc:name="tis-data" doc:id="646edc55-52a8-4867-871a-839f2a9f42df">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="tis-data"><![CDATA[%dw 2.0
+output application/json
+
+&#45;&#45;-
+{
+    InventoryDate: vars."InventoryDate",
+    Elmendorf_Products: (vars."aggregated-tis-data") - "SAR" - "Elmendorf" - "Crude-SAR",
+    SAR_Products: {
+       "Crude-SAR": vars."aggregated-tis-data"."Crude-SAR"
+    },
+    Elmendorf_GrandTotal: vars."aggregated-tis-data"."Elmendorf" ,
+    SAR_GrandTotal: vars."aggregated-tis-data"."SAR"
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling get-columnCountAndColumns-Sub_Flow" doc:id="c5f31821-0021-4bec-b53f-56c9e6908ac7" name="get-columnCountAndColumns-Sub_Flow" />
+		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="3fd99017-17e0-44ed-96b3-b680adeaae49" name="get-Inventory-template-columns-Sub_Flow" />
+		<ee:transform doc:name="inventory-products-data" doc:id="13488dc8-a0ca-4426-bc9b-d79f22d6235f">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="inventory-products-data"><![CDATA[%dw 2.0
+output application/json
+var weekday= (vars."InventoryDate" as Date {format: "dd-MMM-yyyy"}) as String {format: "EEEE"}
+
+&#45;&#45;-
+{
+  "Date": vars."InventoryDate",
+  "weekday": weekday,
+  "C1001": vars."tis-data"."Elmendorf_GrandTotal" default "0", //Crude - Elmendorf
+  "C1002": vars."tis-data"."SAR_Products"."Crude-SAR" default "0", //Crude - Refinery
+  "C1004": vars."tis-data"."Elmendorf_Products"."JET" default "0",
+  "C1005": vars."tis-data"."Elmendorf_Products"."JET A" default "0",
+  "C1006": vars."tis-data"."Elmendorf_Products"."KEROSENE" default "0",
+  "C1007": vars."tis-data"."Elmendorf_Products"."JPTS" default "0",
+  "C1008": vars."tis-data"."Elmendorf_Products"."ULSD/Conosol" default "0",
+  "C1009": vars."tis-data"."Elmendorf_Products"."NHT-FEED" default "0",
+  "C1010": vars."tis-data"."Elmendorf_Products"."ASU feed" default "0",
+  "C1011": vars."tis-data"."Elmendorf_Products"."ULSD" default "0",
+  "C1012": vars."tis-data"."Elmendorf_Products"."DHT FEED" default "0",
+  "C1013": vars."tis-data"."Elmendorf_Products"."GASOLINE" default "0",
+  "C1014": vars."tis-data"."Elmendorf_Products"."Ethanol" default "0",
+  "C1015": vars."tis-data"."Elmendorf_Products"."FULL RANGE REF" default "0",
+  "C1016": vars."tis-data"."Elmendorf_Products"."Premium PBOB" default "0",
+  "C1017": vars."tis-data"."Elmendorf_Products"."Light Reformate" default "0",
+  "C1018": vars."tis-data"."Elmendorf_Products"."ISOMERATE" default "0",
+  "C1019": vars."tis-data"."Elmendorf_Products"."ATB" default "0",
+  "C1020": vars."tis-data"."Elmendorf_Products"."LPG" default "0",
+  "C1023": "0", // 1 BTMS
+  "C1024": "0", // 1 TOPS
+  "C1025": vars."tis-data"."Elmendorf_Products"."SLOP" default "0",
+  "C1029": "0", // Includes DHT Feed/ LSD from Nixon
+  "C1030": "0", // Includes Naphtha purchases
+  "C1031": vars."idp-response-data"."TMS6"."RECEIPTS"."ETHANOL Receipts" default "0", 	// Include Ethanol purchases
+  "C1032": "0", //  Include Clear91 from 07/2020, and Toluene before 12/2019  
+  "C1033": "0", //  Include CBOB receipts      
+  "C1035": "0", // Biodiesel blended to ULSD
+  "C1036": "0", // Toluene blended to Premium/87 Clear/87 Reg
+  "C1037": -(vars."idp-response-data"."TMS6"."ETHANOL BASE") default "0",
+  "C1038": vars."idp-response-data"."TMS6"."Premium" default "0",
+  "C1039": vars."idp-response-data"."TMS6"."REFORMATE" default "0",
+  "C1040": vars."idp-response-data"."TMS6"."CBOB" default "0",
+  "C1041": vars."idp-response-data"."TMS6"."Gasoline Blendstock" default "0",
+  "C1042": -((vars."idp-response-data"."TMS6"."REGULAR BASE" default "0") + (vars."idp-response-data"."TMS6"."ETHANOL BASE" default "0"))  ,
+  "C1043": vars."idp-response-data"."TMS6"."JET-A BASE" default "0",
+  "C1044": vars."idp-response-data"."TMS6"."KEROSENE BASE" default "0",
+  "C1045": vars."idp-response-data"."TMS6"."JPTS BASE" default "0",
+  "C1046": -(vars."idp-response-data"."TMS6"."#2 ULSD BASE") default "0",
+  "C1047": -(vars."idp-response-data"."TMS6"."LPG MIX BASE") default "0",
+  "C1048": vars."idp-response-data"."TMS6"."HSR/NAPHTHA BASE" default "0",
+  "C1049": vars."idp-response-data"."TMS6"."LSR/NAPHTHA BASE" default "0",
+  "C1050": -(vars."idp-response-data"."TMS6"."#4 OIL BASE") default "0",
+  "C1051": vars."idp-response-data"."TMS6"."EXPORTS"."#2 ULSD BASE" default "0",
+  "C1052": vars."idp-response-data"."TMS6"."DHT FEEDSTOCK" default "0",
+  "C1058": "0", //Product to Elmendorf
+  "C1060": "0", 
+  "C1061": "21364" // METER CONTROL
+  
+}
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="inventory-request-data" doc:id="932ddf0c-6170-4f94-8ba3-ee0414b1bdf4">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="inventory-request-data"><![CDATA[%dw 2.0
+output application/json
+var formulas = vars."changed-formulas"
+var data = vars."inventory-products-data"
+&#45;&#45;-
+formulas map (row) ->
+  row map (cell) ->
+    if (cell startsWith "=") cell
+    //else if (cell == "Date") (data.Date as Date {format: "yyyy-MM-dd"}) as String {format: "dd-MMM-yyyy"}
+    else if (data[cell&#93;? != null) data[cell&#93;
+    else cell&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<try doc:name="Try" doc:id="cb7f8f90-f2b4-4ea6-8850-31ef7e3e70da">
+			<http:request method="GET" doc:name="checks for date present in Table or not" doc:id="92821a2b-77da-485f-8dbe-8286ab0e0244" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;columns/&quot; ++ vars.&quot;InventoryDate&quot; as String&#93;">
+				<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+			</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="f1deb84c-fe88-4239-8251-cf4d6dd6b19b" variableName="flag" />
+			<set-variable value="#[payload.id&#93;" doc:name="col-id to update" doc:id="dd4973b0-ea02-4dcc-93ea-490bba4af757" variableName="col-id" />
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2c128bbc-497d-46f9-a6c6-591692b1d66b" type="HTTP:NOT_FOUND">
+					<logger level="INFO" doc:name="Logger" doc:id="a4ec1d29-072f-4755-bbea-ad7e90f31fc3" message="&#45;&#45;&#45;&#45;-ItemNotFound&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="30608191-269a-4053-a595-0a93c75b268d" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="update or insert" doc:id="2809aa06-622c-4330-aeda-3cb5a524d852">
+			<when expression='#[vars.flag == "update"&#93;'>
+				<http:request method="PATCH" doc:name="Inventory-patch-request" doc:id="ae4a2dae-d90b-4e45-9a64-d92fae819d1e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;col-id&quot;&#93;" >
+					<http:body ><![CDATA[#[{ 
+	values: vars."inventory-request-data"
+}&#93;&#93;&#93;></http:body>
+					<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+			</when>
+			<otherwise>
+				<http:request method="POST" doc:name="Inventory-post-request" doc:id="468d6ad3-73a7-443a-bdd9-0b05a3b26506" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/add&quot;&#93;">
+			<http:body><![CDATA[#[{ 
+	values: vars."inventory-request-data"
+}&#93;&#93;&#93;></http:body>
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+				<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="dca5ff25-d53c-4cfa-90d3-5399f22fe1da" name="MTD-Sub_Flow" />
+			</otherwise>
+		</choice>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"MTD-Sub_Flow"]<sub-flow name="MTD-Sub_Flow" doc:id="adf94071-5a78-4fd4-a955-be43f223d548" >
+		<set-variable value="#[attributes.queryParams.InventoryDate&#93;" doc:name="InventoryDate" doc:id="91920449-a06a-4b2f-b811-09eb261952e3" variableName="InventoryDate"/>
+		<ee:transform doc:name="date-checking" doc:id="10c7be81-a5ff-4718-8288-2d8ca76f0f1d">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="date" ><![CDATA[%dw 2.0
+output application/json
+
+fun isLastDateOfMonth(date: Date) = (date + |P1D|).day == 1
+
+fun getPreviousMonthLastDate(date: Date) = 
+    (date as String {format: "yyyy-MM-01"} as Date) - |P1D|
+
+fun getCurrentMonthStartDate(date: Date) = 
+    date as String {format: "yyyy-MM-01"} as Date
+
+fun getCurrentMonthPreviousDate(date: Date) = 
+    date as String {format: "yyyy-MM-dd"} as Date - |P1D|
+
+var inputDate = vars.InventoryDate
+var parsedDate = inputDate as Date {format: "dd-MMM-yyyy"}
+var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
+var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
+var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
+
+&#45;&#45;-
+{
+    "currentDate": parsedDate,
+    "previousDate": getCurrentMonthPreviousDate(parsedDate) as String {format: "dd-MMM-yyyy"},
+    "isLastDateOfMonth": isLastDateOfMonth(parsedDate),
+    "isStartMonthDate": parsedDate.day == 1,  // true if day is 1, false otherwise
+    "previousMonthLastDate": previousMonthLastDate as String {format: "dd-MMM-yyyy"},
+    "currentMonthStartDate": currentMonthStartDate as String {format: "dd-MMM-yyyy"},
+    "date": parsedDate as String {format: "dd-MMM-yyyy"},
+    "month": upper(parsedDate as String {format: "MMM"}),
+    "previousMonth": upper(previousMonthLastDate as String {format: "MMM"}),
+    "weekday": parsedDate as String {format: "EEEE"},
+    "currentNumberOfDays": parsedDate.day,
+    "year": parsedDate as String {format: "yyyy"}  // Added last two digits of year
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling token-subflow" doc:id="36c669af-aed5-4e33-9648-1bc5f27776e1" name="token"/>
+		<http:request method="GET" doc:name="gets sample mtd-formulas" doc:id="45ed5cb4-76f7-4599-aaef-89b88a8b2ad7" config-ref="HTTP_Graph_API_configuration" path="#[&quot;v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/worksheets/MTD/range(address='B1:I200')&quot;&#93;" target="mtd-sample-formulas" targetValue="#[payload.formulas&#93;">
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="gets last Month End Column (MTD)" doc:id="a12c3403-22f5-4964-8d82-5bd4ebc2edc5" target="mtd-previous-month-index" targetValue="#[payload.index&#93;" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/" &#10;++ vars.date.previousMonth ++ "-" ++ vars.date.year ++ "-END"&#93;'>
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="gets previous Month LastDate Column (Inventory)" doc:id="d2fefeb7-1935-4e91-af84-422734d0a015" targetValue="#[payload.index&#93;" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/" ++ vars.Date.previousMonthLastDate as String&#93;' target="previous-month-last-date-index">
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="gets Current Month Start Date Column (Inventory)" doc:id="c0d1e5b3-a111-4157-9279-c14605059eb5" target="current-month-start-date-index" targetValue="#[payload.index&#93;" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/" ++ vars.date.currentMonthStartDate as String&#93;' config-ref="HTTP_Graph_API_configuration">
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="mcolumns and new-mtd-headers" doc:id="39a429c2-c60b-4b3f-a2ab-7db3c66feba8" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="mcolumn" ><![CDATA[%dw 2.0
+output application/json
+
+fun toColumnLetter(idx) =
+    if (idx < 26) 
+        ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[idx to idx&#93;)
+    else
+        toColumnLetter((idx / 26) as Number - 1) ++ ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[(idx mod 26) to (idx mod 26)&#93;)
+
+fun getColumnRange(startIdx, endIdx) = 
+    (startIdx to endIdx) map toColumnLetter($)
+
+// MTD column Indexes
+var previousMonthEndIndex = (vars."mtd-previous-month-index" as Number)
+var currentMonthStartIndex = previousMonthEndIndex + 1
+var currentMonthEndIndex = previousMonthEndIndex + 8
+
+// Inventory Column Indexes
+var previousMonthLastDateIndex = vars."previous-month-last-date-index"
+var currentMonthStartDateIndex = vars."current-month-start-date-index"
+
+
+//var currentMonthPreviousDateIndex= vars."current-month-previous-date-index" //
+//var currentDateIndex = vars. // 
+
+// MTD &#45;&#45; Calculate column names for the specific indices
+var previousMonthEndColumn = toColumnLetter(previousMonthEndIndex)
+var currentMonthStartColumn = toColumnLetter(currentMonthStartIndex)
+var currentMonthEndColumn = toColumnLetter(currentMonthEndIndex)
+
+// Inventory &#45;&#45; Calculate column names for the specific indices
+var previousMonthLastDateColumn = toColumnLetter(previousMonthLastDateIndex)
+var currentMonthStartDateColumn = toColumnLetter(currentMonthStartDateIndex)
+var currentMonthPreviousDateColumn = vars.numberToColumn.CurrentColumn  //toColumnLetter(currentMonthPreviousDateIndex)
+var currentDateColumn = vars.numberToColumn.NextColumn  //toColumnLetter(currentMonthStartDateIndex)
+
+&#45;&#45;-
+{
+	// MTD column-names
+   monthEndRangeColumns: getColumnRange(currentMonthStartIndex, currentMonthEndIndex),
+   mtdPreviousMonthEndColumn: previousMonthEndColumn,
+   currentMonthStartColumn: currentMonthStartColumn,
+   
+   // Inventory column-names
+   previousMonthLastDateColumn: previousMonthLastDateColumn,
+   currentMonthStartDateColumn: currentMonthStartDateColumn,
+   currentMonthPreviousDateColumn: currentMonthPreviousDateColumn,
+   currentDateColumn: currentDateColumn,
+}&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="new-mtd-headers" ><![CDATA[%dw 2.0
+output application/json
+var column1 = vars.date.month ++ "-" ++ vars.date.year ++ "-START"
+var column2 = vars.date.month ++ "-" ++ vars.date.year ++ "-BPD"
+var column3 = vars.date.month ++ "-" ++ vars.date.year ++ "-Barrels"
+var column4 = vars.date.month ++ "-" ++ vars.date.year ++"-Est-Ref-Yields"
+var column5 = vars.date.month ++"-" ++ vars.date.year ++ "-MTD-Inv-Change"
+var column6 = vars.date.month ++ "-" ++ vars.date.year ++ "-MTD-BPD-Change"
+var column7 = vars.date.month ++ "-" ++ vars.date.year ++"-EndingInvTo-PreviousDay-InvChange"
+var column8 = vars.date.month ++ "-" ++ vars.date.year ++"-END"
+&#45;&#45;-
+[column1,column2,column3, column4, column5, column6, column7, column8&#93;&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="new-mtd-headers" doc:id="56e85944-2d9f-43a3-879e-8b6a4564594b" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="new-mtd-headers" ><![CDATA[%dw 2.0
+output application/json
+var column1 = vars.date.month ++ "-" ++ vars.date.year ++ "-START"
+var column2 = vars.date.month ++ "-" ++ vars.date.year ++ "-BPD"
+var column3 = vars.date.month ++ "-" ++ vars.date.year ++ "-Barrels"
+var column4 = vars.date.month ++ "-" ++ vars.date.year ++"-Est-Ref-Yields"
+var column5 = vars.date.month ++"-" ++ vars.date.year ++ "-Inv-Change"
+var column6 = vars.date.month ++ "-" ++ vars.date.year ++ "-MTD-BPD-Change"
+var column7 = vars.date.month ++ "-" ++ vars.date.year ++"-EndingInvTo-PreviousDay-InvChange"
+var column8 = vars.date.month ++ "-" ++ vars.date.year ++"-END"
+&#45;&#45;-
+[column1,column2,column3, column4, column5, column6, column7, column8&#93;&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="mtd-request-data" doc:id="6d7b3557-4e4e-48d2-81b5-cb227c40f3ed" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="mtd-request-data" ><![CDATA[%dw 2.0
+output application/json
+var headers = vars."new-mtd-headers"
+&#45;&#45;-
+{
+	values: vars."mtd-sample-formulas" map ((row, index) ->
+    if (index == 0) headers
+    else row
+)
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Replace Excel Formulas" doc:id="47142c9d-54d7-4084-a510-3ac35a8fcb95" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var arr= vars.mcolumn.monthEndRangeColumns
+
+var from1= "A" 								      // previous month last column
+var to1= vars.mcolumn.previousMonthLastDateColumn // previous month last column
+
+var from2= "B" 									  // Present Month First Column
+var to2= vars.mcolumn.currentMonthStartDateColumn // Present Month First Column
+
+var from3="C" 						// Previous Date Column
+var to3= vars.mcolumn.currentMonthPreviousDateColumn // Previous Date Column
+
+var from4="D" 						    // current date column
+var to4= vars.mcolumn.currentDateColumn // current date column
+
+var from5="E" // MTD 1st column
+var to5= arr[1&#93;
+
+var from6="F"  //  MTD 2nd column
+var to6= arr[2&#93;  // 
+
+var from7="G" //  MTD 3rd column
+var to7=arr[3&#93;
+
+var from8="H" //  MTD 4rth column
+var to8=arr[4&#93;
+
+var from9="I" //  MTD 5th column
+var to9=arr[5&#93;
+
+var from10="J" // MTD 6th column
+var to10=arr[6&#93;
+
+var from11="N1"
+var to11= vars.date.currentNumberOfDays
+&#45;&#45;-
+{
+  values: vars."mtd-request-data".values map ((row) ->
+    row map ((cell) -> 
+      if (cell is String and sizeOf(cell) > 0 and cell[0&#93; == "=")
+        (cell 
+          //replace (("(?<![A-Za-z0-9_&#93;)" ++ from11 ++ "(?![A-Za-z0-9_&#93;)") as Regex) with to11 // Use word boundaries for N1
+          replace (("\\b" ++ from11 ++ "\\b") as Regex) with to11
+          replace (("(?:" ++ from10 ++ ")(?=\\d|\\\$)") as Regex) with to10
+          replace (("(?:" ++ from9 ++ ")(?=\\d|\\\$)") as Regex) with to9
+          replace (("(?:" ++ from8 ++ ")(?=\\d|\\\$)") as Regex) with to8
+          replace (("(?:" ++ from7 ++ ")(?=\\d|\\\$)") as Regex) with to7
+          replace (("(?:" ++ from6 ++ ")(?=\\d|\\\$)") as Regex) with to6
+          replace (("(?:" ++ from5 ++ ")(?=\\d|\\\$)") as Regex) with to5
+          replace (("(?:" ++ from4 ++ ")(?=\\d|\\\$)") as Regex) with to4
+          replace (("(?:" ++ from3 ++ ")(?=\\d|\\\$)") as Regex) with to3
+          replace (("(?:" ++ from2 ++ ")(?=\\d|\\\$)") as Regex) with to2
+          replace (("(?:" ++ from1 ++ ")(?=\\d|\\\$)") as Regex) with to1
+        )
+      else 
+        cell
+    )
+  )
+}&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="mtd separated data" doc:id="8d91f15f-3b13-4fb8-92f1-5846c63e318b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var data = payload.values
+var headers = data[0&#93;
+var rows = data[1 to -1&#93;
+&#45;&#45;-
+headers map ((colName, colIndex) -> {
+    values: [[colName&#93;&#93; ++ (rows map ((row) -> [row[colIndex&#93;&#93;))
+})
+&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="checks whether the start of the month or Not" doc:id="7041abb7-5034-43fe-88d3-06435f830bc3" >
+			<when expression="#[vars.Date.isStartMonthDate == true&#93;" >
+				<flow-ref doc:name="calling new-month-mtd-post-Sub_Flow" doc:id="8003e605-4fca-4890-a1f7-9364b3262835" name="new-month-mtd-post-Sub_Flow"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="calling mtd-post-Sub_Flow" doc:id="07e51a30-9592-40a8-8fce-eae641e17bdd" name="mtd-post-Sub_Flow"/>
+			</otherwise>
+		</choice>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"new-month-mtd-post-Sub_Flow"]<sub-flow name="new-month-mtd-post-Sub_Flow" doc:id="7e387699-e1f7-4a18-9d5d-a2523402a09f" >
+		<foreach doc:name="For Each" doc:id="78f18ecd-eaee-4fc0-a3bf-d64623feb2bc">
+					<try doc:name="Try" doc:id="58d03536-812e-46e3-934a-8ecc975fc52a">
+						<http:request method="POST" doc:name="mtd-new-month-post" doc:id="d54aba9d-ac54-4c56-ba16-d35572459774" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/add"&#93;' config-ref="HTTP_Graph_API_configuration">
+							<ee:repeatable-file-store-stream bufferUnit="MB" />
+							<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+						</http:request>
+						<error-handler>
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="21e4e0bf-8e3c-4d07-bb4c-cac296d9f99f">
+								<ee:transform doc:name="Transform Message" doc:id="4cf205be-8061-4ab5-a965-1f311bfb5ef8">
+									<ee:message>
+										<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload&#93;&#93;></ee:set-payload>
+									</ee:message>
+								</ee:transform>
+							</on-error-continue>
+						</error-handler>
+					</try>
+				</foreach>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"priceForFunding-Sub_Flow"]<sub-flow name="priceForFunding-Sub_Flow" doc:id="01294d4f-60a1-4529-b693-97def14e576f" >
+		<set-variable value="#[attributes.queryParams.InventoryDate&#93;" doc:name="InventoryDate" doc:id="a4d38c0c-a982-4983-8036-c265997a272b" variableName="InventoryDate"/>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date = vars.InventoryDate&#10;var parsedDate = date as Date {format: "d-MMM-yyyy"}&#10;&#45;&#45;-&#10;(parsedDate + |P1D|) as String {format: "d-MMM-yyyy"}&#93;' doc:name="date" doc:id="f63023b9-5ffe-4025-9ae8-9eb425aabeeb" variableName="date"/>
+		<flow-ref doc:name="calling token-subflow" doc:id="c5960d23-8694-4ffc-9db3-8db228c28b63" name="token"/>
+		<http:request method="GET" doc:name="calling prices for funding column 1" doc:id="2f7b869c-07d6-4a98-b3d8-dbf442c32953" path="/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FWFXVCMQY7BCNHIM4QFYVBNDEIQ/workbook/tables/PricesForFunding_Table/columns/Products" config-ref="HTTP_Graph_API_configuration" target="priceForFunding-products" targetValue="#[payload.values&#93;">
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="calling prices for funding" doc:id="98de5d31-99c7-42f2-89bf-2a17441c02f3" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FWFXVCMQY7BCNHIM4QFYVBNDEIQ/workbook/tables/PricesForFunding_Table/columns/" ++ vars.date&#93;' target="priceForFunding-values" targetValue="#[payload.values&#93;">
+			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<ee:transform doc:name="PriceForFundingData" doc:id="e5ab64bd-186d-43b3-aa6f-846e3fe20583" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="PriceForFundingData" ><![CDATA[%dw 2.0
+output application/json
+var products= vars."priceForFunding-products"
+var values= vars."priceForFunding-values"
+var data=flatten(
+    products map (p, index) ->
+        (p[0&#93; splitBy ",") map (item) ->
+            {
+                product: trim(item),
+                value: values[index&#93;[0&#93;
+            }
+) filter ((item, index) -> item.product !="")
+&#45;&#45;-
+(data map (item) ->
+    {
+        (item.product): item.value
+    }
+) reduce ($$++$)&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="data" doc:id="bcfa7831-90cb-4b35-8d38-fcc53bddf65f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var products= vars."priceForFunding-products"
+var prices= vars."priceForFunding-values"
+&#45;&#45;-
+(products map ((p, i) -> 
+  {
+    (p[0&#93;): prices[i&#93;[0&#93;
+  }
+)) reduce ((item, acc = {}) -> acc ++ item)&#93;&#93;></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"mtd-post-Sub_Flow"]<sub-flow name="mtd-post-Sub_Flow" doc:id="007471a6-8bf1-40a0-920d-4a9b1956b018" >
+		<foreach doc:name="For Each" doc:id="25b46d96-de9c-4993-ac33-9b89da3a56d5">
+					<try doc:name="Try" doc:id="af157f38-a2b2-453b-ab89-7a5db4683291">
+						<http:request method="PATCH" doc:name="mtd-post" doc:id="c4d96008-7df5-4d90-8393-7d772aa75526" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/" ++ payload.values[0&#93;[0&#93;&#93;'>
+							<ee:repeatable-file-store-stream bufferUnit="MB" />
+							<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+						</http:request>
+						<error-handler>
+							<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f7658f7f-177a-45a6-ba14-df9d3f1bbd41">
+								<ee:transform doc:name="Transform Message" doc:id="72b926df-4fba-402e-80d4-752df5ffa6be">
+									<ee:message>
+										<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload&#93;&#93;></ee:set-payload>
+									</ee:message>
+								</ee:transform>
+							</on-error-continue>
+						</error-handler>
+					</try>
+				</foreach>
+	</sub-flow> [STUDIO] -->
+	<!-- [STUDIO:"read-email-to-idp-extraction-Sub_Flow"]<sub-flow name="read-email-to-idp-extraction-Sub_Flow" doc:id="6fa5e904-b00b-4e71-b4b8-78c829115d7b" >
+		<set-variable value="#[attributes.queryParams.date&#93;" doc:name="Inventorydate" doc:id="9cc0ab2b-74a0-4fe0-a43d-ad6590e6f930" variableName="Inventorydate" />
+		<flow-ref doc:name="calling token flow" doc:id="6bf75c58-21ca-460c-9730-2132bd822150" name="token" />
+		<http:request method="GET" doc:name="reads Email" doc:id="a1614e46-d3da-4468-b675-5ea624eee67d" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/mailFolders/inbox/messages?$top=1">
+			<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request>
+		<set-variable value="#[payload.value.id[0&#93;&#93;" doc:name="mailId" doc:id="bc284e64-b12f-4b80-add5-c4a7f37c972c" variableName="mailId" />
+		<logger level="INFO" doc:name="reads the mail-attachments" doc:id="e55229fa-2384-42f9-a19e-0860ae057291" />
+		<choice doc:name="checks for the attachments in the Mail" doc:id="f233853f-0e56-4060-a074-0800f1d0c48e">
+			<when expression="#[payload.value.hasAttachments[0&#93; == true&#93;">
+				<http:request method="GET" doc:name="Read Attachments" doc:id="ad75028b-f439-4d02-bbd4-088d17982a46" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/messages/" ++ vars.mailId as String ++ "/attachments"&#93;' target="attachments" targetValue="#[payload.value&#93;">
+					<http:headers><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request>
+				<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="dbdf28f9-1e35-4f25-8863-7b326b1ea4fb" name="pdf-idf-routing-subflow" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="NO ATTACHMENTS" doc:id="8edd558e-b070-4631-b183-4a42588d2ee7" message="&#45;&#45;&#45;&#45;-NO ATTACHMENTS&#45;&#45;&#45;&#45;-" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="idp-response-data" doc:id="09e34369-8e0b-46ed-a622-6b4b036b0045">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="idp-response-data"><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+{	"Date": vars."Inventorydate" ,
+	"Elmendorf": vars."elmendorf-idp-response",
+	"TSAR": vars."tsar-idp-response",
+	"TMS6": vars."tms6data",
+	"Freepoint": vars."freepoint-idp-response"
+}&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling TIS-Sheet-Sub_Flow" doc:id="bdf6e370-fc80-42fa-8667-103916bf48d9" name="TIS-Sheet-Sub_Flow" />
+		<flow-ref doc:name="IDP-Inventory-Sub_Flow" doc:id="b005e87b-d288-45b2-bf86-d42475428ae3" name="IDP-Inventory-Sub_Flow"/>
+	</sub-flow> [STUDIO] -->
+	
+	
+</mule>

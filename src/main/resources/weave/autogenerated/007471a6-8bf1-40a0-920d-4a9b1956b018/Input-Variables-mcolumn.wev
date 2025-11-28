@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_007471a6_8bf1_40a0_920d_4a9b1956b018_Input_Variables_mcolumn = {|
+  monthEndRangeColumns: Array<String>, 
+  currentColumn: String, 
+  nextColumn: String, 
+  monthEndColumn: String, 
+  monthStartColumn: String
+|}
+

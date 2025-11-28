@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/microsoftOneDrive http://www.mulesoft.org/schema/mule/microsoftOneDrive/current/mule-microsoftOneDrive.xsd">
+	<sub-flow name="freepoint-worksheet-main-subflow" doc:id="9578161e-f046-4e36-8984-ffbc88fa5812" >
+		<ee:transform doc:name="freepoint-data" doc:id="e03b3010-d981-4562-bdb1-f9da50f7b1a7" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="freepoint-idp-response" ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="InventoryDate" doc:id="63e998d2-8c69-4765-bc19-171223ffd51b">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="InventoryDate" ><![CDATA[%dw 2.0
+output application/json
+---
+payload."Inventory Date"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="dates" doc:id="feffa624-080b-4663-a602-25761f70e63c">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="dates" ><![CDATA[%dw 2.0
+output application/json
+
+var input1 = vars."freepoint-idp-response"
+
+
+// Function to parse string like "26-Aug-2025" into a date
+fun toDate(str) = (str as Date { format: "d-MMM-yyyy" })
+
+var startDate = toDate(input1.PriorInventoryDate) + |P1D|   //  prior inventory date + 1 day
+var endDate = toDate(input1."Inventory Date")
+
+// Generate all dates between startDate and endDate (inclusive)
+fun dateRange(from, to) =
+    if (from > to) [] 
+    else [from as String {format: "d-MMM-yyyy"}] ++ dateRange(from + |P1D|, to)
+
+var datesList = dateRange(startDate, endDate)
+
+// Extract day parts and month-year for tableDate
+var dayParts = datesList map ((it) -> (it splitBy "-")[0])
+var monthYear = (datesList[-1] splitBy "-")[1 to 2] joinBy "-"
+
+var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
+
+---
+{
+    dates: datesList,
+    threeDatesTableName: tableDate
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling token" doc:id="b4e9dbbc-8227-47d9-85db-ab2c1539cbe6" name="token" />
+		<ee:transform doc:name="monthYear" doc:id="7fc542f2-7db8-478b-8b0e-046110fc48e2">
+					<ee:message />
+					<ee:variables>
+						<ee:set-variable variableName="monthYear"><![CDATA[%dw 2.0
+output application/json
+
+var InventoryDate =vars.InventoryDate  as Date {format: "d-MMM-yyyy"}
+var year = InventoryDate.year
+var month = InventoryDate as String {format: "MMM"}
+
+---
+{
+	"monthYear": month ++ "_" ++ year,
+	"year": year,
+	"month": month
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+		<ee:transform doc:name="checks the InvDate is Sunday or not---isNewMonth" doc:id="2de9f400-9b84-4bdc-991e-d1102d30b3dc">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="isNewMonth" ><![CDATA[%dw 2.0
+output application/json
+
+var InventoryDate = payload."Inventory Date" as Date {format: "d-MMM-yyyy"}
+---
+InventoryDate.day==1
+]]></ee:set-variable>
+				<ee:set-variable variableName="isSunday" ><![CDATA[%dw 2.0
+output application/json
+
+var InventoryDate = payload."Inventory Date"
+var day = InventoryDate as Date {format: "d-MMM-yyyy"} as String {format: "EEEE"}
+
+---
+if (day == "Sunday") "true" else "false"
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling freepoint-workbook-creation-montly-Sub_Flow" doc:id="39a5bb5e-c3ec-4c91-a4f4-348fe1d06099" name="freepoint-workbook-creation-montly-Sub_Flow"/>
+		<choice doc:name="Choice" doc:id="5235ca23-57fa-49e2-b1dc-4975c814c915">
+			<when expression='#[vars.isSunday == true]'>
+				<set-variable value='#[vars.monthYear.monthYear ++ "_3_Day_Calculations"]' doc:name="sheetName  3_Day_Calculations" doc:id="13448638-e121-4e16-b268-bc362bc304b1" variableName="sheetName"/>
+				<flow-ref doc:name="calling freepoint-post-Sub_Flow" doc:id="f62f4c55-f17b-4315-83be-93ee63d71167" name="freepoint-post-Sub_Flow"/>
+				<foreach doc:name="For Each" doc:id="60580fdf-12b5-48bc-bc98-282177619750" collection='#[vars."dates"."dates"]'>
+					<set-variable value="#[payload]" doc:name="InventoryDate" doc:id="14e6fbe2-7f37-4a51-886e-2abbbea22b72" variableName="InventoryDate"/>
+					<ee:transform doc:name="monthYear" doc:id="fea449c0-7890-4ef4-b880-d107db5435b8">
+						<ee:message>
+						</ee:message>
+						<ee:variables>
+							<ee:set-variable variableName="monthYear"><![CDATA[%dw 2.0
+output application/json
+
+var InventoryDate =vars.forEachDate  as Date {format: "d-MMM-yyyy"}
+var year = InventoryDate.year
+var month = InventoryDate as String {format: "MMM"}
+
+---
+{
+	"monthYear": month ++ "_" ++ year,
+	"year": year,
+	"month": month
+}]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<set-variable value="#[vars.monthYear.monthYear]" doc:name="sheetName" doc:id="c8335ca9-affd-4a9b-a1ca-4af9009f86ab" variableName="sheetName"/>
+					<flow-ref doc:name="calling freepoint-workbook-creation-montly-Sub_Flow" doc:id="4440d6dd-cc21-44c5-b82c-0873198c7ffa" name="freepoint-workbook-creation-montly-Sub_Flow" />
+					<flow-ref doc:name="calling freepoint-post-Sub_Flow" doc:id="932a35d9-e0db-4ec8-ac9a-c979594225bb" name="freepoint-post-Sub_Flow" />
+					<flow-ref doc:name="calling get-inventory-values-Sub_Flow" doc:id="1f0005b2-a5a4-4785-bc3e-49d7c5b260ec" name="get-inventory-values-Sub_Flow" />
+					<flow-ref doc:name="calling trueUp-table-creation-Sub_Flow" doc:id="42088727-7d0a-4372-8bcc-6476d5c661ce" name="trueUp-table-creation-Sub_Flow"/>
+				</foreach>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="monthYear" doc:id="c4035c44-daf6-4c9c-8528-65d61610bd97">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="monthYear" ><![CDATA[%dw 2.0
+output application/json
+
+var InventoryDate =vars.dates.dates[0]  as Date {format: "d-MMM-yyyy"}
+var year = InventoryDate.year
+var month = InventoryDate as String {format: "MMM"}
+
+---
+{
+	"monthYear": month ++ "_" ++ year,
+	"year": year,
+	"month": month
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<set-variable value='#[vars."monthYear".monthYear]' doc:name="sheetName  Daily Worksheet" doc:id="2373e771-1589-4844-88a1-a06bcee369a9" variableName="sheetName" />
+				<flow-ref doc:name="calling freepoint-post-Sub_Flow" doc:id="27a3a2b8-aa50-478b-9181-3c9613ab1ecd" name="freepoint-post-Sub_Flow" />
+				<flow-ref doc:name="calling get-inventory-values-Sub_Flow" doc:id="8e108a2b-4080-412b-aeed-b849a9f2411a" name="get-inventory-values-Sub_Flow"/>
+				<flow-ref doc:name="calling trueUp-table-creation-Sub_Flow" doc:id="b3744406-bebf-4716-aefe-8e3af49ffd43" name="trueUp-table-creation-Sub_Flow"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="freepoint-post-Sub_Flow" doc:id="509b003e-4488-4054-b084-691b701105ce" >
+		<flow-ref doc:name="calling differential-names-lookup-Sub_Flow" doc:id="c7574bb1-c42f-4c9c-a146-9000ac6600f6" name="differential-names-lookup-Sub_Flow" />
+		<flow-ref doc:name="calling priceForFunding-Sub_Flow" doc:id="690aa7c0-61b2-484a-b8a4-818e8c13582b" name="priceForFunding-Sub_Flow" />
+		<set-variable value='#[vars."PriceForFundingData"."Less RVO"]' doc:name="lessRVO" doc:id="9371c9c1-0535-4a6f-a921-59ebc7c2ad45" variableName="lessRVO"/>
+		<flow-ref doc:name="calling differential-values-Sub_Flow" doc:id="d7455e33-680e-44a4-beb5-0f1be045ddcf" name="differential-values-Sub_Flow" />
+		<ee:transform doc:name="dynamic-values" doc:id="513b91a5-5d96-4e8f-b4b9-305a00f8981b">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="dynamicValues" ><![CDATA[%dw 2.0
+output application/json
+var CrudeDiffPerBarrel= "3.58"
+//var ATBUnitPrice= (vars."PriceForFundingData"."ATB") / 42
+---
+{
+	"Crude Diff per barrel": CrudeDiffPerBarrel,
+	//"ATB Unit Price": ATBUnitPrice  as String {format: "#.####"},
+	"Crude UnitPrice per barrel": "60.48" //Crude_UnitPricePerBarrel
+	
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling get-sample-freepoint-table-Sub_Flow" doc:id="ecc24746-dc6b-41f9-8464-de04a3176f23" name="get-sample-freepoint-table-Sub_Flow"/>
+		<ee:transform doc:name="dataWithUnchangedFormulas" doc:id="7bc59776-87c3-415d-890d-a7ae1795c20a">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="dataWithUnchangedFormulas"><![CDATA[%dw 2.0
+output application/json
+var InventoryDate= vars.InventoryDate
+var sampleValues = vars."sampleData"
+var dynamicValues= vars."dynamicValues"
+var quantites= vars."freepoint-idp-response".Products mapObject ((value, key, index) -> (key): value."Quantity (bbls)" )
+var unitPrices = vars."PriceForFundingData"
+var differentialValues = vars."differentialValuesByLookupWithLessRVO"
+
+fun updateData(data) =
+    data map ((row, rowIndex) ->
+        row map ((cell, colIndex) ->
+
+            // STEP 1 → Replace dynamic reference values
+            if ((cell default "") is String and (cell matches /^(P\d+|Crude UnitPrice per barrel|Crude Diff per barrel)$/))
+                dynamicValues[cell] default cell
+                
+            // STEP 2 → Fill quantity row
+            else if (rowIndex == 2 and colIndex > 0)
+                quantites[data[1][colIndex]] default cell
+
+            // STEP 3 → Fill unit prices row
+            else if (rowIndex == 3 and colIndex > 0)
+                unitPrices[data[1][colIndex]] default cell
+
+            // STEP 4 → Fill differential row (NO LOOKUP)
+            else if (rowIndex == 4 and colIndex > 0)
+                differentialValues[data[1][colIndex]] default cell
+			 // STEP 5 → Replace inventory date
+            else 
+				(cell as String) replace "02-Aug-2025" with InventoryDate
+        )
+    )
+
+---
+updateData(sampleValues)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="gets rowNumber of DailyWorksheet" doc:id="2cd0dc7d-43dc-4f69-a18c-2b1105cc4b41" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/worksheets/" ++ vars."monthYear"."monthYear" ++ "/usedRange/rowCount"]' target="rowNumber" targetValue="#[payload.value]">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="RequestData" doc:id="ed1eb8bb-e57c-4a80-bd21-9f63d7398014">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="tableRange"><![CDATA[%dw 2.0
+output application/json
+var rowNumber= vars.rowNumber // used row number in sheet
+var productCount = vars.freepointSampleTableRowsCount - 1// sample table size vertically
+---
+{
+    range: 
+            "A" ++ (rowNumber + 3) ++ ":" ++ "L" ++ ((rowNumber + 2) + productCount)
+}]]></ee:set-variable>
+				<ee:set-variable variableName="requestData" ><![CDATA[%dw 2.0
+output application/json
+
+// changing formulas
+
+
+var usedRange = vars.rowNumber
+var gap = 2
+var shift = usedRange + gap     // new-table start
+var start = shift         // first row
+var end   = shift + (vars.freepointSampleTableRowsCount - 1)  
+var data = vars.dataWithUnchangedFormulas       // (sample products size -1)
+
+// increment ranges like A2:A14
+fun incRanges(f, s) =
+  f replace /([A-Z]+)(\d+):([A-Z]+)(\d+)/ with ((m) ->
+    m[1] ++ ((m[2] as Number) + s) ++ ":" ++ m[3] ++ ((m[4] as Number) + s)
+  )
+
+// increment single refs but avoid refs that are part of ranges
+fun incSingles(f, s) =
+  f replace /(?<!:)([A-Z]+)(\d+)(?!:)/ with ((m) ->
+    m[1] ++ ((m[2] as Number) + s)
+  )
+
+// NEW → Replace START/END with actual numbers for SUM formulas
+fun replaceStartEnd(str, start, end) =
+  str
+    replace /'START'/ with (start as String)
+    replace /'END'/ with (end as String)
+
+// FULL formula updater
+fun incrementFormula(formula, s) =
+  replaceStartEnd(
+    incSingles(incRanges(formula, s), s),
+    start,
+    end
+  )
+
+---
+data map (column, colIndex) ->
+  column map (row, rowIndex) ->
+    do {
+      var cell = row
+      ---
+      if ((cell is String) and (cell startsWith "="))
+        [ incrementFormula(cell, shift) ]
+      else
+        [ cell ]
+    }
+
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="get existing tables in freepointWorksheet" doc:id="8bd94742-cd76-4831-be6e-b60c42e06f4f" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables"]' target="existingTables" targetValue="#[payload.value.name]">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<set-variable value='#["Freepoint_" ++ (vars.InventoryDate replace  "-" with "_") as String]' doc:name="tableName" doc:id="3ad68edc-5967-4a5d-bb00-49d2f6eac388" variableName="tableName" />
+		<choice doc:name="checks for Table is existing or Not" doc:id="c4bdad92-f6af-4ab9-8387-3e24da142e5e" >
+			<when expression='#[vars.existingTables contains vars.tableName]'>
+				<set-variable value='#["update"]' doc:name="flag=update" doc:id="2e1e55d2-88f2-463b-861c-beff636945a5" variableName="flag" />
+				<logger level="INFO" doc:name="Logger" doc:id="a742d260-1600-434d-880d-be037325a082" message="----Table is already Existing------"/>
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;["Inventory Date", "Products", "Quantity", "Unit Price per gal", "Differential per gal", "Total Price per gal", "Unit Price per barrel", "Differential per barrel", "Total Price per barrel", "Purchases or Sales", "After Rounding Rates", "QB Rounding Diff"]]' doc:name="tableHeaders" doc:id="8f864143-b603-465f-bf77-27622049ef55" variableName="tableHeaders"/>
+			</when>
+			<otherwise >
+				<set-variable value='#["create"]' doc:name="flag=create" doc:id="e6848215-3ccc-4bf7-8614-79ae0224c768" variableName="flag" />
+				<http:request method="POST" doc:name="create table" doc:id="57c52bce-f444-4bc1-8b07-a0f983eef11e" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/worksheets/" ++ vars.sheetName ++ "/tables/add"]' target="autoGenerated-tableName" targetValue="#[payload.name]">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"address": vars.tableRange.range
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;["Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9", "Column10", "Column11", "Column12"]]' doc:name="tableHeaders" doc:id="afe7acf7-0814-4103-a7b3-a5666a4d468c" variableName="tableHeaders"/>
+				<http:request method="PATCH" doc:name="Table Name Updation" doc:id="fae57b18-aa42-46ae-8771-6acdaf5e7aad" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars."autoGenerated-tableName"]' target="tableName" targetValue="#[payload.name]">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json 
+---
+{
+	"name": vars.tableName
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+			</otherwise>
+		</choice>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;if(vars.flag=="create") vars.requestData else vars.requestData[0 to 4]]' doc:name="forEachData" doc:id="3fa80c53-2417-4ff4-af26-120f2d5d5cc4" variableName="forEachData"/>
+		<foreach doc:name="For Each" doc:id="20de0998-58e0-46aa-9dcc-d1fb34d4b8b0" collection="#[vars.forEachData]">
+			<http:request method="PATCH" doc:name="post data" doc:id="19812267-b70d-4755-8820-f7efb59f9ba1" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars.tableName ++"/columns/" ++ vars.tableHeaders[vars.counter - 1]]'>
+				<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"numberFormat": vars.numberFormats[vars.counter - 1],
+	"values": payload
+}]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+		</foreach>
+	</sub-flow>
+	<sub-flow name="get-inventory-values-Sub_Flow" doc:id="23534904-7b43-4f64-bfe0-57f0ec18c0e7" >
+		<http:request method="GET" doc:name="inventory-products" doc:id="5bdce99f-a32d-4b20-ab73-e30a69cd5ef9" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/1" target="inventory-products" targetValue="#[payload.values]">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="inventory-values" doc:id="49edc857-4084-4cd1-8010-e896b0d9f171" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/" ++ vars.InventoryDate]' target="inventory-values" targetValue="#[payload.values]">
+				<http:body><![CDATA[#[""]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+		<ee:transform doc:name="product and values combined" doc:id="77e8499f-8ed5-4073-9cbc-a671918e8064">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var products=vars."inventory-products"
+var values=vars."inventory-values"
+---
+(products map ((p, i) -> {
+    (p[0]): values[i][0]
+})) reduce ($$ ++ $)]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		<ee:transform doc:name="InventoryValues" doc:id="179a2254-717e-441a-80b1-960ec2d9b392">
+				<ee:message>
+				</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="InventoryValues" ><![CDATA[%dw 2.0
+output application/json
+---
+{	
+	"InventoryDate": vars."InventoryDate",
+    "Values": 
+    {
+	    "Crude": payload."Crude Received from Pipeline",
+	    "Gasoline - Domestic": payload."Gasoline - Q",
+	    "Gasoline - Export": "2",
+	    "ULSD - Domestic": payload."Jet estimated production" + payload."ULSD estimated production",
+	    "ULSHO - Export": payload."ULSD for Export",
+	    "ATB": payload."ATB estimated production",
+	    "JPTS (includes sales to TSAR)": payload."JPTS production" - (payload."JPTS - Q") ,
+	    "DHT Feed": payload."DHT feed/LSD est. production/(feed to DHT)",
+	    "Naphtha": payload."Naphtha production Tnk406",
+	    "Isomerate": payload."Isomerate/LSR/Dehex est. production",
+	    "Reformate": payload."Heavy/Full Ref. estimated production"
+		    
+	}
+}]]></ee:set-variable>
+			</ee:variables>
+			</ee:transform>
+	</sub-flow>
+	<sub-flow name="freepoint-workbook-creation-montly-Sub_Flow" doc:id="511db0ca-d06f-41df-ad14-e5ea0be347e4" >
+		<http:request method="GET" doc:name="gets yearFolders from onedrive" doc:id="90c3c574-0ef5-443b-a407-0cadda8efaeb" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/drive/root:/Freepoint_Worksheets:/children?$select=name" target="yearFoldersNames" targetValue="#[payload.value.name]">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var arr = vars.yearFoldersNames&#10;---&#10;arr contains  vars."monthYear"."year" as String]' doc:name="isYearExist" doc:id="109999ad-ec3b-4ca2-8f96-550d07e53564" variableName="isYearExist"/>
+		<set-variable value='#[[&#10;	vars."monthYear".monthYear,&#10;	vars."monthYear".monthYear ++ "_3_Day_Calculations",&#10;	vars."monthYear".monthYear ++ "_Inventory True-Up"&#10;]]' doc:name="freepointSheetNames" doc:id="00dd7e39-6e3c-4292-a931-a173bd9faddc" variableName="freepointSheetNames"/>
+		<choice doc:name="checks isYearFolderExisting or not, if not create one" doc:id="7044bc2d-9c1b-4fd6-a1a9-b2caa151aedb" >
+			<when expression='#[vars.isYearExist == true]'>
+				<http:request method="GET" doc:name="gets existingFreepointWorkbooks" doc:id="cbd26269-7ed0-433d-aea5-f9a1bb34a3c5" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/root:/Freepoint_Worksheets/" ++ vars."monthYear"."year" ++ ":/children?\$select=name"]' targetValue="#[payload.value.name]" target="existingFreepointWorkbooks">
+					<http:body ><![CDATA[#[""]]]></http:body>
+					<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;var arr = vars."existingFreepointWorkbooks"&#10;---&#10;arr contains ("Freepoint_Worksheet_" ++ vars."monthYear"."monthYear" ++ ".xlsx") as String]' doc:name="isWorkbookExists" doc:id="d633d74d-b213-4103-95cf-8743d8286200" variableName="isWorkbookExists"/>
+			</when>
+			<otherwise >
+				<http:request method="POST" doc:name="year folder creation" doc:id="684d96e6-9cbd-4722-804c-6408d4426601" config-ref="HTTP_Graph_API_configuration" path='/v1.0/users/jshaik@mdwhub.com/drive/root:/Freepoint_Worksheets:/children'>
+					<http:body ><![CDATA[#[{
+  "name": vars."monthYear"."year" as String,
+  "folder": {},
+  "@microsoft.graph.conflictBehavior": "rename"
+}]]]></http:body>
+					<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="78c35044-9c77-41be-9d78-dbcbbf8387c9" message="---YEAR FOLDER CREATED----"/>
+			</otherwise>
+		</choice>
+		<set-variable value='#["Freepoint_Worksheet_" ++ vars."monthYear"."monthYear" ++ ".xlsx"]' doc:name="workbookName" doc:id="503bb4ee-5508-4dc2-9680-6049b3e60c62" variableName="workbookName" />
+		<choice doc:name="Choice" doc:id="4c6c0f94-acda-499d-85e9-efd46b6a9722" >
+			<when expression='#[vars.isWorkbookExists== true]'>
+				<http:request method="GET" doc:name="gets Existing workbookId" doc:id="157822ba-721c-4801-a9f3-dc87151036d3" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/root:/Freepoint_Worksheets/" ++ vars."monthYear"."year" ++ "/" ++ vars."workbookName"]' targetValue="#[payload.id]" target="workbookId" >
+					<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="6fdee88a-fa94-49fe-a211-25e5be72a11f" message="-------PRESENT WORKBOOK ID-------"/>
+			</when>
+			<otherwise >
+				<http:request method="PUT" doc:name="creates-new workbook" doc:id="cf032711-f8e3-4e82-8758-d857e85624ba" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/drives/b!6yo0lcksJ02v_x1yp0VwUkQaT3A1dcxGuX_RIxqBYIIVZ97JDwhOSbPnjjW3FJwM/root:/Freepoint_Worksheets/" ++ vars."monthYear"."year" ++ "/"++ vars.workbookName ++ ":/content"]' target="workbookId" targetValue="#[payload.id]">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="8f8bb25d-56b3-42db-84f1-dae4f6f9af03" message="-----NEW WORKBOOK CREATED-----" />
+				<foreach doc:name="For Each freepointSheetNames" doc:id="b137c319-942f-4983-9789-a89c3610f213" collection='#[vars."freepointSheetNames"]'>
+			<http:request method="POST" doc:name="add worksheets" doc:id="d7bd8c56-a307-46c5-9811-8ecae3a69858" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/worksheets/add"]'>
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "name": vars."freepointSheetNames"[vars.counter - 1]
+}]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		</foreach>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="trueUp-table-creation-Sub_Flow" doc:id="42fc2acd-f126-4cd0-a4d1-6311298b3717" >
+		<set-variable value='#[vars.monthYear.monthYear ++ "_Inventory_True-Up"]' doc:name="trueUpSheetName" doc:id="9b34939c-1f37-484e-a866-82539d9a8f5f" variableName="trueUpSheetName"/>
+		<!-- [STUDIO:"freepointTableName"]<set-variable value='#[("Freepoint_" ++ vars.InventoryDate) replace "-" with "_"&#93;' doc:name="freepointTableName" doc:id="cd080f28-bea3-4469-a3c2-a97296ec397f" variableName="freepointTableName"/> [STUDIO] -->
+		<http:request method="GET" doc:name="gets freepointProducts from dailyWorksheet" doc:id="78489a9a-1ad3-4f39-b168-dfbeaac46890" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars.tableName ++ "/columns/Products"]' target="freepointProducts" targetValue="#[payload.values]">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="gets freepointQuantities from dailyWorksheet" doc:id="29140891-ad9b-4871-bae1-6d63966e9ea1" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars.tableName ++ "/columns/Quantity"]' target="freepointQuantities" targetValue="#[payload.values]">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<!-- [STUDIO:"calling get-inventory-values-Sub_Flow"]<flow-ref doc:name="calling get-inventory-values-Sub_Flow" doc:id="7c2f4ed3-b7cc-45e4-ac1e-d040dd3b92b8" name="get-inventory-values-Sub_Flow" /> [STUDIO] -->
+		<ee:transform doc:name="trueUpRequestData  4 columns" doc:id="9e9c24ec-5512-4e5a-9857-cdc555ab119a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="trueUpRequestData" ><![CDATA[%dw 2.0
+output application/json
+var inventoryDate= vars.InventoryValues.InventoryDate
+var freepointProducts = vars.freepointProducts
+var freepointQuantities= vars.freepointQuantities
+var t_sarInventory= vars.InventoryValues.Values
+
+// removes null or empty products
+var freepointProductsFiltered =
+    (freepointProducts map ($[0] default "")) filter ($ != "")
+
+var freepointQuantitiesFiltered =
+    (freepointQuantities map ($[0] default "")) filter ($ != "")
+
+var tsarValues =
+    (freepointProductsFiltered) map ((p) -> (t_sarInventory[p] default ""))
+
+var result = [
+    // Inventory Date row
+    ["Inventory Date"] ++ ((freepointProductsFiltered) map (() -> inventoryDate)),
+
+    // Products row
+    ["Products"] ++ freepointProductsFiltered,
+
+    // T-SAR Inventory row
+    ["T-SAR Inventory"] ++ tsarValues,
+
+    // Freepoint Purchased row
+    ["Freepoint Purchased"] ++ freepointQuantitiesFiltered
+]
+
+// into array of arrays
+var data = result  map ((col) -> col map ((row) -> [row]))
+---
+data map ((row) -> row filter ((item, index) -> index != 1))]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="gets trueUp used rowNumber" doc:id="99d872d6-a05e-40d2-a49d-85fe88009e2c" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++ "/workbook/worksheets/" ++ vars.trueUpSheetName ++ "/usedRange(valuesOnly=true)/rowCount"]' target="rowNumber" targetValue="#[payload.value]" config-ref="HTTP_Graph_API_configuration">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<set-variable value='#["A" ++ (vars.rowNumber + 2) ++ ":D" ++ (vars.rowNumber + 2)]' doc:name="trueUpTableRange" doc:id="1e14c473-eb77-4fa4-a83c-303c74db6873" variableName="trueUpTableRange"/>
+		<set-variable value='#[[&#10;        ["Inventory Date", "Products", "T-SAR Inventory", "Freepoint Purchased", "Difference"]&#10;    ]]' doc:name="trueUpHeaders" doc:id="38118138-a073-4c3d-8101-f3d1946562e8" variableName="trueUpHeaders"/>
+		<http:request method="PATCH" doc:name="trup headers creation" doc:id="759df35a-5b72-459c-a658-b9d77157c01d" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/jshaik@mdwhub.com/drive/items/&quot; ++ vars.workbookId ++ &quot;/workbook/worksheets/&quot; ++ vars.trueUpSheetName ++ &quot;/range(address='&quot; ++ vars.trueUpTableRange ++ &quot;')&quot;]">
+					<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "values": vars.trueUpHeaders
+}]]]></http:body>
+					<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+		<http:request method="POST" doc:name="trueUp table creation" doc:id="192600a7-c70c-4272-b51e-bdf731961d99" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars."workbookId" ++ "/workbook/worksheets/" ++ vars.trueUpSheetName ++ " tables/add"]' target="autoGeneratedTablename" targetValue="#[payload.name]">
+					<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"address": "A1:E1",
+  	"hasHeaders": true
+}]]]></http:body>
+					<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+		<http:request method="PATCH" doc:name="TrueUp Table rename" doc:id="a857452a-a313-45b8-b9ef-484161a95a9f" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars."autoGenerated-tableName"]' targetValue="#[payload.name]" target="newTrueUpTableName">
+					<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "name": "Trueup_Table_" ++ vars.InventoryDate
+}]]]></http:body>
+					<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+		<foreach doc:name="For Each trueUpRequestData" doc:id="00261193-0186-4ad6-b73c-e0fb57661bd9" collection="#[vars.trueUpRequestData]">
+			<http:request method="PATCH" doc:name="post data to trueUp" doc:id="49c945e2-8493-4221-8b93-97d40c04c64a" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.workbookId ++"/workbook/tables/" ++ vars.newTrueUpTableName ++"/columns/" ++ vars.trueUpHeaders[vars.counter - 1]]'>
+				<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values": vars.trueUpRequestData[vars.counter - 1]
+}]]]></http:body>
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+		</foreach>
+	</sub-flow>
+	<sub-flow name="get-sample-freepoint-table-Sub_Flow" doc:id="d8440548-e0c4-4560-87c0-405d1f3f69e3">
+		<http:request method="GET" doc:name="calling sample-freepoin-table" doc:id="8ce39b0c-2424-44b9-9b05-c101fc4da4d9" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FR4GIIBJ5JK4VAJYBF7KK7Q7XOJ/workbook/worksheets/Freepoint-Sample-Sheet/range/usedRange" target="freepointSampleTableResponse">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="var numberFormat sampleData" doc:id="eec7322e-c2fd-4c93-92bb-c9cad1794fcd">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="quantities"><![CDATA[%dw 2.0
+output application/json
+---
+vars."freepoint-idp-response"."Products" mapObject ((value, key, index) -> (key):value."Quantity (bbls)")]]></ee:set-variable>
+				<ee:set-variable variableName="freepointSampleTableRowsCount"><![CDATA[%dw 2.0
+output application/json
+//with headers
+---
+sizeOf(vars."freepointSampleTableResponse"."values")]]></ee:set-variable>
+				<ee:set-variable variableName="sampleData" ><![CDATA[%dw 2.0
+output application/json
+var sampleValues= vars."freepointSampleTableResponse"."formulas"
+---
+sampleValues[0] map ((col, colIndex) -> sampleValues map (row) -> row[colIndex])]]></ee:set-variable>
+				<ee:set-variable variableName="numberFormats" ><![CDATA[%dw 2.0
+output application/json
+//TRANSPOSE + wrap each cell inside its own array
+
+var numberFormat= vars."freepointSampleTableResponse"."numberFormat"
+var data = numberFormat[0] map ((col, colIndex) -> numberFormat map (row) -> row[colIndex])
+---
+data map ((item, index) -> item map ((item, index) -> [item]))]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

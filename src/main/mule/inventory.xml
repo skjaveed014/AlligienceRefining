@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="IDP-Inventory-Sub_Flow" doc:id="a9e23e65-f894-4b56-8775-0dce7b0e9b77" >
+		<ee:transform doc:name="idp-response-data" doc:id="07ef57ff-6c22-4a50-85c2-4a105c1c7eef" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="idp-response-data" ><![CDATA[%dw 2.0
+output application/json
+---
+vars."idp-response-data"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="aggregated-tis-data(idp)" doc:id="d1cb0eb7-69b8-4e76-b7a5-bdcfbb7e7d79" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="aggregated-tis-data" ><![CDATA[%dw 2.0
+output application/json
+var Elmendorf_subtotals=  vars."idp-response-data"."Elmendorf"."Subtotal" mapObject ((value, key, index) ->"Crude-SAR":value.GrossProduct )
+var TSAR_subtotals= vars."idp-response-data"."TSAR"."Subtotal" mapObject ((value, key, index) -> (key):value.GrossProduct)
+var Elmendorf_GrandTotal= vars."idp-response-data"."Elmendorf"."GrandTotal"."GrossProductTotal"
+var SAR_GrandTotal= vars."idp-response-data"."TSAR"."GrandTotal"."GrossProductTotal"
+---
+TSAR_subtotals ++ Elmendorf_subtotals ++ 
+{
+    "SAR_GrandTotal": SAR_GrandTotal,
+    "Elmendorf_GrandTotal": Elmendorf_GrandTotal
+    
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling Inventory-common-Sub_Flow" doc:id="1140b973-adf9-4741-8baa-c2ff1facb276" name="Inventory-common-Sub_Flow" />
+	</sub-flow>
+	<sub-flow name="Inventory-common-Sub_Flow" doc:id="96e31bd9-23a2-429f-a721-8dc714f86cd1" >
+		<ee:transform doc:name="tis-data, tms6data" doc:id="56112f2b-a802-4719-992e-8d9146793062" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="tis-data" ><![CDATA[%dw 2.0
+output application/json
+
+---
+{
+    InventoryDate: vars."InventoryDate",
+    Elmendorf_Products: (vars."aggregated-tis-data") - "SAR" - "Elmendorf" - "Crude-SAR",
+    SAR_Products: {
+       "Crude-SAR": vars."aggregated-tis-data"."Crude-SAR"
+    },
+    Elmendorf_GrandTotal: vars."aggregated-tis-data"."Elmendorf" ,
+    SAR_GrandTotal: vars."aggregated-tis-data"."SAR"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="tms6data" ><![CDATA[%dw 2.0
+output application/json
+---
+vars."tms6data"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling get-columnCountAndColumns-Sub_Flow" doc:id="6f044ad9-6d64-401e-b201-d5f4465f9da4" name="get-columnCountAndColumns-Sub_Flow" />
+		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="35e90aaa-3fbd-459a-a204-bafe32d6a133" name="get-Inventory-template-columns-Sub_Flow" />
+		<ee:transform doc:name="inventory-products-data" doc:id="8f487cdc-f621-45c3-9dd4-ecc419acb632" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="inventory-products-data" ><![CDATA[%dw 2.0
+output application/json
+var weekday= (vars."InventoryDate" as Date {format: "dd-MMM-yyyy"}) as String {format: "EEEE"}
+
+---
+{
+  "Date": vars."InventoryDate",
+  "weekday": weekday,
+  "C1001": vars."tis-data"."Elmendorf_GrandTotal" default "0", //Crude - Elmendorf
+  "C1002": vars."tis-data"."SAR_Products"."Crude-SAR" default "0", //Crude - Refinery
+  "C1004": vars."tis-data"."Elmendorf_Products"."JET" default "0",
+  "C1005": vars."tis-data"."Elmendorf_Products"."JET A" default "0",
+  "C1006": vars."tis-data"."Elmendorf_Products"."KEROSENE" default "0",
+  "C1007": vars."tis-data"."Elmendorf_Products"."JPTS" default "0",
+  "C1008": vars."tis-data"."Elmendorf_Products"."ULSD/Conosol" default "0",
+  "C1009": vars."tis-data"."Elmendorf_Products"."NHT-FEED" default "0",
+  "C1010": vars."tis-data"."Elmendorf_Products"."ASU feed" default "0",
+  "C1011": vars."tis-data"."Elmendorf_Products"."ULSD" default "0",
+  "C1012": vars."tis-data"."Elmendorf_Products"."DHT FEED" default "0",
+  "C1013": vars."tis-data"."Elmendorf_Products"."GASOLINE" default "0",
+  "C1014": vars."tis-data"."Elmendorf_Products"."Ethanol" default "0",
+  "C1015": vars."tis-data"."Elmendorf_Products"."FULL RANGE REF" default "0",
+  "C1016": vars."tis-data"."Elmendorf_Products"."Premium PBOB" default "0",
+  "C1017": vars."tis-data"."Elmendorf_Products"."Light Reformate" default "0",
+  "C1018": vars."tis-data"."Elmendorf_Products"."ISOMERATE" default "0",
+  "C1019": vars."tis-data"."Elmendorf_Products"."ATB" default "0",
+  "C1020": vars."tis-data"."Elmendorf_Products"."LPG" default "0",
+  "C1023": "0", // 1 BTMS
+  "C1024": "0", // 1 TOPS
+  "C1025": vars."tis-data"."Elmendorf_Products"."SLOP" default "0",
+  "C1029": "0", // Includes DHT Feed/ LSD from Nixon
+  "C1030": "0", // Includes Naphtha purchases
+  "C1031": vars."idp-response-data"."TMS6"."RECEIPTS"."ETHANOL Receipts" default "0", 	// Include Ethanol purchases
+  "C1032": "0", //  Include Clear91 from 07/2020, and Toluene before 12/2019  
+  "C1033": "0", //  Include CBOB receipts      
+  "C1035": "0", // Biodiesel blended to ULSD
+  "C1036": "0", // Toluene blended to Premium/87 Clear/87 Reg
+  "C1037": -(vars."idp-response-data"."TMS6"."ETHANOL BASE") default "0",
+  "C1038": vars."idp-response-data"."TMS6"."Premium" default "0",
+  "C1039": vars."idp-response-data"."TMS6"."REFORMATE" default "0",
+  "C1040": vars."idp-response-data"."TMS6"."CBOB" default "0",
+  "C1041": vars."idp-response-data"."TMS6"."Gasoline Blendstock" default "0",
+  "C1042": -((vars."idp-response-data"."TMS6"."REGULAR BASE" default "0") + (vars."idp-response-data"."TMS6"."ETHANOL BASE" default "0"))  ,
+  "C1043": vars."idp-response-data"."TMS6"."JET-A BASE" default "0",
+  "C1044": vars."idp-response-data"."TMS6"."KEROSENE BASE" default "0",
+  "C1045": vars."idp-response-data"."TMS6"."JPTS BASE" default "0",
+  "C1046": -(vars."idp-response-data"."TMS6"."#2 ULSD BASE") default "0",
+  "C1047": -(vars."idp-response-data"."TMS6"."LPG MIX BASE") default "0",
+  "C1048": vars."idp-response-data"."TMS6"."HSR/NAPHTHA BASE" default "0",
+  "C1049": vars."idp-response-data"."TMS6"."LSR/NAPHTHA BASE" default "0",
+  "C1050": -(vars."idp-response-data"."TMS6"."#4 OIL BASE") default "0",
+  "C1051": vars."idp-response-data"."TMS6"."EXPORTS"."#2 ULSD BASE" default "0",
+  "C1052": vars."idp-response-data"."TMS6"."DHT FEEDSTOCK" default "0",
+  "C1058": "0", //Product to Elmendorf
+  "C1060": "0", 
+  "C1061": "21364" // METER CONTROL
+  
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="inventory-request-data" doc:id="76d9fce7-ce5e-4b51-8d2a-7cca406231aa" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="inventory-request-data" ><![CDATA[%dw 2.0
+output application/json
+var formulas = vars."changed-formulas"
+var data = vars."inventory-products-data"
+---
+formulas map (row) ->
+  row map (cell) ->
+    if (cell startsWith "=") cell
+    //else if (cell == "Date") (data.Date as Date {format: "yyyy-MM-dd"}) as String {format: "dd-MMM-yyyy"}
+    else if (data[cell]? != null) data[cell]
+    else cell]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<try doc:name="Try" doc:id="c2057403-a818-4645-b504-d4caab7a8fb4" >
+			<http:request method="GET" doc:name="checks for date present in Table or not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;columns/&quot; ++ vars.&quot;InventoryDate&quot; as String]" >
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="079de1df-7c5b-471f-b69b-46ac92dac6cf" variableName="flag" />
+			<set-variable value="#[payload.id]" doc:name="col-id to update" doc:id="815a5de9-d4f2-4544-8ad3-4862f9988ff9" variableName="col-id" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9be448c8-8dc7-4cc4-90b4-cbfb72659702" type="HTTP:NOT_FOUND" >
+					<logger level="INFO" doc:name="Logger" doc:id="a68132dc-ccb4-4366-8df4-747fbc0190be" message="-----ItemNotFound--------" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="3ae43b84-04e6-45bd-88b7-b02e8fbd308e" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="update or insert" doc:id="f207da4b-a787-49ab-bf53-fc462620d1a2" >
+			<when expression='#[vars.flag == "update"]' >
+				<http:request method="PATCH" doc:name="Inventory-patch-request" doc:id="6715755d-3b11-4591-ba5b-e8cef361aa6b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;col-id&quot;]" >
+					<http:body ><![CDATA[#[{ 
+	values: vars."inventory-request-data"
+}]]]></http:body>
+					<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+			</when>
+			<otherwise >
+				<http:request method="POST" doc:name="Inventory-post-request" doc:id="1961b219-0f32-4c89-890a-fe0e04083b8a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.inventory_&amp;_sales.workbookId')++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/add&quot;]" >
+					<http:body ><![CDATA[#[{ 
+	values: vars."inventory-request-data"
+}]]]></http:body>
+					<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+				<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="71ab369d-4805-4bad-a2eb-74c439f5639e" name="MTD-Sub_Flow" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

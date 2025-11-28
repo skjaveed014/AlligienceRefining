@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_d8440548_e0c4_4560_87c0_405d1f3f69e3_Input_Variables_values = {|
+  "Factor-value": Number, 
+  P101: Number, 
+  P102: String, 
+  P103: String, 
+  P104: String, 
+  P105: Any
+|}
+

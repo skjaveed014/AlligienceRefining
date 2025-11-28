@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_7e387699_e1f7_4a18_9d5d_a2523402a09f_Input_Variables_count = Any
+
