@@ -21,6 +21,7 @@ http.path.usedRange: "/range/usedRange"
 idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
 idp.port: "443"
 idp.protocol: "HTTPS"
+idp.responseTimeout: "30000"
 idp.clientId: "58e295be816e4999858a7ebf507b11ce"
 idp.clientSecret: "5f004Bd0F1F0445299f43b1Be34a6443"
 
@@ -29,10 +30,9 @@ workbook.inventory_&_sales.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
 workbook.tis.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
 workbook.mtd.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
 workbook.tms6.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
-workbook.stockholders-Lookup.workbookId: "Stockholders-Lookup"
+workbook.stockholders-Lookup.workbookId: "01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV"
 workbook.pricesForFunding.workbookId: "01NVG26FWFXVCMQY7BCNHIM4QFYVBNDEIQ"
 workbook.freepoint.workbookId: ""
-
 
 inventory.sheetName: "Inventory"
 mtd.sheetName: "MTD"
@@ -46,4 +46,9 @@ tms6.tableName: "TMS6_Table"
 tms6.exports.tableName: "TMS6_Exports_Table"
 tms6.receipts.tableName: "TMS6_Receipts_Table"
 stockholdersLookup.tableName: "Stockholders_LookUp_Table"
-  
+priceForFunding.tableName: "PricesForFunding_Table"
+productNameLookup.tableName: "ProductName_Lookup_Table"
+
+
+freepoint.folderName: "Freepoint_Workbooks"
+inventory_&_sales.foldername: "Inventory_&_Sales_Workbooks"

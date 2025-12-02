@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_509b003e_4488_4054_b084_691b701105ce_Output_Variables_workbookId = Any
-

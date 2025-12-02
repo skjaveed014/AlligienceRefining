@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110"
-	xmlns:excel="http://www.mulesoft.org/schema/mule/excel"
-	xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:idp-ar-tms6-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100" xmlns:idp-ar-tis-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100"
+	xmlns:idp-ar-freepoint-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100"
+	xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:excel="http://www.mulesoft.org/schema/mule/excel" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/microsoftOneDrive http://www.mulesoft.org/schema/mule/microsoftOneDrive/current/mule-microsoftOneDrive.xsd
 http://www.mulesoft.org/schema/mule/excel http://www.mulesoft.org/schema/mule/excel/current/mule-excel.xsd
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110/current/mule-idp-freepoint-invoice-idp-110.xsd
-http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100 http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100/current/mule-idp-tis-inventory-idp-100.xsd">
+http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100 http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100/current/mule-idp-tis-inventory-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100/current/mule-idp-ar-freepoint-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100/current/mule-idp-ar-tis-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100/current/mule-idp-ar-tms6-idp-100.xsd">
 	<http:request-config name="HTTP_Graph_API_Auth_configuration" doc:name="HTTP Request configuration" doc:id="dd7f0c83-a90f-495f-b2e3-08174fa05cef" >
 		<http:request-connection protocol="HTTPS" host="${graphApi.auth.host}" port="${graphApi.auth.port}"/>
 	</http:request-config>
@@ -17,13 +20,8 @@ http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100 http://www.mulesof
 	<http:request-config name="HTTP_Graph_API_configuration" doc:name="HTTP Request configuration" doc:id="74cb9d11-41af-4b1b-b3cb-69f2fb3d4971" >
 		<http:request-connection host="${http.graphApi.host}" protocol="HTTPS" port="${http.graphApi.port}"/>
 	</http:request-config>
-	<idp-tis-inventory-idp-100:config name="IDP___TIS_INVENTORY_IDP___1_0_0_Config" doc:name="IDP - TIS-INVENTORY-IDP - 1.0.0 Config" doc:id="5dfe7a3b-6565-40f0-bdce-4b73e31bfeb6" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="10000" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}"/>
 	<configuration-properties doc:name="Configuration properties" doc:id="d9f68474-128d-4c0b-9ca8-bd5666088f73" file="properties.yaml" />
-	<microsoftOneDrive:onedrive-config name="Microsoft_OneDrive_Microsoft_OneDrive_Config" doc:name="Microsoft OneDrive Microsoft OneDrive Config" doc:id="45c0f28d-0980-4461-9979-5d60fd1675f0" >
-		<microsoftOneDrive:oauth-authorization-code-connection >
-			<microsoftOneDrive:oauth-authorization-code consumerKey="4c5cf168-670d-4681-96f6-01b98b8fd79e" consumerSecret="7Gk8Q~LlwETRGls.54RDQ2TyXDqKNUNIKw5~TbwC" authorizationUrl="https://login.microsoftonline.com/82bd2b79-844a-4f08-bd21-0949a05fcedb/oauth2/v2.0/authorize" accessTokenUrl="https://login.microsoftonline.com/82bd2b79-844a-4f08-bd21-0949a05fcedb/oauth2/v2.0/token" scopes="https://graph.microsoft.com/.default" />
-			<microsoftOneDrive:oauth-callback-config listenerConfig="HTTP_Listener_config" callbackPath="/callback" authorizePath="/authorize" externalCallbackUrl="http://localhost:8081/callback" />
-			<microsoftOneDrive:oauth-store-config objectStore="Object_store" />
-		</microsoftOneDrive:oauth-authorization-code-connection>
-	</microsoftOneDrive:onedrive-config>
+	<idp-ar-freepoint-idp-100:config name="IDP___AR_Freepoint_IDP___1_0_0_Config" doc:name="IDP - AR-Freepoint-IDP - 1.0.0 Config" doc:id="43d034d4-ad36-41b5-a8bd-63f00bac150d" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
+	<idp-ar-tis-idp-100:config name="IDP___AR_TIS_IDP___1_0_0_Config" doc:name="IDP - AR-TIS-IDP - 1.0.0 Config" doc:id="f5d265fc-c168-4377-8627-6de58ecb5e86" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
+	<idp-ar-tms6-idp-100:config name="IDP___AR_TMS6_IDP___1_0_0_Config" doc:name="IDP - AR-TMS6-IDP - 1.0.0 Config" doc:id="fc188680-a30c-4ccd-b79e-94abd0a4d5f0" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
 </mule>

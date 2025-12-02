@@ -5,9 +5,7 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="read-email-to-idp-extraction-Sub_Flow" doc:id="a5058022-215c-491e-b60b-47217d266306" >
-		<!-- [STUDIO:"Inventorydate"]<set-variable value="#[attributes.queryParams.date&#93;" doc:name="Inventorydate" doc:id="5b8283d2-b624-4cf5-a668-abef2351f8bb" variableName="Inventorydate" /> [STUDIO] -->
-		<flow-ref doc:name="calling token flow" doc:id="2ef63ddb-f09f-4e6a-9fa7-474665de90e9" name="token" />
+	<sub-flow name="read-email-to-idp-extraction-subflow" doc:id="a5058022-215c-491e-b60b-47217d266306" >
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var dateStr = (now() as String {format: "yyyy-MM-dd"})&#10;---&#10;"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages?\$filter=receivedDateTime%20ge%20" &#10;  ++ dateStr ++ "T00:00:00Z&amp;\$orderby=receivedDateTime%20desc"]' doc:name="Set Variable" doc:id="5ce6b8e1-7c9a-4d4a-b45e-b94e41e4f8d3" variableName="fetchMailUrl"/>
 		<!-- [STUDIO:"reads Email"]<http:request method="GET" doc:name="reads Email" doc:id="b169c572-8af9-4890-8ad7-67f84aa8eef4" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/mailFolders/inbox/messages?$top=1">
 			<http:headers><![CDATA[#[output application/json
@@ -25,7 +23,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:request>
 		<!-- [STUDIO:"mailId"]<set-variable value="#[payload.value.id[0&#93;&#93;" doc:name="mailId" doc:id="c8ce2009-3c04-4109-a273-d5bc667ab167" variableName="mailId" /> [STUDIO] -->
 		<!-- [STUDIO:"reads the mail-attachments"]<logger level="INFO" doc:name="reads the mail-attachments" doc:id="71839b73-6ed3-4bb5-9de3-db1c4eb83a3e" /> [STUDIO] -->
-		<foreach doc:name="For Each" doc:id="c7460f50-48d7-4bd3-9ad6-d356761c2678" collection="#[payload.value]">
+		<foreach doc:name="For Each email" doc:id="c7460f50-48d7-4bd3-9ad6-d356761c2678" collection="#[payload.value]">
 			<choice doc:name="checks for the attachments in the Mail" doc:id="99595607-4874-460e-bb51-4132e71ce4a9">
 			<when expression="#[payload.hasAttachments == true]">
 				<!-- [STUDIO:"Read Attachments"]<http:request method="GET" doc:name="Read Attachments" doc:id="df12aaaf-c9e5-43b1-8d22-10c47f763667" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/messages/" ++ vars.mailId as String ++ "/attachments"&#93;' target="attachments" targetValue="#[payload.value&#93;">
@@ -57,8 +55,9 @@ var mailid = payload.id
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 					</http:request>
-					<foreach doc:name="For Each" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
-						<ee:transform doc:name="Transform Message" doc:id="922647d5-c3d7-4204-ae91-543474e061b1" >
+					<foreach doc:name="For Each attachment" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
+						<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="36d660df-a568-4614-ba1b-e8943722e63e" variableName="pdfName"/>
+						<ee:transform doc:name="pdf-binary" doc:id="922647d5-c3d7-4204-ae91-543474e061b1" >
 							<ee:message >
 								<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
@@ -70,7 +69,7 @@ Binaries::fromBase64(payload.contentBytes)]]></ee:set-payload>
 								<ee:set-variable variableName="pdfName" ><![CDATA[payload.name]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
-						<ee:transform doc:name="Transform Message" doc:id="f71ef000-ba06-44c3-a595-f033b9241016" >
+						<ee:transform doc:name="idp request data" doc:id="f71ef000-ba06-44c3-a595-f033b9241016" >
 							<ee:message >
 								<ee:set-payload ><![CDATA[%dw 2.0
 output multipart/form-data
@@ -99,38 +98,33 @@ output multipart/form-data
 			</otherwise>
 		</choice>
 		</foreach>
-		<ee:transform doc:name="idp-response-data" doc:id="233ea1c1-6428-4fc1-8867-a644ea049134" >
+		<ee:transform doc:name="idpResponseData" doc:id="233ea1c1-6428-4fc1-8867-a644ea049134" >
 			<ee:message />
 			<ee:variables >
-				<ee:set-variable variableName="idp-response-data" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="InventoryDate" ><![CDATA[vars."tsar-idp-response".InventoryDate ]]></ee:set-variable>
+				<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
 output application/json
 ---
-{	"Date": vars."tsar-idp-response".InventoryDate  ,
-	"Elmendorf": vars."elmendorf-idp-response",
-	"TSAR": vars."tsar-idp-response",
-	"TMS6": vars."tms6data",
-	"Freepoint": vars."freepoint-idp-response"
+{	"Date": vars."idpResponseData".InventoryDate  ,
+	"Elmendorf": vars."elmendorfIdpResponse",
+	"TSAR": vars."tsarIdpResponse",
+	"TMS6": vars."tms6Data",
+	"Freepoint": vars."freepointIdpResponse"
 }]]></ee:set-variable>
-				<ee:set-variable variableName="InventoryDate" ><![CDATA[vars."tsar-idp-response".InventoryDate ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<!-- [STUDIO:"calling TIS-Sheet-Sub_Flow"]<flow-ref doc:name="calling TIS-Sheet-Sub_Flow" doc:id="f699f032-2cdc-4920-bfe4-47911eaa5d38" name="TIS-Sheet-Sub_Flow" /> [STUDIO] -->
-		<!-- [STUDIO:"IDP-Inventory-Sub_Flow"]<flow-ref doc:name="IDP-Inventory-Sub_Flow" doc:id="f61c4fa1-28b4-4628-a97d-8eb8bfd073ea" name="IDP-Inventory-Sub_Flow" /> [STUDIO] -->
 	</sub-flow>
 	<sub-flow name="pdf-idf-routing-subflow" doc:id="52e0406b-4c91-496d-8ec2-5a4a9a396997" >
-		<choice doc:name="Choice" doc:id="4edb50b9-6e4c-4b53-abbf-6332905f16cd" >
+		<choice doc:name="routing pdfs to respective idp" doc:id="4edb50b9-6e4c-4b53-abbf-6332905f16cd" >
 			<when expression='#[vars."pdfName" contains("Invoice")]' >
-				<!-- [STUDIO:"pdf-to-binary-convertion-subflow"]<flow-ref doc:name="pdf-to-binary-convertion-subflow" doc:id="13a3ad72-c5ea-460f-8a92-a24fa4e7f0e0" name="pdf-to-binary-convertion-subflow" /> [STUDIO] -->
+				<!-- [STUDIO:"setting frpPdfName"]<set-variable value="#[vars.pdfName&#93;" doc:name="setting frpPdfName" doc:id="f53b5409-ffd1-4a13-8ce7-da7a2fd66c44" variableName="frpPdfName"/> [STUDIO] -->
 				<flow-ref doc:name="calling freepoint-idp-extraction-sublow" doc:id="c2a18a27-e773-48bc-9faf-e1b80cbec151" name="freepoint-idp-extraction-sublow" />
-				<set-variable value="" doc:name="filePath" doc:id="82fcfbca-9e3d-4061-aea6-7f4ae9357769" variableName="filePath" />
 			</when>
 			<when expression='#[lower(vars."pdfName") contains("summary report")]' >
-				<!-- [STUDIO:"pdf-to-binary-convertion-subflow"]<flow-ref doc:name="pdf-to-binary-convertion-subflow" doc:id="ddefa25b-e7c7-48d3-b4f6-7ee1a56039e3" name="pdf-to-binary-convertion-subflow" /> [STUDIO] -->
-				<flow-ref doc:name="calling tms6-idp-extraction-sublow" doc:id="10220f3f-a91f-4045-8331-c1e0f204cf9f" name="tms6-idp-extraction-sublow" />
+				<flow-ref doc:name="calling tms6-idp-extraction-sublow" doc:id="10220f3f-a91f-4045-8331-c1e0f204cf9f" name="tms6-idp-extraction-subflow" />
 			</when>
 			<when expression='#[(lower(vars."pdfName") contains "elmendorf") or (lower(vars."pdfName") contains "san antonio")]' >
-				<!-- [STUDIO:"pdf-to-binary-convertion-subflow"]<flow-ref doc:name="pdf-to-binary-convertion-subflow" doc:id="9a493b3f-3998-4d33-8e6e-31c331e3c532" name="pdf-to-binary-convertion-subflow" /> [STUDIO] -->
-				<flow-ref doc:name="calling tis-idp-extraction-sublow" doc:id="0d808090-1cdf-4776-bf0a-b874e1d3353e" name="tis-idp-extraction-sublow" />
+				<flow-ref doc:name="calling tis-idp-extraction-sublow" doc:id="0d808090-1cdf-4776-bf0a-b874e1d3353e" name="tis-idp-extraction-subflow" />
 			</when>
 			<otherwise >
 				<logger level="INFO" doc:name="Logger" doc:id="5441c0ec-c032-4291-abf1-026653e92021" />

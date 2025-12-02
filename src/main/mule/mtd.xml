@@ -5,10 +5,10 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="new-month-mtd-post-Sub_Flow" doc:id="1a820967-bcc0-42e9-9312-f705386731af" >
-		<foreach doc:name="For Each" doc:id="7c01a05a-63fc-419a-a70b-babeffb41065" >
+	<sub-flow name="new-month-mtd-post-subflow" doc:id="1a820967-bcc0-42e9-9312-f705386731af" >
+		<foreach doc:name="For Each mtdFinalRequestData" doc:id="7c01a05a-63fc-419a-a70b-babeffb41065" collection="#[vars.mtdFinalRequestData]">
 			<try doc:name="Try" doc:id="65783975-02ab-4986-8abf-7524c7248a65" >
-				<http:request method="POST" doc:name="mtd-new-month-post" doc:id="e73f0678-2be2-4e10-a83c-fca74325b499" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/add"]' >
+				<http:request method="POST" doc:name="mtd new month creation and post data" doc:id="e73f0678-2be2-4e10-a83c-fca74325b499" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/add&quot;]" >
 					<ee:repeatable-file-store-stream bufferUnit="MB" />
 					<http:headers ><![CDATA[#[output application/json
 ---
@@ -32,8 +32,7 @@ payload]]></ee:set-payload>
 		</foreach>
 	</sub-flow>
 	<sub-flow name="MTD-Sub_Flow" doc:id="adf94071-5a78-4fd4-a955-be43f223d548" >
-		<!-- [STUDIO:"InventoryDate"]<set-variable value="#[attributes.queryParams.InventoryDate&#93;" doc:name="InventoryDate" doc:id="91920449-a06a-4b2f-b811-09eb261952e3" variableName="InventoryDate"/> [STUDIO] -->
-		<ee:transform doc:name="date-checking" doc:id="10c7be81-a5ff-4718-8288-2d8ca76f0f1d">
+		<ee:transform doc:name="var date" doc:id="10c7be81-a5ff-4718-8288-2d8ca76f0f1d">
 			<ee:message />
 			<ee:variables>
 				<ee:set-variable variableName="date" ><![CDATA[%dw 2.0
@@ -50,8 +49,8 @@ fun getCurrentMonthStartDate(date: Date) =
 fun getCurrentMonthPreviousDate(date: Date) = 
     date as String {format: "yyyy-MM-dd"} as Date - |P1D|
 
-var inputDate = vars.InventoryDate
-var parsedDate = inputDate as Date {format: "dd-MMM-yyyy"}
+var inputDate = vars.inventoryDate
+var parsedDate = inputDate as Date {format: "d-MMM-yyyy"}
 var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
 var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
 var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
@@ -59,12 +58,12 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 ---
 {
     "currentDate": parsedDate,
-    "previousDate": getCurrentMonthPreviousDate(parsedDate) as String {format: "dd-MMM-yyyy"},
+    "previousDate": getCurrentMonthPreviousDate(parsedDate) as String {format: "d-MMM-yyyy"},
     "isLastDateOfMonth": isLastDateOfMonth(parsedDate),
     "isStartMonthDate": parsedDate.day == 1,  // true if day is 1, false otherwise
-    "previousMonthLastDate": previousMonthLastDate as String {format: "dd-MMM-yyyy"},
-    "currentMonthStartDate": currentMonthStartDate as String {format: "dd-MMM-yyyy"},
-    "date": parsedDate as String {format: "dd-MMM-yyyy"},
+    "previousMonthLastDate": previousMonthLastDate as String {format: "d-MMM-yyyy"},
+    "currentMonthStartDate": currentMonthStartDate as String {format: "d-MMM-yyyy"},
+    "date": parsedDate as String {format: "d-MMM-yyyy"},
     "month": upper(parsedDate as String {format: "MMM"}),
     "previousMonth": upper(previousMonthLastDate as String {format: "MMM"}),
     "weekday": parsedDate as String {format: "EEEE"},
@@ -73,8 +72,7 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="calling token-subflow" doc:id="36c669af-aed5-4e33-9648-1bc5f27776e1" name="token"/>
-		<http:request method="GET" doc:name="gets sample mtd-formulas" doc:id="45ed5cb4-76f7-4599-aaef-89b88a8b2ad7" config-ref="HTTP_Graph_API_configuration" path="#[&quot;v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/worksheets/MTD/range(address='B1:I200')&quot;]" target="mtd-sample-formulas" targetValue="#[payload.formulas]">
+		<http:request method="GET" doc:name="gets sample mtd-formulas" doc:id="45ed5cb4-76f7-4599-aaef-89b88a8b2ad7" config-ref="HTTP_Graph_API_configuration" path="#[&quot;v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ p('mtd.sheetName') ++ &quot;/range(address='B1:I200')&quot;]" target="mtdSampleFormulas" targetValue="#[payload.formulas]">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -82,7 +80,7 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets last Month End Column (MTD)" doc:id="a12c3403-22f5-4964-8d82-5bd4ebc2edc5" target="mtd-previous-month-index" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/" &#10;++ vars.date.previousMonth ++ "-" ++ vars.date.year ++ "-END"]'>
+		<http:request method="GET" doc:name="gets last Month End Column (MTD)" doc:id="a12c3403-22f5-4964-8d82-5bd4ebc2edc5" target="mtdPreviousMonthIndex" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/&quot; &#10;++ vars.date.previousMonth ++ &quot;-&quot; ++ vars.date.year ++ &quot;-END&quot;]">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -90,7 +88,7 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets previous Month LastDate Column (Inventory)" doc:id="d2fefeb7-1935-4e91-af84-422734d0a015" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/" ++ vars.Date.previousMonthLastDate as String]' target="previous-month-last-date-index">
+		<http:request method="GET" doc:name="gets previous Month LastDate Column (Inventory)" doc:id="d2fefeb7-1935-4e91-af84-422734d0a015" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.Date.previousMonthLastDate as String]" target="previousMonthLastDateIndex">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -98,14 +96,14 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets Current Month Start Date Column (Inventory)" doc:id="c0d1e5b3-a111-4157-9279-c14605059eb5" target="current-month-start-date-index" targetValue="#[payload.index]" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/InventoryTable/columns/" ++ vars.date.currentMonthStartDate as String]' config-ref="HTTP_Graph_API_configuration">
+		<http:request method="GET" doc:name="gets Current Month Start Date Column (Inventory)" doc:id="c0d1e5b3-a111-4157-9279-c14605059eb5" target="currentMonthStartDateIndex" targetValue="#[payload.index]" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.date.currentMonthStartDate as String]" config-ref="HTTP_Graph_API_configuration">
 			<http:headers ><![CDATA[#[output application/json
 ---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<ee:transform doc:name="mcolumns and new-mtd-headers" doc:id="39a429c2-c60b-4b3f-a2ab-7db3c66feba8" >
+		<ee:transform doc:name="var mcolumns and newMtdHeaders" doc:id="39a429c2-c60b-4b3f-a2ab-7db3c66feba8" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="mcolumn" ><![CDATA[%dw 2.0
@@ -157,145 +155,124 @@ var currentDateColumn = vars.numberToColumn.NextColumn  //toColumnLetter(current
    currentMonthPreviousDateColumn: currentMonthPreviousDateColumn,
    currentDateColumn: currentDateColumn,
 }]]></ee:set-variable>
-				<ee:set-variable variableName="new-mtd-headers" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="newMtdHeaders" ><![CDATA[%dw 2.0
 output application/json
 var column1 = vars.date.month ++ "-" ++ vars.date.year ++ "-START"
 var column2 = vars.date.month ++ "-" ++ vars.date.year ++ "-BPD"
 var column3 = vars.date.month ++ "-" ++ vars.date.year ++ "-Barrels"
-var column4 = vars.date.month ++ "-" ++ vars.date.year ++"-Est-Ref-Yields"
-var column5 = vars.date.month ++"-" ++ vars.date.year ++ "-MTD-Inv-Change"
+var column4 = vars.date.month ++ "-" ++ vars.date.year ++ "-Est-Ref-Yields"
+var column5 = vars.date.month ++ "-" ++ vars.date.year ++ "-MTD-Inv-Change"
 var column6 = vars.date.month ++ "-" ++ vars.date.year ++ "-MTD-BPD-Change"
-var column7 = vars.date.month ++ "-" ++ vars.date.year ++"-EndingInvTo-PreviousDay-InvChange"
-var column8 = vars.date.month ++ "-" ++ vars.date.year ++"-END"
+var column7 = vars.date.month ++ "-" ++ vars.date.year ++ "-EndingInvTo-PreviousDay-InvChange"
+var column8 = vars.date.month ++ "-" ++ vars.date.year ++ "-END"
 ---
 [column1,column2,column3, column4, column5, column6, column7, column8]]]></ee:set-variable>
-			</ee:variables>
+			
+</ee:variables>
 		</ee:transform>
-		<!-- [STUDIO:"new-mtd-headers"]<ee:transform doc:name="new-mtd-headers" doc:id="56e85944-2d9f-43a3-879e-8b6a4564594b" >
+		<ee:transform doc:name="var aggregatedMtdRequestData" doc:id="6d7b3557-4e4e-48d2-81b5-cb227c40f3ed" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="new-mtd-headers" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="aggregatedMtdRequestData" ><![CDATA[%dw 2.0
 output application/json
-var column1 = vars.date.month ++ "-" ++ vars.date.year ++ "-START"
-var column2 = vars.date.month ++ "-" ++ vars.date.year ++ "-BPD"
-var column3 = vars.date.month ++ "-" ++ vars.date.year ++ "-Barrels"
-var column4 = vars.date.month ++ "-" ++ vars.date.year ++"-Est-Ref-Yields"
-var column5 = vars.date.month ++"-" ++ vars.date.year ++ "-Inv-Change"
-var column6 = vars.date.month ++ "-" ++ vars.date.year ++ "-MTD-BPD-Change"
-var column7 = vars.date.month ++ "-" ++ vars.date.year ++"-EndingInvTo-PreviousDay-InvChange"
-var column8 = vars.date.month ++ "-" ++ vars.date.year ++"-END"
-&#45;&#45;-
-[column1,column2,column3, column4, column5, column6, column7, column8&#93;&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform> [STUDIO] -->
-		<ee:transform doc:name="mtd-request-data" doc:id="6d7b3557-4e4e-48d2-81b5-cb227c40f3ed" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="mtd-request-data" ><![CDATA[%dw 2.0
-output application/json
-var headers = vars."new-mtd-headers"
+var headers = vars."newMtdHeaders"
 ---
 {
-	values: vars."mtd-sample-formulas" map ((row, index) ->
+	values: vars."mtdSampleFormulas" map ((row, index) ->
     if (index == 0) headers
     else row
 )
 }]]></ee:set-variable>
-			</ee:variables>
+			
+</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Replace Excel Formulas" doc:id="47142c9d-54d7-4084-a510-3ac35a8fcb95" >
+		<ee:transform doc:name="requestDataWithFormulas" doc:id="47142c9d-54d7-4084-a510-3ac35a8fcb95" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="requestDataWithFormulas" ><![CDATA[%dw 2.0
 output application/json
-var arr= vars.mcolumn.monthEndRangeColumns
 
-var from1= "A" 								      // previous month last column
-var to1= vars.mcolumn.previousMonthLastDateColumn // previous month last column
-
-var from2= "B" 									  // Present Month First Column
-var to2= vars.mcolumn.currentMonthStartDateColumn // Present Month First Column
-
-var from3="C" 						// Previous Date Column
-var to3= vars.mcolumn.currentMonthPreviousDateColumn // Previous Date Column
-
-var from4="D" 						    // current date column
-var to4= vars.mcolumn.currentDateColumn // current date column
-
-var from5="E" // MTD 1st column
-var to5= arr[1]
-
-var from6="F"  //  MTD 2nd column
-var to6= arr[2]  // 
-
-var from7="G" //  MTD 3rd column
-var to7=arr[3]
-
-var from8="H" //  MTD 4rth column
-var to8=arr[4]
-
-var from9="I" //  MTD 5th column
-var to9=arr[5]
-
-var from10="J" // MTD 6th column
-var to10=arr[6]
-
-var from11="N1"
-var to11= vars.date.currentNumberOfDays
+var arr = vars.mcolumn.monthEndRangeColumns
+var from1 = "A"
+var to1 = vars.mcolumn.previousMonthLastDateColumn
+var from2 = "B"
+var to2 = vars.mcolumn.currentMonthStartDateColumn
+var from3 = "C"
+var to3 = vars.mcolumn.currentMonthPreviousDateColumn
+var from4 = "D"
+var to4 = vars.mcolumn.currentDateColumn
+var from5 = "E"
+var to5 = arr[1]
+var from6 = "F"
+var to6 = arr[2]
+var from7 = "G"
+var to7 = arr[3]
+var from8 = "H"
+var to8 = arr[4]
+var from9 = "I"
+var to9 = arr[5]
+var from10 = "J"
+var to10 = arr[6]
+var from11 = "N1"
+var to11 = vars.date.currentNumberOfDays
 ---
 {
-  values: vars."mtd-request-data".values map ((row) ->
-    row map ((cell) -> 
+  values: vars."aggregatedMtdRequestData".values map ((row) ->
+    row map ((cell) ->
       if (cell is String and sizeOf(cell) > 0 and cell[0] == "=")
-        (cell 
-          //replace (("(?<![A-Za-z0-9_])" ++ from11 ++ "(?![A-Za-z0-9_])") as Regex) with to11 // Use word boundaries for N1
+        (cell
           replace (("\\b" ++ from11 ++ "\\b") as Regex) with to11
-          replace (("(?:" ++ from10 ++ ")(?=\\d|\\\$)") as Regex) with to10
-          replace (("(?:" ++ from9 ++ ")(?=\\d|\\\$)") as Regex) with to9
-          replace (("(?:" ++ from8 ++ ")(?=\\d|\\\$)") as Regex) with to8
-          replace (("(?:" ++ from7 ++ ")(?=\\d|\\\$)") as Regex) with to7
-          replace (("(?:" ++ from6 ++ ")(?=\\d|\\\$)") as Regex) with to6
-          replace (("(?:" ++ from5 ++ ")(?=\\d|\\\$)") as Regex) with to5
-          replace (("(?:" ++ from4 ++ ")(?=\\d|\\\$)") as Regex) with to4
-          replace (("(?:" ++ from3 ++ ")(?=\\d|\\\$)") as Regex) with to3
-          replace (("(?:" ++ from2 ++ ")(?=\\d|\\\$)") as Regex) with to2
-          replace (("(?:" ++ from1 ++ ")(?=\\d|\\\$)") as Regex) with to1
+          replace (("(?<!\\w)(" ++ from10 ++ ")(?=\\d|\\\$)") as Regex) with to10
+          replace (("(?<!\\w)(" ++ from9 ++ ")(?=\\d|\\\$)") as Regex) with to9
+          replace (("(?<!\\w)(" ++ from8 ++ ")(?=\\d|\\\$)") as Regex) with to8
+          replace (("(?<!\\w)(" ++ from7 ++ ")(?=\\d|\\\$)") as Regex) with to7
+          replace (("(?<!\\w)(" ++ from6 ++ ")(?=\\d|\\\$)") as Regex) with to6
+          replace (("(?<!\\w)(" ++ from5 ++ ")(?=\\d|\\\$)") as Regex) with to5
+          replace (("(?<!\\w)(" ++ from4 ++ ")(?=\\d|\\\$)") as Regex) with to4
+          replace (("(?<!\\w)(" ++ from3 ++ ")(?=\\d|\\\$)") as Regex) with to3
+          replace (("(?<!\\w)(" ++ from2 ++ ")(?=\\d|\\\$)") as Regex) with to2
+          replace (("(?<!\\w)(" ++ from1 ++ ")(?=\\d|\\\$)") as Regex) with to1
         )
-      else 
+      else
         cell
     )
   )
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<ee:transform doc:name="mtd separated data" doc:id="8d91f15f-3b13-4fb8-92f1-5846c63e318b" >
+}]]></ee:set-variable>
+			</ee:variables>
+		
+</ee:transform>
+		<ee:transform doc:name="mtdFinalRequestData" doc:id="8d91f15f-3b13-4fb8-92f1-5846c63e318b" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="mtdFinalRequestData" ><![CDATA[%dw 2.0
 output application/json
-var data = payload.values
+var data = requestDataWithFormulas.values
 var headers = data[0]
 var rows = data[1 to -1]
 ---
 headers map ((colName, colIndex) -> {
     values: [[colName]] ++ (rows map ((row) -> [row[colIndex]]))
 })
-]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+]]></ee:set-variable>
+			</ee:variables>
+		
+</ee:transform>
 		<choice doc:name="checks whether the start of the month or Not" doc:id="7041abb7-5034-43fe-88d3-06435f830bc3" >
 			<when expression="#[vars.Date.isStartMonthDate == true]" >
-				<flow-ref doc:name="calling new-month-mtd-post-Sub_Flow" doc:id="8003e605-4fca-4890-a1f7-9364b3262835" name="new-month-mtd-post-Sub_Flow"/>
+				<flow-ref doc:name="calling new-month-mtd-post-subflow" doc:id="8003e605-4fca-4890-a1f7-9364b3262835" name="new-month-mtd-post-subflow"/>
 			</when>
 			<otherwise >
-				<flow-ref doc:name="calling mtd-post-Sub_Flow" doc:id="07e51a30-9592-40a8-8fce-eae641e17bdd" name="mtd-post-Sub_Flow"/>
+				<flow-ref doc:name="calling mtd-update-subflow" doc:id="07e51a30-9592-40a8-8fce-eae641e17bdd" name="mtd-update-subflow"/>
 			</otherwise>
 		</choice>
 	</sub-flow>
-	<sub-flow name="mtd-post-Sub_Flow" doc:id="db8c4da5-b423-4bdf-8cba-5c63719642bd" >
-		<foreach doc:name="For Each" doc:id="48b9530d-08fe-48cf-9cfe-40cdb9eba13a" >
+	<sub-flow name="mtd-update-subflow" doc:id="db8c4da5-b423-4bdf-8cba-5c63719642bd" >
+		<foreach doc:name="For Each mtdFinalRequestData" doc:id="48b9530d-08fe-48cf-9cfe-40cdb9eba13a" collection="#[vars.mtdFinalRequestData]">
 			<try doc:name="Try" doc:id="1f4b33b3-c931-4e60-b3d8-fe2af3aad7cd" >
-				<http:request method="PATCH" doc:name="mtd-post" doc:id="97c6ea75-d5b0-434a-b204-7829a59bd3b0" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV/workbook/tables/MTD_Table/columns/" ++ payload.values[0][0]]' >
+				<http:request method="PATCH" doc:name="mtd update data" doc:id="97c6ea75-d5b0-434a-b204-7829a59bd3b0" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/&quot; ++ payload.values[0][0]]" >
 					<ee:repeatable-file-store-stream bufferUnit="MB" />
 					<http:headers ><![CDATA[#[output application/json
 ---

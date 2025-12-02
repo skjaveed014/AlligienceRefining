@@ -11,42 +11,41 @@ http://www.mulesoft.org/schema/mule/excel http://www.mulesoft.org/schema/mule/ex
 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100/current/mule-idp-elmendrof-inventory-pdf-100.xsd
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100/current/mule-idp-freepoint-invoice-idp-100.xsd">
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="9f7451d7-5a53-445d-ab5c-da57646f18e7" />
-	<flow name="AlliegeanceRefiningFlow" doc:id="ce918746-4a23-402a-9a9f-c9bd7bb43276" >
+	<!-- [STUDIO:"AlliegeanceRefiningFlow"]<flow name="AlliegeanceRefiningFlow" doc:id="ce918746-4a23-402a-9a9f-c9bd7bb43276" >
 		<http:listener doc:name="Listener" doc:id="b3905450-0752-4833-bcba-88749ca023ac" config-ref="HTTP_Listener_config" path="/*"/>
 		<choice doc:name="Choice" doc:id="7109baa8-d9fa-4e8f-b7c5-675e7d384a79" >
-			<when expression='#[attributes.method =="POST" and attributes.requestPath=="/tis-inventory"]'>
+			<when expression='#[attributes.method =="POST" and attributes.requestPath=="/tis-inventory"&#93;'>
 				<flow-ref doc:name="calling TIS-To-Inventory-POST-Sub_Flow" doc:id="c36be517-5bff-48c6-807e-f2780cda48e7" name="get-tis-data-by-date-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.method =="POST" and attributes.requestPath=="/idp-tis-inventory"]'>
+			<when expression='#[attributes.method =="POST" and attributes.requestPath=="/idp-tis-inventory"&#93;'>
 				<flow-ref doc:name="read-email-to-idp-extraction-Sub_Flow" doc:id="c80e2a55-05da-4431-a75d-3997867729c3" name="read-email-to-idp-extraction-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.requestPath=="/tis-insert" and attributes.method =="POST"]'>
+			<when expression='#[attributes.requestPath=="/tis-insert" and attributes.method =="POST"&#93;'>
 				<flow-ref doc:name="calling TIS-Sheet-Sub_Flow" doc:id="a06c0d44-4a66-4211-bfad-b065eec1b7f8" name="TIS-Sheet-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.requestPath=="/price-for-funding" and attributes.method=="GET"]'>
+			<when expression='#[attributes.requestPath=="/price-for-funding" and attributes.method=="GET"&#93;'>
 				<flow-ref doc:name="calling priceForFunding-Sub_Flow" doc:id="124f8653-6759-459c-9c80-c1561b0dc2d0" name="priceForFunding-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.requestPath=="/tms6-insert" and attributes.method=="POST"]'>
+			<when expression='#[attributes.requestPath=="/tms6-insert" and attributes.method=="POST"&#93;'>
 				<flow-ref doc:name="Flow Reference" doc:id="4559f220-8e35-4b12-9675-9b0c3a492501" name="TMS6-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.requestPath=="/workbook-creation"]'>
+			<when expression='#[attributes.requestPath=="/workbook-creation"&#93;'>
 				<flow-ref doc:name="calling all-sheets-and-tables-creation-Sub_Flow" doc:id="fcf89e6d-39ac-4a72-bd05-5d0c3ca2975a" name="all-sheets-and-tables-creation-Sub_Flow"/>
 			</when>
-			<when expression='#[attributes.requestPath =="/freepoint-insert"]'>
+			<when expression='#[attributes.requestPath =="/freepoint-insert"&#93;'>
 				<flow-ref doc:name="calling freepoint-worksheet-main-subflow" doc:id="1bf26db2-1d73-4e1b-91b9-ac6956a46f42" name="freepoint-worksheet-main-subflow"/>
 			</when>
-			<when expression='#[attributes.requestPath=="/tms6-data-by-date"]'>
+			<when expression='#[attributes.requestPath=="/tms6-data-by-date"&#93;'>
 				<flow-ref doc:name="callling get-tms6-data-Sub_Flow" doc:id="094b0271-beb8-4e0c-8afe-b0e4881ca8da" name="get-tms6-data-Sub_Flow"/>
 			</when>
 			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="af1c59b7-12bd-4e54-a30d-f893414831bf" message="-------default-------"/>
-				<!-- [STUDIO:"calling MTD-Sub_Flow"]<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="86dd6b11-a5a1-4d9b-a3c1-bfed225922d2" name="MTD-Sub_Flow"/> [STUDIO] -->
+				<logger level="INFO" doc:name="Logger" doc:id="af1c59b7-12bd-4e54-a30d-f893414831bf" message="&#45;&#45;&#45;&#45;&#45;&#45;-default&#45;&#45;&#45;&#45;&#45;&#45;-"/>
+				<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="86dd6b11-a5a1-4d9b-a3c1-bfed225922d2" name="MTD-Sub_Flow"/>
 			</otherwise>
 		</choice>
-	</flow>
+	</flow> [STUDIO] -->
 	<flow name="arFlow" doc:id="4c9a0563-6e4b-4af2-9cbf-33ea44a1571e" >
-		<http:listener doc:name="Listener" doc:id="5c92cf59-ab86-4fb3-9a2a-f9888cce470f" config-ref="HTTP_Listener_config" path="/main"/>
-		<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="32073d90-986b-4d9f-971d-364f76e5e39f" name="read-email-to-idp-extraction-Sub_Flow"/>
-		<flow-ref doc:name="calling TIS-Sheet-Sub_Flow" doc:id="b4d8df42-c96f-4cff-b02e-d41800717b8d" name="TIS-Sheet-Sub_Flow"/>
+		<http:listener doc:name="Listener" doc:id="5c92cf59-ab86-4fb3-9a2a-f9888cce470f" path="/main" config-ref="HTTP_Listener_config"/>
+		<flow-ref doc:name="calling email-reading-to-inventory-subflow" doc:id="3988093f-bfda-4ef8-b064-0711171c7a19" name="email-reading-to-inventory-subflow"/>
 	</flow>
 </mule>

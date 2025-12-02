@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_7335dae2_1d3d_4475_b5bd_e8351f2d92e7_Input_Variables_startdate = Any
+
