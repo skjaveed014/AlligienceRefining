@@ -72,7 +72,7 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="GET" doc:name="gets sample mtd-formulas" doc:id="45ed5cb4-76f7-4599-aaef-89b88a8b2ad7" config-ref="HTTP_Graph_API_configuration" path="#[&quot;v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ p('mtd.sheetName') ++ &quot;/range(address='B1:I200')&quot;]" target="mtdSampleFormulas" targetValue="#[payload.formulas]">
+		<http:request method="GET" doc:name="gets sample mtd-formulas" doc:id="45ed5cb4-76f7-4599-aaef-89b88a8b2ad7" config-ref="HTTP_Graph_API_configuration" path="#[&quot;v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.previousInventoryWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ p('mtd.sheetName') ++ &quot;/range(address='B1:I200')&quot;]" target="mtdSampleFormulas" targetValue="#[payload.formulas]">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---

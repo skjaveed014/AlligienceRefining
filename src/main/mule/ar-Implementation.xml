@@ -1374,6 +1374,7 @@ var daysInMonth = getDaysInMonth(parsedDate)
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date= attributes.queryParams.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;date]' doc:name="inventoryDate" doc:id="efff9cc6-7742-442a-9d9f-07d0cd31ccfd" variableName="inventoryDate"/>
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;"Inventory_&amp;_Sales_" ++ date.year]' doc:name="workbookName" doc:id="766ac28a-8354-40d2-b524-47d72815c425" variableName="workbookName"/>
 		<flow-ref doc:name="calling get-token-subflow" doc:id="4e818d4d-5280-4901-8a59-1e1013efbf23" name="get-token-subflow" />
+		<set-variable value="01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV" doc:name="previousInventoryWorkbookId" doc:id="be38a217-5633-4255-abd2-fc08be4956df" variableName="previousInventoryWorkbookId"/>
 		<http:request method="GET" doc:name="get Existing Inventory&amp;Sales workbookId" doc:id="b668ac1b-76f8-4006-b7a8-c631b2ed9cfe" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++&quot;/&quot; ++ vars.&quot;workbookName&quot; ++ &quot;.xlsx&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]">
 			<http:headers><![CDATA[#[output application/json
 ---
