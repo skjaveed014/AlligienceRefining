@@ -226,14 +226,46 @@ var data = vars.columnPayload.values
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="tms6 post-columns" doc:id="a53c2ce9-6b51-45da-bb28-b1e080a3c5ba" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;]" >
-			<http:body ><![CDATA[#[vars."tms6RequestData"]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<try doc:name="Try" doc:id="99ec1686-be85-4eec-8a51-3162714877f6" >
+			<http:request method="GET" doc:name="checks for date col present in tms6 sheet or not" doc:id="1368006b-ef81-4495-ba1b-072488624453" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="bd25d897-e120-4a4d-b09a-3c3d8ad7f5ad" variableName="flag" />
+			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="883cdd31-8a8c-4fba-8d54-014228cde3dc" variableName="columnId" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fdb38e2b-e6eb-4cf2-897a-08eae0a200a2" type="HTTP:NOT_FOUND" >
+					<logger level="INFO" doc:name="Logger" doc:id="8755c0bb-483e-4df5-93ad-aca4ebf4ee65" message="-----ItemNotFound--------" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="578a421e-ae6a-44a3-a403-9660c2fef981" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="checks for tis sheet update or insert" doc:id="0202232f-3d83-4df0-88b3-942cf4531149" >
+			<when expression='#[vars.flag == "update"]'>
+				<http:request method="PATCH" doc:name="tms6 update request" doc:id="7b7ae779-6200-4e1e-9f0d-b9af585bcfaf" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;]" >
+					<http:body ><![CDATA[#[vars."tms6RequestData"]]]></http:body>
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+				</http:request>
+			</when>
+			<otherwise >
+				<http:request method="POST" doc:name="tms6 insert request" doc:id="a53c2ce9-6b51-45da-bb28-b1e080a3c5ba" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;]">
+			<http:body><![CDATA[#[vars."tms6RequestData"]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+			</otherwise>
+		</choice>
 	</sub-flow>
 	<sub-flow name="tms6-exports-data-subflow" doc:id="2ff62c6e-c192-4e16-92bf-a73bd6ef8a01" >
 		<http:request method="GET" doc:name="gets stockholderLookupValues" doc:id="2c04d55b-2f2f-4e17-b523-f98b1a2dc7db" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.stockholders-Lookup.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('stockholdersLookup.tableName') ++ &quot;/rows?\$select=values&quot;]" target="stockholderLookupValues" targetValue="#[payload.value]" >
