@@ -119,13 +119,13 @@ fun getColumnRange(startIdx, endIdx) =
     (startIdx to endIdx) map toColumnLetter($)
 
 // MTD column Indexes
-var previousMonthEndIndex = (vars."mtd-previous-month-index" as Number)
+var previousMonthEndIndex = (vars."mtdPreviousMonthIndex" as Number)
 var currentMonthStartIndex = previousMonthEndIndex + 1
 var currentMonthEndIndex = previousMonthEndIndex + 8
 
 // Inventory Column Indexes
-var previousMonthLastDateIndex = vars."previous-month-last-date-index"
-var currentMonthStartDateIndex = vars."current-month-start-date-index"
+var previousMonthLastDateIndex = vars."previousMonthLastDateIndex"
+var currentMonthStartDateIndex = vars."currentMonthStartDateIndex"
 
 
 //var currentMonthPreviousDateIndex= vars."current-month-previous-date-index" //
@@ -249,7 +249,7 @@ var to11 = vars.date.currentNumberOfDays
 			<ee:variables >
 				<ee:set-variable variableName="mtdFinalRequestData" ><![CDATA[%dw 2.0
 output application/json
-var data = requestDataWithFormulas.values
+var data = vars.requestDataWithFormulas.values
 var headers = data[0]
 var rows = data[1 to -1]
 ---

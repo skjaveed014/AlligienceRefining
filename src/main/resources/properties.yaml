@@ -35,7 +35,7 @@ workbook.pricesForFunding.workbookId: "01NVG26FWFXVCMQY7BCNHIM4QFYVBNDEIQ"
 workbook.freepoint.workbookId: ""
 
 inventory.sheetName: "Inventory"
-mtd.sheetName: "MTD"
+mtd.sheetName: "MonthlyCalculations"
 tis.sheetName: "TIS"
 tms6.sheetName: "TMS6"
 

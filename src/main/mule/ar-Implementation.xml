@@ -1371,7 +1371,16 @@ var daysInMonth = getDaysInMonth(parsedDate)
 		<flow-ref doc:name="calling Inventory-subflow" doc:id="3543b4ff-f691-4e96-8fad-b8b67b8e3857" name="Inventory-subflow" />
 	</sub-flow>
 	<sub-flow name="inventory-update-subflow" doc:id="46f868b2-fd7f-400f-b985-6e1d102cebca" >
-		<flow-ref doc:name="calling get-token-subflow" doc:id="4e818d4d-5280-4901-8a59-1e1013efbf23" name="get-token-subflow"/>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date= attributes.queryParams.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;date]' doc:name="inventoryDate" doc:id="efff9cc6-7742-442a-9d9f-07d0cd31ccfd" variableName="inventoryDate"/>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;"Inventory_&amp;_Sales_" ++ date.year]' doc:name="workbookName" doc:id="766ac28a-8354-40d2-b524-47d72815c425" variableName="workbookName"/>
+		<flow-ref doc:name="calling get-token-subflow" doc:id="4e818d4d-5280-4901-8a59-1e1013efbf23" name="get-token-subflow" />
+		<http:request method="GET" doc:name="get Existing Inventory&amp;Sales workbookId" doc:id="b668ac1b-76f8-4006-b7a8-c631b2ed9cfe" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++&quot;/&quot; ++ vars.&quot;workbookName&quot; ++ &quot;.xlsx&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]">
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
 		<flow-ref doc:name="calling get-tis-data-by-inventory-date-subflow" doc:id="be26b5cf-2c1f-4af5-806a-ac067977255e" name="get-tis-data-by-inventory-date-subflow" />
 		<flow-ref doc:name="calling get-tms6-data-by-inventory-date-subflow" doc:id="b9b5c4cf-d040-4a92-a058-60d574717c86" name="get-tms6-data-by-inventory-date-subflow" />
 		<flow-ref doc:name="calling Inventory-subflow" doc:id="68a624ce-c8b5-4a6e-a2ed-7853d4c47cd1" name="Inventory-subflow" />

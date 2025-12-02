@@ -35,44 +35,6 @@ TSAR_subtotals ++ Elmendorf_subtotals ++
 		<flow-ref doc:name="calling Inventory-common-Sub_Flow" doc:id="1140b973-adf9-4741-8baa-c2ff1facb276" name="Inventory-subflow" />
 	</sub-flow> [STUDIO] -->
 	<sub-flow name="Inventory-subflow" doc:id="96e31bd9-23a2-429f-a721-8dc714f86cd1" >
-		<!-- [STUDIO:"tis-data, tms6data"]<ee:transform doc:name="tis-data, tms6data" doc:id="56112f2b-a802-4719-992e-8d9146793062" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="tis-data" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-{
-    InventoryDate: vars."InventoryDate",
-    SAR_Products: (vars."aggregated-tis-data") - "SAR" - "Elmendorf" - "Crude-SAR",
-    Elmendorf_Products: {
-       "Crude-SAR": vars."aggregated-tis-data"."Crude-SAR"
-    },
-    Elmendorf_GrandTotal: vars."aggregated-tis-data"."Elmendorf_GrandTotal" ,
-    SAR_GrandTotal: vars."aggregated-tis-data"."SAR_GrandTotal"
-}&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="invTms6Data" ><![CDATA[%dw 2.0
-output application/json
-
-var tanks = vars.tms6Data.products  // <&#45;&#45; Graph API stores actual list under "value"
-
-&#45;&#45;-
-{
- "prods":tanks reduce (item, acc = {}) ->
-    acc ++ {
-        (item.productName): item.volume
-    },
-  "exports":vars.exportTanks reduce (item, acc = {}) ->
-    acc ++ {
-        (item.productName): item.volume
-    },
-    "receipts":vars.receiptsData reduce (item, acc = {}) ->
-    acc ++ {
-        (item.productName): item.stockAdjust
-    }
-    }
-&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="var aggregatedTisData, aggregatedTMS6Data" doc:id="d1f5f87a-208d-4474-ab88-4dd9fcdf41a2" >
 			<ee:message >
 			</ee:message>
@@ -170,7 +132,7 @@ formulas map (row) ->
 			</ee:variables>
 		</ee:transform>
 		<try doc:name="Try" doc:id="c2057403-a818-4645-b504-d4caab7a8fb4" >
-			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" >
+			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" >
 				<http:headers ><![CDATA[#[output application/json
 ---
 {
@@ -189,8 +151,11 @@ formulas map (row) ->
 		<choice doc:name="checks for whether to update or insert the inventory sheet" doc:id="f207da4b-a787-49ab-bf53-fc462620d1a2" >
 			<when expression='#[vars.flag == "update"]' >
 				<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="6715755d-3b11-4591-ba5b-e8cef361aa6b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryColumnId&quot;]" >
-					<http:body ><![CDATA[#[{ 
-	values: vars."inventoryProductsData"
+					<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{ 
+	values: vars."inventoryRequestData"
 }]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
 ---
@@ -201,8 +166,11 @@ formulas map (row) ->
 			</when>
 			<otherwise >
 				<http:request method="POST" doc:name="Inventory-insert-request" doc:id="1961b219-0f32-4c89-890a-fe0e04083b8a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/add&quot;]" >
-					<http:body ><![CDATA[#[{ 
-	values: vars."inventoryProductsData"
+					<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{ 
+	values: vars."inventoryRequestData"
 }]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
 ---
