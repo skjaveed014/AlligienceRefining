@@ -145,8 +145,12 @@ dateRange(startDate, endDate)
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="2af78e90-289c-4c16-8d84-c5b7c0161412" name="3days-calculationsSub_Flow"/>
 	</flow> [STUDIO] -->
-	<!-- [STUDIO:"3days-calculationsSub_Flow"]<sub-flow name="3days-calculationsSub_Flow" doc:id="4c8994ba-60ca-4c25-9bc9-5244fab411e9" >
-		<try doc:name="Try" doc:id="d696ba1b-afaa-4761-a2aa-165ac6416339" >
+	<flow name="3days-calculationsFlow" doc:id="40171e6f-0614-48fc-a146-32fbe1935e30" >
+		<http:listener doc:name="Listener" doc:id="0e31df76-5c77-4f51-8d06-3c5d0ad772a5" config-ref="HTTP_Listener_config" path="/qb"/>
+		<flow-ref doc:name="Flow Reference" doc:id="455eae1b-aca7-4a98-aa24-788c42b9b329" name="3days-calculationsSub_Flow"/>
+	</flow>
+	<sub-flow name="3days-calculationsSub_Flow" doc:id="4c8994ba-60ca-4c25-9bc9-5244fab411e9" >
+		<!-- [STUDIO:"Try"]<try doc:name="Try" doc:id="d696ba1b-afaa-4761-a2aa-165ac6416339" >
 			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e148dffc-3877-4760-a91c-d955a3adbcc0" >
 				<idp-freepoint-invoice-idp-170:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="5d8fa908-cacf-4982-9012-ba3e9e2a4527" config-ref="IDP___Freepoint_Invoice_IDP___1_7_0_Config" execution-id="#[payload.id&#93;"/>
 				<choice doc:name="Choice" doc:id="6ccfe034-4f76-4528-8d31-2ee47f0a8eaa" >
@@ -184,10 +188,118 @@ output application/json
 					<raise-error doc:name="Raise error" doc:id="1b33c002-87e6-497f-b757-aaab35430325" type="CUSTOM:IDP_NOT_SUCCESSFUL" description='#["IDP Status:" ++ payload.status&#93;'/>
 				</on-error-propagate>
 			</error-handler>
-		</try>
+		</try> [STUDIO] -->
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="b595bf53-baaf-48ca-a25a-44dffeee95b9" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[{
+    "Name": "FreepointData",
+    "Inventory Date": "06-Nov-2025",
+    "PriorInventoryDate": "05-Nov-2025",
+    "pricingdate": "07-Nov-2025",
+    "PaymentDueDate": "12-Nov-2025",
+    "Products": {
+        "Crude": {
+            "Quantity (bbls)": "(20,436)",
+            "Settle Price": "59.75",
+            "Diff": "3.21",
+            "Total Price (Dollar/Gallon)": "1.4990",
+            "Total Price (Dollar/Barrel)": "62.960",
+            "Payment": "(1,286,651)"
+        },
+        "Gasoline - Domestic": {
+            "Quantity (bbls)": "6,268",
+            "Settle Price": "1.8178",
+            "Diff": "0.0193",
+            "Total Price (Dollar/Gallon)": "1.8371",
+            "Total Price (Dollar/Barrel)": "77.158",
+            "Payment": "483,620"
+        },
+        "Gasoline - Export": {
+            "Quantity (bbls)": "(144)",
+            "Settle Price": "1.8178",
+            "Diff": "(0.0909)",
+            "Total Price (Dollar/Gallon)": "1.7269",
+            "Total Price (Dollar/Barrel)": "72.530",
+            "Payment": "(10,473)"
+        },
+        "ULSD - Domestic": {
+            "Quantity (bbls)": "8,019",
+            "Settle Price": "2.3814",
+            "Diff": "0.0233",
+            "Total Price (Dollar/Gallon)": "2.4047",
+            "Total Price (Dollar/Barrel)": "100.995",
+            "Payment": "809,922"
+        },
+        "ULSHO - Export": {
+            "Quantity (bbls)": "0",
+            "Settle Price": "2.3814",
+            "Diff": "(0.0770)",
+            "Total Price (Dollar/Gallon)": "2.3044",
+            "Total Price (Dollar/Barrel)": "96.783",
+            "Payment": "0"
+        },
+        "ATB": {
+            "Quantity (bbls)": "4,928",
+            "Settle Price": "1.6727",
+            "Diff": "(0.1231)",
+            "Total Price (Dollar/Gallon)": "1.5496",
+            "Total Price (Dollar/Barrel)": "65.085",
+            "Payment": "320,706"
+        },
+        "JPTS (includes sales to TSAR)": {
+            "Quantity (bbls)": "(2)",
+            "Settle Price": "2.2071",
+            "Diff": "0.0300",
+            "Total Price (Dollar/Gallon)": "2.2371",
+            "Total Price (Dollar/Barrel)": "93.958",
+            "Payment": "(150)"
+        },
+        "DHT Feed": {
+            "Quantity (bbls)": "48",
+            "Settle Price": "2.4821",
+            "Diff": "(0.1490)",
+            "Total Price (Dollar/Gallon)": "2.3331",
+            "Total Price (Dollar/Barrel)": "97.989",
+            "Payment": "4,694"
+        },
+        "Naphtha": {
+            "Quantity (bbls)": "273",
+            "Settle Price": "1.9403",
+            "Diff": "(0.6520)",
+            "Total Price (Dollar/Gallon)": "1.2883",
+            "Total Price (Dollar/Barrel)": "54.108",
+            "Payment": "14,788"
+        },
+        "Isomerate": {
+            "Quantity (bbls)": "117",
+            "Settle Price": "1.9403",
+            "Diff": "(0.6020)",
+            "Total Price (Dollar/Gallon)": "1.3383",
+            "Total Price (Dollar/Barrel)": "56.208",
+            "Payment": "6,559"
+        },
+        "Reformate": {
+            "Quantity (bbls)": "(142)",
+            "Settle Price": "1.9403",
+            "Diff": "(0.2176)",
+            "Total Price (Dollar/Gallon)": "1.7227",
+            "Total Price (Dollar/Barrel)": "72.354",
+            "Payment": "(10,289)"
+        }
+    },
+    "Total": {
+        "TotalQuantity (bbls)": "(1,072)",
+        "TotalPayment": "332,725"
+    }
+}&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName" ><![CDATA["TSAR Invoice 11_6_25.pdf"&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="setting date for sheet creation" doc:id="8ba372a7-717a-4823-82fe-45af43da6224" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[vars.freepointIdpResponse."Inventory Date"&#93;&#93;></ee:set-payload>
+				<ee:set-payload ><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<flow-ref doc:name="calling month sheet creation flow" doc:id="e2fec088-ad7d-4da8-9a93-fb993bd97159" name="months-sheet-creationFlow"/>
@@ -195,17 +307,17 @@ output application/json
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.freepointIdpResponse&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="pdfName" ><![CDATA[vars.frpPdfName&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+				<ee:set-variable variableName="pdfName" ><![CDATA[vars.frpPdfName]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="3120fa90-34e8-4123-93c8-83b25d95ba9c" >
-			<when expression='#[(vars.pdfName splitBy " ")[2&#93; endsWith "_3"&#93;'>
+			<when expression='#[(vars.pdfName splitBy " ")[2] endsWith "_3"]'>
 				<ee:transform doc:name="sheet2" doc:id="c35cfc3a-6923-4e1a-9984-3f5ee11358ee">
 			<ee:message>
 			</ee:message>
 					<ee:variables >
-						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet2"&#93;&#93;></ee:set-variable>
+						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet2"]]></ee:set-variable>
 						<ee:set-variable variableName="days3" ><![CDATA[%dw 2.0
 output application/json
 
@@ -219,49 +331,49 @@ var endDate = toDate(input1."Inventory Date")
 
 // Generate all dates between startDate and endDate (inclusive)
 fun dateRange(from, to) =
-    if (from > to) [&#93; 
-    else [from as String {format: "dd-MMM-yyyy"}&#93; ++ dateRange(from + |P1D|, to)
+    if (from > to) [] 
+    else [from as String {format: "dd-MMM-yyyy"}] ++ dateRange(from + |P1D|, to)
 
 var datesList = dateRange(startDate, endDate)
 
 // Extract day parts and month-year for tableDate
-var dayParts = datesList map ((it) -> (it splitBy "-")[0&#93;)
-var monthYear = (datesList[-1&#93; splitBy "-")[1 to 2&#93; joinBy "-"
+var dayParts = datesList map ((it) -> (it splitBy "-")[0])
+var monthYear = (datesList[-1] splitBy "-")[1 to 2] joinBy "-"
 
 var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 
-&#45;&#45;-
+---
 {
     dates: datesList,
     tableDate: tableDate
 }
-&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate&#93;&#93;></ee:set-variable>
+]]></ee:set-variable>
+						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
 					</ee:variables>
 		</ee:transform>
 				<ee:transform doc:name="Transform Message" doc:id="9ff3581d-aa5b-41ba-b35f-7b059aaae178" >
 					<ee:message >
 					</ee:message>
 					<ee:variables >
-						<ee:set-variable variableName="date" ><![CDATA[vars.days3.tableDate&#93;&#93;></ee:set-variable>
+						<ee:set-variable variableName="date" ><![CDATA[vars.days3.tableDate]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<flow-ref doc:name="calling table creation add date column flow" doc:id="4a753f31-f0e0-4e11-bd6d-1f2c31a11e3b" name="table-creation-addDateColumn"/>
+				<flow-ref doc:name="calling table creation add date column flow" doc:id="4a753f31-f0e0-4e11-bd6d-1f2c31a11e3b" name="freepoint-table-creation-add-date-column"/>
 				<set-variable value='"Sheet1"' doc:name="Set Variable" doc:id="1f3fe00e-c224-426d-b107-bf6529cddb23" variableName="sheetName"/>
-				<foreach doc:name="For Each" doc:id="7513f803-e4a4-41bb-bc20-e56567bc3873" collection="#[vars.days3.dates&#93;">
+				<foreach doc:name="For Each" doc:id="7513f803-e4a4-41bb-bc20-e56567bc3873" collection="#[vars.days3.dates]">
 					<ee:transform doc:name="Transform Message" doc:id="cb037ec1-7d90-4951-9f67-aafae8a819de" >
 						<ee:message >
 						</ee:message>
 						<ee:variables >
-							<ee:set-variable variableName="date" ><![CDATA[payload&#93;&#93;></ee:set-variable>
+							<ee:set-variable variableName="date" ><![CDATA[payload]]></ee:set-variable>
 							<ee:set-variable variableName="sheetName" ><![CDATA["Sheet1"
-&#93;&#93;></ee:set-variable>
+]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
 					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow"/>
 					<flow-ref doc:name="calling individual 3days sub flow" doc:id="c8e0b0a5-a5ae-4238-bd67-1127c913cf1e" name="individual-3-days-sub-flow" />
-					<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="table-creation-addDateColumn"/>
+					<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="freepoint-table-creation-add-date-column"/>
 					<flow-ref doc:name="calling trueup flow" doc:id="6a69e424-861a-47ce-b312-b7a1efba0c4c" name="trueupFlow"/>
 					<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoiceSub_Flow"/>
 				</foreach>
@@ -271,19 +383,19 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet1"&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="date" ><![CDATA[vars.freepointIdpResponse."Inventory Date"&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate&#93;&#93;></ee:set-variable>
+						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet1"]]></ee:set-variable>
+						<ee:set-variable variableName="date" ><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-variable>
+						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-				<flow-ref doc:name="calling table creation add date column" doc:id="c6e6bc49-e047-410e-9052-8e4e3b7cc5fa" name="table-creation-addDateColumn"/>
+				<flow-ref doc:name="calling table creation add date column" doc:id="c6e6bc49-e047-410e-9052-8e4e3b7cc5fa" name="freepoint-table-creation-add-date-column"/>
 				<flow-ref doc:name="calling trueup flow" doc:id="ba1f7b64-431c-4d2e-8dd3-bc2088ffe26a" name="trueupFlow"/>
 				<flow-ref doc:name="calling qb invoice" doc:id="72c649e3-02ab-48d6-b4ce-dc12e1a88228" name="qb-invoiceSub_Flow"/>
 			</otherwise>
 		</choice>
-	</sub-flow> [STUDIO] -->
-	<sub-flow name="3days-calculationsSub_Flow" doc:id="9e99c9cf-3f06-4f8f-a564-b620a6e15695" >
-		<logger level="INFO" doc:name="Logger" doc:id="1b1405c1-31b1-43e1-9399-0ff7e19d1145" />
 	</sub-flow>
+	<!-- [STUDIO:"3days-calculationsSub_Flow"]<sub-flow name="3days-calculationsSub_Flow" doc:id="9e99c9cf-3f06-4f8f-a564-b620a6e15695" >
+		<logger level="INFO" doc:name="Logger" doc:id="1b1405c1-31b1-43e1-9399-0ff7e19d1145" />
+	</sub-flow> [STUDIO] -->
 </mule>

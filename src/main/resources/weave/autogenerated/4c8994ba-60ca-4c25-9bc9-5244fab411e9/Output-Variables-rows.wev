@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_4c8994ba_60ca_4c25_9bc9_5244fab411e9_Output_Variables_rows = Any
+

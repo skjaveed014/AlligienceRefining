@@ -246,7 +246,7 @@ var data = vars.columnPayload.values
 		</try>
 		<choice doc:name="checks for tis sheet update or insert" doc:id="0202232f-3d83-4df0-88b3-942cf4531149" >
 			<when expression='#[vars.flag == "update"]'>
-				<http:request method="PATCH" doc:name="tms6 update request" doc:id="7b7ae779-6200-4e1e-9f0d-b9af585bcfaf" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;]" >
+				<http:request method="PATCH" doc:name="tms6 update request" doc:id="7b7ae779-6200-4e1e-9f0d-b9af585bcfaf" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/&quot; ++ vars.columnId]" >
 					<http:body ><![CDATA[#[vars."tms6RequestData"]]]></http:body>
 					<http:headers ><![CDATA[#[output application/java
 ---

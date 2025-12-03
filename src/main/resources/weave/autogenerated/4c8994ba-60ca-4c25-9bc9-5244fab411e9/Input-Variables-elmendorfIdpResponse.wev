@@ -1,0 +1,34 @@
+%dw 2.0
+
+type auto_4c8994ba_60ca_4c25_9bc9_5244fab411e9_Input_Variables_elmendorfIdpResponse = {|
+  RefineryName: String, 
+  InventoryDate: String, 
+  ReportGeneratedOn: String, 
+  DateAndTime: String, 
+  Products: {|
+    Crude: Array<{|      Tank: String,       Product: String,       "Gauge(Date) (Time)": String,       "Gauge(Ft In 16)": String,       GrossProduct: String,       NetProduct: String,       Temp: String,       Density: String,       TotalWater: String,       TruckCount: String,       LastNetProduct: String,       Available: String,       DeltaNetProduct: String,       AvailableCapacity: String,       TotalCapacity: String    |}>
+  |}, 
+  Subtotal: {|
+    Crude: {|
+      GrossProduct: String, 
+      NetProduct: String, 
+      TotalWater: String, 
+      LastNetProduct: String, 
+      Available: String, 
+      DeltaNetProduct: String, 
+      AvailableCapacity: String, 
+      TotalCapacity: String
+    |}
+  |}, 
+  GrandTotal: {|
+    GrossProductTotal: String, 
+    NetProductTotal: String, 
+    TotalWaterTotal: String, 
+    LastNetProductTotal: String, 
+    AvailableTotal: String, 
+    DeltaNetProductTotal: String, 
+    AvailableCapacityTotal: String, 
+    TotalCapacityTotal: String
+  |}
+|}
+

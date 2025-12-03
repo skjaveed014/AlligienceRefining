@@ -286,7 +286,7 @@ output application/x-www-form-urlencoded
 		</http:request>
 	</sub-flow>
 	<sub-flow name="all-sheets-and-tables-creation-subflow" doc:id="1ca9ea8a-b980-4b8d-a11f-75b91ad4e8e9" >
-		<http:request method="PUT" doc:name="creates new Inventory&amp;Sales workbook" doc:id="7dd115e0-4357-48c0-9009-673e42e623d4" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++ &quot;/&quot; ++ vars.workbookName ++ &quot;.xlsx:/content&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration">
+		<http:request method="PUT" doc:name="creates new Inventory&amp;Sales workbook" doc:id="7dd115e0-4357-48c0-9009-673e42e623d4" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++ &quot;/&quot; ++ vars.workbookName ++ &quot;.xlsx:/content&quot;]" target="inventoryAndSalesWorkbookId5" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---

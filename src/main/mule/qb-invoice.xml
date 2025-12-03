@@ -306,7 +306,7 @@ output application/json
 		<http:request method="POST" doc:name="invoice generation" doc:id="e7c44bba-b59c-4037-9ae8-3dbe266a047c" config-ref="HTTP_Request_configuration22" path="/v3/company/9341454875771769/invoice?minorversion=75"/>
 	</flow> [STUDIO] -->
 	<sub-flow name="qb-invoiceSub_Flow" doc:id="0723cabb-7632-4a3e-9991-8e6234e4d5f1" >
-		<http:request method="GET" doc:name="get purchase amount from frp tables" doc:id="68f57ccf-6e2c-48d3-9296-a219c8189cf0" url='#["https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1/tables/freepoint_" ++ (vars.date replace "-" with "_") ++ "/columns/Purchase"]' targetValue="#[payload.values]" target="amountValues">
+		<http:request method="GET" doc:name="get purchase amount from frp tables" doc:id="68f57ccf-6e2c-48d3-9296-a219c8189cf0" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1/tables/freepoint_" ++ (vars.date replace "-" with "_") ++ "/columns/Purchase"]' targetValue="#[payload.values]" target="amountValues">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -363,7 +363,10 @@ var values= vars.amountValues
 (products) map ((p, i) ->
     {
         product: (qbMap[p[0]] default p[0]),
-        quantity: (quantities[i][0] replace "," with "") as Number,
+        quantity: if (quantities[i][0] == "" or quantities[i][0] == null)
+            0
+        else
+            (quantities[i][0] replace "," with "") as Number,
         itemId: itemId[(qbMap[p[0]] default p[0])] default null,
         amount : values[i+1][0]
     }
