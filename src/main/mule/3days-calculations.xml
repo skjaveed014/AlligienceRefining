@@ -372,7 +372,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 						</ee:variables>
 					</ee:transform>
 					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow"/>
-					<flow-ref doc:name="calling individual 3days sub flow" doc:id="c8e0b0a5-a5ae-4238-bd67-1127c913cf1e" name="individual-3-days-sub-flow" />
+					<flow-ref doc:name="calling individual 3days sub flow" doc:id="c8e0b0a5-a5ae-4238-bd67-1127c913cf1e" name="get-volumes-from-inventory-by-inventory-date-subflow" />
 					<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="freepoint-table-creation-add-date-column"/>
 					<flow-ref doc:name="calling trueup flow" doc:id="6a69e424-861a-47ce-b312-b7a1efba0c4c" name="trueupFlow"/>
 					<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoiceSub_Flow"/>

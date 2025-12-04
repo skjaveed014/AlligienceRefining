@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-price-for-funding-subflow" doc:id="c05b1ccd-4a40-411d-ad6c-67a33b26d6d7" >
+		<http:request method="GET" doc:name="get products column from prices sheet     " doc:id="7b3b6b6e-bbc7-47b9-8b12-fdf4eef2c6bc" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/PricesForFunding_Table/columns/Products" target="pricesSheetProds" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get date wise unit price from pricessheet" doc:id="65aef4ce-248e-4d8c-b469-a27ba6735479" url='#["https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/PricesForFunding_Table/columns/" ++ vars.pricingDate]' target="priceSheetUnitPrices" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="setting products and their unit prices parallelly" doc:id="8c33397f-a799-423e-88c2-e009207b68f3" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="unitPrices" ><![CDATA[%dw 2.0
+output application/json
+
+var input1 = vars.pricesSheetProds //products names from prices sheet
+var input2 = vars.priceSheetUnitPrices //unit prices of the next date of today from unit prices sheet
+---
+(input1 zip input2)
+    map ((item, index) ->
+        if ((item[0][0] indexOf "Crude") != -1 or (item[0][0] indexOf "ATB") != -1)
+            {(item[0][0]): round(((item[1][0]) / 42 * 10000)) / 10000}
+        else
+            {(item[0][0]): item[1][0]}
+    )
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="f9d6c201-b9ac-4064-9cad-a7c6ab12ee16" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="unitPriceColumn" ><![CDATA[%dw 2.0
+output application/json
+
+var input1 = vars.sampleProducts[1 to -4]
+var input2 = vars.unitPrices
+
+// Merge all input2 objects into one map for lookup
+var lookup = input2 reduce ((acc, item) -> acc ++ item)
+
+---
+[["unit price per gal"]] ++ (input1 map (item) -> do {
+    var key = trim(item[0] as String)
+    ---
+    [lookup[key] default 0]
+}) ++ [[""],[""],[""]]
+
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

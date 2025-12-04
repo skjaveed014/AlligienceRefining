@@ -1,5 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-differential-subflow" doc:id="6596bd98-f985-43aa-8f82-bb4bcaf9679c" >
+		<http:request method="GET" doc:name="get differential prod column" doc:id="89df9672-73b3-4473-9684-8a6a9f23b5b6" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/Table2/columns/Products" target="input1" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="diff month calc" doc:id="55d92fef-4e41-4519-9390-b88620d7e01c" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="diffMonth" ><![CDATA[%dw 2.0
+output application/json
+var d = vars.freepointIdpResponse."Inventory Date"
+---
+(d as Date {format: "dd-MMM-yyyy"}) as String {format: "MMM-yyyy"}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="get particular month diff values" doc:id="e9be4f3d-addc-4fbb-810e-e83cbd124d6c" url='#["https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/Table2/columns/" ++ vars.diffMonth]' target="input2" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="merging prods and diff values and subtract less rvo" doc:id="6e15135f-5e0c-4c06-b331-2f020f6cb19b" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="diffValueSet" ><![CDATA[%dw 2.0
+output application/json
+
+
+var keys = vars.input1[1 to -1] map $[0]
+var values = vars.input2[1 to -1] map $[0]
+
+var data=(keys zip values) reduce ((item, acc = {}) -> acc ++ { (item[0]): item[1] })
+
+var lessRVO = vars.unitPrices."Less RVO"[0]
+
+---
+data mapObject ((value, key) ->
+    if (key contains "Export")
+        { (key): value - (lessRVO) }
+    else
+        { (key): value }
+)
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="arranging diff values set" doc:id="e2a66287-7ab2-464a-8b07-be57402c9c5c" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="arrangedDiffValuesSet" ><![CDATA[%dw 2.0
+output application/json
+
+var sample = vars.sampleProducts[1 to -4]
+var input2 = vars.diffValueSet
+
+---
+sample map ((item) -> do {
+    var name = item[0]
+    ---
+    if (input2[name]? )
+        { (name): input2[name] }
+    else
+        { (name): null }
+})
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="diff value set column payload" doc:id="f47f477b-7e56-4ceb-95dd-98875bc33b52" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="diffValueColPayload" ><![CDATA[%dw 2.0
+output application/json
+//var date= "26-Aug-2025"
+var input1 =vars.arrangedDiffValuesSet
+--- 
+[["differential per gal"]] ++ (input1 map ((item) -> [ (item pluck ((v, k) -> v))[0] ])) ++ [[""],[""],[""]]
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>
