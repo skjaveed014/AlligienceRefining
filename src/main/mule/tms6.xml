@@ -26,18 +26,17 @@ output application/json
 			<ee:variables >
 				<ee:set-variable variableName="receiptsData" ><![CDATA[%dw 2.0
 output application/json
-// receipts data nothing but the stockAdjust values
 ---
-vars.tms6Data.products
-    filter ((item) -> item.stockAdjust != "0")
-    map ((p) -> {
-        tank: p.tank,
-        productName: p.productName,
-        volume:p.volume,
-        stockAdjust: p.stockAdjust
+[
+	flatten(vars.tms6Data.products map ((item) -> 
+    item.tank map ((t, i) -> {
+        tank: t,
+        productName: item.productName[i],
+        volume: item.volume[i],
+        stockAdjust: item.stockAdjust[i]
     })
-
-]]></ee:set-variable>
+)) filter ((p) -> p.stockAdjust != "0")
+]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<foreach doc:name="For Each tms6TableNames" doc:id="6b006ad6-0c33-406b-aa20-4729ce481390" collection="#[vars.tms6TableNames]" >
@@ -71,7 +70,7 @@ if(payload != p('tms6.exports.tableName'))
 		        stockAdjust: p.stockAdjust
 		    })
     )
-    else vars.exportTanks
+    else [vars.exportTanks]
 
 ]]></ee:set-variable>
 				</ee:variables>
@@ -92,7 +91,7 @@ output application/json
 // This will look for the new tanks came in pdfs with comparing to tms6 sheet
 //var existTanks = vars.existTanks
 ---
-vars.data filter (p) -> not (vars.existTanks contains (p.tank as String))]]></ee:set-variable>
+vars.data[0] filter (p) -> not (vars.existTanks contains (p.tank as String))]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
 			<flow-ref doc:name="calling check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="7ce55dee-af37-4798-ae0d-b979315b9f35" name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" />
@@ -173,7 +172,7 @@ fun normalize(t) = (upper(t default "")) replace /^0+/ with ""
 {
     date: vars."inventoryDate",
     products: order map (t) -> do {
-        var match = (vars.data default []) filter (p) -> 
+        var match = (vars.data[0] default []) filter (p) -> 
                         p != null and normalize(p.tank) == normalize(t)
         ---
         if (!isEmpty(match))
@@ -300,7 +299,7 @@ fun cleanName(name) =
     trim((name splitBy " ")[2 to -1] joinBy " ")
 
 ---
-stockholdersPDFData
+stockholdersPDFData[0]
     filterObject ((value, key) ->
         sizeOf(
             exportStockHoldersFromLookUp filter ((exp) ->

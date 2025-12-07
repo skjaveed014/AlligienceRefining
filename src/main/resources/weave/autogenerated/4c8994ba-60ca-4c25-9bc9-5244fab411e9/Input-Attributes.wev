@@ -1,27 +1,26 @@
 %dw 2.0
 
 type auto_4c8994ba_60ca_4c25_9bc9_5244fab411e9_Input_Attributes = {|
+  listenerPath: String, 
+  rawRequestPath: String, 
+  relativePath: String, 
+  maskedRequestPath: String, 
+  version: String, 
+  scheme: String, 
+  method: String, 
+  requestUri: String, 
+  rawRequestUri: String, 
+  queryString: String, 
+  localAddress: String, 
+  remoteAddress: String, 
   clientCertificate?: org_mule_extension_http_api_certificate_CertificateData {"typeId": "org.mule.extension.http.api.certificate.CertificateData",
   "typeAlias": "CertificateData"}, 
-  headers: { _?: String }, 
-  listenerPath?: String, 
-  localAddress?: String, 
-  maskedRequestPath?: String, 
-  method?: String, 
-  queryParams?: { _?: String }, 
-  queryString?: String, 
-  rawRequestPath?: String, 
-  rawRequestUri?: String, 
-  reasonPhrase?: String, 
-  relativePath?: String, 
-  remoteAddress?: String, 
-  requestPath?: String, 
-  requestUri?: String, 
-  scheme?: String, 
-  statusCode?: Number, 
-  uriParams?: { _?: String }, 
-  version?: String
-|}
+  queryParams: { _?: String }, 
+  uriParams: { _?: String }, 
+  requestPath: String, 
+  headers: { _?: String }
+|} {"typeId": "org.mule.extension.http.api.HttpRequestAttributes",
+"typeAlias": "HttpRequestAttributes"}
 type org_mule_extension_http_api_certificate_CertificateData = {|
   basicConstraints?: Number, 
   criticalExtensionOIDs?: Array<String>, 

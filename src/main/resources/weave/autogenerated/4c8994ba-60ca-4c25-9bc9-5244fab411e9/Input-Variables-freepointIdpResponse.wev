@@ -94,14 +94,6 @@ type auto_4c8994ba_60ca_4c25_9bc9_5244fab411e9_Input_Variables_freepointIdpRespo
       "Total Price (Dollar/Gallon)": String, 
       "Total Price (Dollar/Barrel)": String, 
       Payment: String
-    |}, 
-    LPG: {|
-      "Quantity (bbls)": String, 
-      "Settle Price": String, 
-      Diff: String, 
-      "Total Price (Dollar/Gallon)": String, 
-      "Total Price (Dollar/Barrel)": String, 
-      Payment: String
     |}
   |}, 
   Total: {|

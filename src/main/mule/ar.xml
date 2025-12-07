@@ -46,7 +46,7 @@ http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100 http://www.mul
 	</flow> [STUDIO] -->
 	<flow name="arFlow" doc:id="4c9a0563-6e4b-4af2-9cbf-33ea44a1571e" >
 		<http:listener doc:name="Listener" doc:id="5c92cf59-ab86-4fb3-9a2a-f9888cce470f" path="/main" config-ref="HTTP_Listener_config"/>
-		<flow-ref doc:name="calling email-reading-to-inventory-subflow" doc:id="3988093f-bfda-4ef8-b064-0711171c7a19" name="email-reading-to-inventory-subflow"/>
+		<flow-ref doc:name="calling start-sub-flow" doc:id="3988093f-bfda-4ef8-b064-0711171c7a19" name="start-sub-flow"/>
 	</flow>
 	<flow name="arFlow1" doc:id="eea34acb-d8a1-483d-a521-fe3bba2b6f36" >
 		<http:listener doc:name="/update-inventory" doc:id="96e33c6a-d9db-4f19-8f9a-e88983f07af8" config-ref="HTTP_Listener_config" path="/update-inventory"/>

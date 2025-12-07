@@ -195,106 +195,107 @@ output application/json
 			<ee:variables >
 				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[{
     "Name": "FreepointData",
-    "Inventory Date": "06-Nov-2025",
-    "PriorInventoryDate": "05-Nov-2025",
-    "pricingdate": "07-Nov-2025",
-    "PaymentDueDate": "12-Nov-2025",
+    "Inventory Date": "09-Nov-2025",
+    "PriorInventoryDate": "06-Nov-2025",
+    "pricingdate": "10-Nov-2025",
+    "PaymentDueDate": "13-Nov-2025",
     "Products": {
         "Crude": {
-            "Quantity (bbls)": "(20,436)",
-            "Settle Price": "59.75",
+            "Quantity (bbls)": "(63,936)",
+            "Settle Price": "60.13",
             "Diff": "3.21",
-            "Total Price (Dollar/Gallon)": "1.4990",
-            "Total Price (Dollar/Barrel)": "62.960",
-            "Payment": "(1,286,651)"
+            "Total Price (Dollar/Gallon)": "1.5081",
+            "Total Price (Dollar/Barrel)": "63.340",
+            "Payment": "(4,049,706)"
         },
         "Gasoline - Domestic": {
-            "Quantity (bbls)": "6,268",
             "Settle Price": "1.8178",
+            "Quantity (bbls)": "19,734",
+            "Settle Price": "1.8486",
             "Diff": "0.0193",
-            "Total Price (Dollar/Gallon)": "1.8371",
-            "Total Price (Dollar/Barrel)": "77.158",
-            "Payment": "483,620"
+            "Total Price (Dollar/Gallon)": "1.8679",
+            "Total Price (Dollar/Barrel)": "78.452",
+            "Payment": "1,548,136"
         },
         "Gasoline - Export": {
-            "Quantity (bbls)": "(144)",
-            "Settle Price": "1.8178",
-            "Diff": "(0.0909)",
-            "Total Price (Dollar/Gallon)": "1.7269",
-            "Total Price (Dollar/Barrel)": "72.530",
-            "Payment": "(10,473)"
+            "Quantity (bbls)": "(1,014)",
+            "Settle Price": "1.8486",
+            "Diff": "(0.0911)",
+            "Total Price (Dollar/Gallon)": "1.7575",
+            "Total Price (Dollar/Barrel)": "73.815",
+            "Payment": "(74,856)"
         },
         "ULSD - Domestic": {
-            "Quantity (bbls)": "8,019",
-            "Settle Price": "2.3814",
+            "Quantity (bbls)": "26,478",
+            "Settle Price": "2.4099",
             "Diff": "0.0233",
-            "Total Price (Dollar/Gallon)": "2.4047",
-            "Total Price (Dollar/Barrel)": "100.995",
-            "Payment": "809,922"
+            "Total Price (Dollar/Gallon)": "2.4332",
+            "Total Price (Dollar/Barrel)": "102.194",
+            "Payment": "2,705,893"
         },
         "ULSHO - Export": {
             "Quantity (bbls)": "0",
-            "Settle Price": "2.3814",
-            "Diff": "(0.0770)",
-            "Total Price (Dollar/Gallon)": "2.3044",
-            "Total Price (Dollar/Barrel)": "96.783",
+            "Settle Price": "2.4099",
+            "Diff": "(0.0772)",
+            "Total Price (Dollar/Gallon)": "2.3327",
+            "Total Price (Dollar/Barrel)": "97.973",
             "Payment": "0"
         },
         "ATB": {
-            "Quantity (bbls)": "4,928",
-            "Settle Price": "1.6727",
+            "Quantity (bbls)": "14,367",
+            "Settle Price": "1.6830",
             "Diff": "(0.1231)",
-            "Total Price (Dollar/Gallon)": "1.5496",
-            "Total Price (Dollar/Barrel)": "65.085",
-            "Payment": "320,706"
+            "Total Price (Dollar/Gallon)": "1.5599",
+            "Total Price (Dollar/Barrel)": "65.515",
+            "Payment": "941,239"
         },
         "JPTS (includes sales to TSAR)": {
-            "Quantity (bbls)": "(2)",
-            "Settle Price": "2.2071",
+            "Quantity (bbls)": "2",
+            "Settle Price": "2.2804",
             "Diff": "0.0300",
-            "Total Price (Dollar/Gallon)": "2.2371",
-            "Total Price (Dollar/Barrel)": "93.958",
-            "Payment": "(150)"
+            "Total Price (Dollar/Gallon)": "2.3104",
+            "Total Price (Dollar/Barrel)": "97.037",
+            "Payment": "146"
         },
         "DHT Feed": {
-            "Quantity (bbls)": "48",
-            "Settle Price": "2.4821",
+            "Quantity (bbls)": "(732)",
+            "Settle Price": "2.5104",
             "Diff": "(0.1490)",
-            "Total Price (Dollar/Gallon)": "2.3331",
-            "Total Price (Dollar/Barrel)": "97.989",
-            "Payment": "4,694"
+            "Total Price (Dollar/Gallon)": "2.3614",
+            "Total Price (Dollar/Barrel)": "99.177",
+            "Payment": "(72,578)"
         },
         "Naphtha": {
-            "Quantity (bbls)": "273",
-            "Settle Price": "1.9403",
+            "Quantity (bbls)": "437",
+            "Settle Price": "1.9711",
             "Diff": "(0.6520)",
-            "Total Price (Dollar/Gallon)": "1.2883",
-            "Total Price (Dollar/Barrel)": "54.108",
-            "Payment": "14,788"
+            "Total Price (Dollar/Gallon)": "1.3191",
+            "Total Price (Dollar/Barrel)": "55.402",
+            "Payment": "24,183"
         },
         "Isomerate": {
-            "Quantity (bbls)": "117",
-            "Settle Price": "1.9403",
+            "Quantity (bbls)": "(195)",
+            "Settle Price": "1.9711",
             "Diff": "(0.6020)",
-            "Total Price (Dollar/Gallon)": "1.3383",
-            "Total Price (Dollar/Barrel)": "56.208",
-            "Payment": "6,559"
+            "Total Price (Dollar/Gallon)": "1.3691",
+            "Total Price (Dollar/Barrel)": "57.502",
+            "Payment": "(11,190)"
         },
         "Reformate": {
-            "Quantity (bbls)": "(142)",
-            "Settle Price": "1.9403",
+            "Quantity (bbls)": "140",
+            "Settle Price": "1.9711",
             "Diff": "(0.2176)",
-            "Total Price (Dollar/Gallon)": "1.7227",
-            "Total Price (Dollar/Barrel)": "72.354",
-            "Payment": "(10,289)"
+            "Total Price (Dollar/Gallon)": "1.7535",
+            "Total Price (Dollar/Barrel)": "73.648",
+            "Payment": "10,274"
         }
     },
     "Total": {
-        "TotalQuantity (bbls)": "(1,072)",
-        "TotalPayment": "332,725"
+        "TotalQuantity (bbls)": "(4,721)",
+        "TotalPayment": "1,021,541"
     }
 }&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="frpPdfName" ><![CDATA["TSAR Invoice 11_6_25.pdf"&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName" ><![CDATA["TSAR Invoice 11_09_25_3 Day.pdf"&#93;&#93;></ee:set-variable>
 			</ee:variables>
 		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="setting date for sheet creation" doc:id="8ba372a7-717a-4823-82fe-45af43da6224" >
@@ -317,7 +318,7 @@ output application/json
 			<ee:message>
 			</ee:message>
 					<ee:variables >
-						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet2"]]></ee:set-variable>
+						<ee:set-variable variableName="sheetName" ><![CDATA["3days"]]></ee:set-variable>
 						<ee:set-variable variableName="days3" ><![CDATA[%dw 2.0
 output application/json
 
@@ -367,7 +368,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 						</ee:message>
 						<ee:variables >
 							<ee:set-variable variableName="date" ><![CDATA[payload]]></ee:set-variable>
-							<ee:set-variable variableName="sheetName" ><![CDATA["Sheet1"
+							<ee:set-variable variableName="sheetName" ><![CDATA["Daily"
 ]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
@@ -383,7 +384,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-						<ee:set-variable variableName="sheetName" ><![CDATA["Sheet1"]]></ee:set-variable>
+						<ee:set-variable variableName="sheetName" ><![CDATA["Daily"]]></ee:set-variable>
 						<ee:set-variable variableName="date" ><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-variable>
 						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
 						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>

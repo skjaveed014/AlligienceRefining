@@ -76,10 +76,10 @@ sample map ((item) -> do {
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="diff value set column payload" doc:id="f47f477b-7e56-4ceb-95dd-98875bc33b52" >
+		<ee:transform doc:name="diff value set column payload" doc:id="f47f477b-7e56-4ceb-95dd-98875bc33b52">
 			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="diffValueColPayload" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="diffValueColPayload"><![CDATA[%dw 2.0
 output application/json
 //var date= "26-Aug-2025"
 var input1 =vars.arrangedDiffValuesSet

@@ -44,7 +44,17 @@ output application/x-www-form-urlencoded
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="PATCH" doc:name="renaming table in frpdata" doc:id="9b19fede-06ff-42bc-81a8-6cda34b9d6a6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1/tables/" ++ payload.name]'>
+		<ee:transform doc:name="Transform Message" doc:id="df035caa-2ee4-4a59-ba5c-bc7761c84a09" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="tableRenameUrl" ><![CDATA[%dw 2.0
+output application/json
+---
+"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="PATCH" doc:name="renaming table in frpdata" doc:id="9b19fede-06ff-42bc-81a8-6cda34b9d6a6" url="#[vars.tableRenameUrl]">
 			<http:body><![CDATA[#[%dw 2.0
 output application/json
 ---

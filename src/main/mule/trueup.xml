@@ -40,7 +40,7 @@ output application/x-www-form-urlencoded
 				<ee:set-payload ><![CDATA[vars.date]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="4ae47584-dde7-44cd-8b4c-a11a9383a21d" name="individual-3-days-sub-flow"/>
+		<flow-ref doc:name="Flow Reference" doc:id="4ae47584-dde7-44cd-8b4c-a11a9383a21d" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
 		<ee:transform doc:name="Transform Message" doc:id="823e68b9-70f0-4ecc-a3b4-a0f3436ca47b" >
 			<ee:message >
 			</ee:message>
@@ -48,14 +48,14 @@ output application/x-www-form-urlencoded
 				<ee:set-variable variableName="tsar" ><![CDATA[vars.freepointData]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="GET" doc:name="get products column" doc:id="b55f27f9-de97-41c6-a880-ffc0ebdde9d6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1/tables/" ++ vars.tableName ++ "/columns/Products"]' target="prods" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="get products column" doc:id="b55f27f9-de97-41c6-a880-ffc0ebdde9d6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Daily/tables/" ++ vars.tableName ++ "/columns/Products"]' target="prods" targetValue="#[payload.values]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="get quantity" doc:id="b9c235d4-95f1-4a1b-a249-c8263d99dac6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/"++ vars.itemId ++"/workbook/worksheets/Sheet1/tables/" ++ vars.tableName ++ "/columns/Quantity(bbls)"]' target="quantity" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="get quantity" doc:id="b9c235d4-95f1-4a1b-a249-c8263d99dac6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/"++ vars.itemId ++"/workbook/worksheets/Daily/tables/" ++ vars.tableName ++ "/columns/Quantity(bbls)"]' target="quantity" targetValue="#[payload.values]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {

@@ -122,8 +122,21 @@ arr contains ("Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ "
 				</http:request>
 					</when>
 			<otherwise >
-				<http:request method="PUT" doc:name="workbook creation" doc:id="b348858d-f5f2-49a4-8171-db2594512792" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks/" ++ vars.time.year ++ "/" ++ "Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx:/content"]'>
+				<http:request method="PUT" doc:name="workbook creation" doc:id="b348858d-f5f2-49a4-8171-db2594512792" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks/" ++ vars.time.year ++ "/" ++ "Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx:/content"]' target="itemId" targetValue="#[payload.id]">
 					<http:body ><![CDATA[#[""]]]></http:body>
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+				</http:request>
+				<http:request method="PATCH" doc:name="renaming sheet1 name to daily" doc:id="eb8a435c-d770-4d60-a934-245b92e70e2e" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1"]'>
+					<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+  "name": "Daily"
+}]]]></http:body>
 					<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -136,10 +149,9 @@ arr contains ("Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ "
 							<ee:variables>
 								<ee:set-variable variableName="folderName"><![CDATA[vars.time.year]]></ee:set-variable>
 								<ee:set-variable variableName="workBookName"><![CDATA["Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx"]]></ee:set-variable>
-						<ee:set-variable variableName="itemId" ><![CDATA[payload.id]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
-				<foreach doc:name="For Each" doc:id="5980da84-1fa1-42a5-ac53-f3aa58fd20e7" collection='["Sheet2","trueup"]'>
+				<foreach doc:name="For Each" doc:id="5980da84-1fa1-42a5-ac53-f3aa58fd20e7" collection='["3days","trueup"]'>
 					<http:request method="POST" doc:name="adding sheets to new workbook" doc:id="fde38e64-d760-45a2-8f9f-2c643e12619e" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/add"]'>
 					<http:body><![CDATA[#[%dw 2.0
 output application/json

@@ -52,5 +52,6 @@ productNameLookup.tableName: "ProductName_Lookup_Table"
 
 freepoint.folderName: "Freepoint_Workbooks"
 inventory_&_sales.foldername: "Inventory_&_Sales_Workbooks"
-
+workbook.freepoint.sample.workbookId: "01NVG26FR4GIIBJ5JK4VAJYBF7KK7Q7XOJ"
+freepoint.sample.sheetName: "Freepoint-Sample-Sheet.xlsx"
 

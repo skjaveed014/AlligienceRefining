@@ -31,7 +31,9 @@ var input2 = vars.priceSheetUnitPrices //unit prices of the next date of today f
 ---
 (input1 zip input2)
     map ((item, index) ->
-        if ((item[0][0] indexOf "Crude") != -1 or (item[0][0] indexOf "ATB") != -1)
+    	if((item[0][0] indexOf "Crude") != -1)
+    	    {(item[0][0]): ""}
+        else if ((item[0][0] indexOf "ATB") != -1)
             {(item[0][0]): round(((item[1][0]) / 42 * 10000)) / 10000}
         else
             {(item[0][0]): item[1][0]}
