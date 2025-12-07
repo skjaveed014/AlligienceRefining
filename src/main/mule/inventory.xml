@@ -47,8 +47,26 @@ vars."aggregatedTisData"]]></ee:set-variable>
 output application/json
 ---
 vars."aggregatedTMS6Data"]]></ee:set-variable>
+				<ee:set-variable variableName="existInvColIndex" ><![CDATA[0 as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<try doc:name="Try" doc:id="c2057403-a818-4645-b504-d4caab7a8fb4">
+			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" targetValue="#[payload.index]" target="existInvColIndex">
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="079de1df-7c5b-471f-b69b-46ac92dac6cf" variableName="flag" />
+			<!-- [STUDIO:"inventoryColumnId to update"]<set-variable value="#[payload.id&#93;" doc:name="inventoryColumnId to update" doc:id="815a5de9-d4f2-4544-8ad3-4862f9988ff9" variableName="inventoryColumnId" /> [STUDIO] -->
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9be448c8-8dc7-4cc4-90b4-cbfb72659702" type="HTTP:NOT_FOUND">
+					<logger level="INFO" doc:name="Logger" doc:id="a68132dc-ccb4-4366-8df4-747fbc0190be" message="-----ItemNotFound--------" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="3ae43b84-04e6-45bd-88b7-b02e8fbd308e" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
 		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="6f044ad9-6d64-401e-b201-d5f4465f9da4" name="get-columnCountAndColumns-of-inventory-subflow" />
 		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="35e90aaa-3fbd-459a-a204-bafe32d6a133" name="get-Inventory-template-columns-subflow" />
 		<ee:transform doc:name="inventoryProductsData" doc:id="8f487cdc-f621-45c3-9dd4-ecc419acb632" >
@@ -131,26 +149,9 @@ formulas map (row) ->
     else cell]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<try doc:name="Try" doc:id="c2057403-a818-4645-b504-d4caab7a8fb4" >
-			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" >
-				<http:headers ><![CDATA[#[output application/json
----
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}]]]></http:headers>
-			</http:request>
-			<set-variable value="update" doc:name="flag=update" doc:id="079de1df-7c5b-471f-b69b-46ac92dac6cf" variableName="flag" />
-			<set-variable value="#[payload.id]" doc:name="inventoryColumnId to update" doc:id="815a5de9-d4f2-4544-8ad3-4862f9988ff9" variableName="inventoryColumnId" />
-			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9be448c8-8dc7-4cc4-90b4-cbfb72659702" type="HTTP:NOT_FOUND" >
-					<logger level="INFO" doc:name="Logger" doc:id="a68132dc-ccb4-4366-8df4-747fbc0190be" message="-----ItemNotFound--------" />
-					<set-variable value="insert" doc:name="flag=insert" doc:id="3ae43b84-04e6-45bd-88b7-b02e8fbd308e" variableName="flag" />
-				</on-error-continue>
-			</error-handler>
-		</try>
 		<choice doc:name="checks for whether to update or insert the inventory sheet" doc:id="f207da4b-a787-49ab-bf53-fc462620d1a2" >
 			<when expression='#[vars.flag == "update"]' >
-				<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="6715755d-3b11-4591-ba5b-e8cef361aa6b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryColumnId&quot;]" >
+				<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="6715755d-3b11-4591-ba5b-e8cef361aa6b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.existInvColIndex]" >
 					<http:body ><![CDATA[#[%dw 2.0
 output application/json
 ---

@@ -168,8 +168,9 @@ read(data, "application/json")]]></ee:set-variable>
 			<ee:variables >
 				<ee:set-variable variableName="numberToColumn" ><![CDATA[%dw 2.0
 output application/json
-var columnCount= vars.inventoryColumnCount
-var nextColumnCount= columnCount + 1
+
+var columnCount = if (vars.flag == "update") vars.existInvColIndex else vars.inventoryColumnCount
+var nextColumnCount = columnCount + 1
 var preColumnCount = columnCount - 1
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -179,7 +180,7 @@ fun toExcelColumn(n) =
         var rem = (n - 1) mod 26
         var quotient = floor((n - 1) / 26)
         ---
-        toExcelColumn(quotient) ++ letters[(rem) as Number]
+        toExcelColumn(quotient) ++ (letters[rem to rem])
     }
 
 ---
@@ -187,7 +188,7 @@ fun toExcelColumn(n) =
   Number: columnCount,
   CurrentColumn: toExcelColumn(columnCount),
   NextColumn: toExcelColumn(nextColumnCount),
-  PreviousColumn: toExcelColumn(preColumnCount),
+  PreviousColumn: toExcelColumn(preColumnCount)
 }
 ]]></ee:set-variable>
 			</ee:variables>

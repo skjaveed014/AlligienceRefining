@@ -3682,6 +3682,1308 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<ee:set-variable variableName="inventoryDate"><![CDATA[["7-Nov-2025","8-Nov-2025","9-Nov-2025"]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<!-- [STUDIO:"sample data1"]<ee:transform doc:name="sample data1" doc:id="4a111711-36ee-418b-8b0c-9b5f48f2245b">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="elmendorfIdpResponse"><![CDATA[[
+  "6-Nov-2025":{
+    "RefineryName": "TSAR Elmendorf Terminal",
+    "InventoryDate": "6-Nov-2025",
+    "ReportGeneratedOn": "07-Nov-2025 07:53",
+    "DateAndTime": "06-Nov-2025 to 07-Nov-2025",
+    "Products": {
+        "Crude": [
+            {
+                "Tank": "04601",
+                "Product": "Crude",
+                "Gauge": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "27 4 10",
+                "GrossProduct": "27,330.7",
+                "NetProduct": "27,330.7",
+                "Temp": "81.6",
+                "Density": "50.0",
+                "TotalWater": "0.0",
+                "TruckCount": "116.00",
+                "LastNetProduct": "30,066.4",
+                "Available": "20064.87",
+                "DeltaNetProduct": "-2,735.7",
+                "AvailableCapacity": "15,773.42",
+                "TotalCapacity": "43,441.38"
+            },
+            {
+                "Tank": "04602",
+                "Product": "Crude",
+                "Gauge": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "41 9 13",
+                "GrossProduct": "41,828.3",
+                "NetProduct": "41,828.3",
+                "Temp": "82.8",
+                "Density": "50.0",
+                "TotalWater": "0.0",
+                "TruckCount": "201.00",
+                "LastNetProduct": "35,373.2",
+                "Available": "34697.15",
+                "DeltaNetProduct": "6,455.1",
+                "AvailableCapacity": "1,449.73",
+                "TotalCapacity": "43,824.71"
+            },
+            {
+                "Tank": "04603",
+                "Product": "Crude",
+                "Gauge": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "27 6 14",
+                "GrossProduct": "27,721.4",
+                "NetProduct": "27,721.4",
+                "Temp": "75.2",
+                "Density": "50.0",
+                "TotalWater": "0.0",
+                "TruckCount": "117.00",
+                "LastNetProduct": "27,738.3",
+                "Available": "20285.22",
+                "DeltaNetProduct": "-16.9",
+                "AvailableCapacity": "14,839.12",
+                "TotalCapacity": "42,800.96"
+            },
+            {
+                "Tank": "06701",
+                "Product": "Crude",
+                "Gauge": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "0 0 0 (M)",
+                "GrossProduct": "0.0",
+                "NetProduct": "0.0",
+                "Temp": "0.0(M)",
+                "Density": "50.0",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "0.0",
+                "Available": "0.00",
+                "DeltaNetProduct": "0.0",
+                "AvailableCapacity": "0.00",
+                "TotalCapacity": "0.00"
+            }
+        &#93;
+    },
+    "Subtotal": {
+        "Crude": {
+            "GrossProduct": "96,880.4",
+            "NetProduct": "96,880.4",
+            "TotalWater": "0.0",
+            "LastNetProduct": "93,177.9",
+            "Available": "75,047.2",
+            "DeltaNetProduct": "3,702.5",
+            "AvailableCapacity": "32,062.3",
+            "TotalCapacity": "130,067.0"
+        }
+    },
+    "GrandTotal": {
+        "GrossProductTotal": "96,880.4",
+        "NetProductTotal": "96,880.4",
+        "TotalWaterTotal": "0.0",
+        "LastNetProductTotal": "93,177.9",
+        "AvailableTotal": "3,702.5",
+        "DeltaNetProductTotal": "3,702.5",
+        "AvailableCapacityTotal": "32,062.3",
+        "TotalCapacityTotal": "130,067.0"
+    }
+}
+	
+&#93;&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="tsarIdpResponse"><![CDATA[[
+	"6-Nov-2025":{
+    "RefineryName": "The San Antonio Refinery",
+    "InventoryDate": "6-Nov-2025",
+    "ReportGeneratedOn": "07-Nov-2025 07:53",
+    "DateAndTime": "06-Nov-2025 12:00:00AM to 07-Nov-2025 12:00:00AM",
+    "Products": {
+        "JP-8 ANTI-ICE": [
+            {
+                "Tank": "00750",
+                "Product": "JP-8 ANTI-ICE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "0 0 0 (M)",
+                "GrossProduct": "0.0",
+                "NetProduct": "0.0",
+                "Temp": "60.0(M)",
+                "Density": "40.0",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "0.0",
+                "Available": "0.00",
+                "DeltaNetProduct": "0.0",
+                "AvailableCapacity": "124.56",
+                "TotalCapacity": "124.56"
+            }
+        &#93;,
+        "ATB": [
+            {
+                "Tank": "00096",
+                "Product": "ATB",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "10 5 7",
+                "GrossProduct": "2,531.1",
+                "NetProduct": "2,531.1",
+                "Temp": "149.1(M)",
+                "Density": "34.2",
+                "TotalWater": "0.0",
+                "TruckCount": "11.00",
+                "LastNetProduct": "2,291.8",
+                "Available": "1882.72",
+                "DeltaNetProduct": "239.3",
+                "AvailableCapacity": "6,324.73",
+                "TotalCapacity": "8,965.18"
+            },
+            {
+                "Tank": "00097",
+                "Product": "ATB",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "10 1 13",
+                "GrossProduct": "2,448.2",
+                "NetProduct": "2,448.2",
+                "Temp": "157.6(M)",
+                "Density": "34.2",
+                "TotalWater": "0.0",
+                "TruckCount": "11.00",
+                "LastNetProduct": "2,330.0",
+                "Available": "1812.49",
+                "DeltaNetProduct": "118.2",
+                "AvailableCapacity": "6,399.63",
+                "TotalCapacity": "8,964.20"
+            },
+            {
+                "Tank": "00113",
+                "Product": "ATB",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "0 4 0 (M)",
+                "GrossProduct": "18.9",
+                "NetProduct": "18.9",
+                "Temp": "68.0(M)",
+                "Density": "33.9",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "18.9",
+                "Available": "0.00",
+                "DeltaNetProduct": "0.0",
+                "AvailableCapacity": "1,005.21",
+                "TotalCapacity": "1,024.20"
+            },
+            {
+                "Tank": "00125",
+                "Product": "ATB",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "1 2 0 (M)",
+                "GrossProduct": "146.0",
+                "NetProduct": "146.0",
+                "Temp": "68.0(M)",
+                "Density": "33.9",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "146.0",
+                "Available": "0.00",
+                "DeltaNetProduct": "0.0",
+                "AvailableCapacity": "2,365.66",
+                "TotalCapacity": "2,512.16"
+            }
+        &#93;,
+        "Crude": [
+            {
+                "Tank": "00401",
+                "Product": "Crude",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "21 6 13",
+                "GrossProduct": "6,054.6",
+                "NetProduct": "6,054.6",
+                "Temp": "82.3",
+                "Density": "49.9",
+                "TotalWater": "15.8",
+                "TruckCount": "23.00",
+                "LastNetProduct": "6,266.2",
+                "Available": "4134.75",
+                "DeltaNetProduct": "-211.6",
+                "AvailableCapacity": "859.78",
+                "TotalCapacity": "7,007.23"
+            }
+        &#93;,
+        "DHT FEED": [
+            {
+                "Tank": "00095",
+                "Product": "DHT FEED",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "43 10 11",
+                "GrossProduct": "23,102.5",
+                "NetProduct": "23,102.5",
+                "Temp": "94.1",
+                "Density": "44.7",
+                "TotalWater": "0.0",
+                "TruckCount": "128.00",
+                "LastNetProduct": "23,054.6",
+                "Available": "21430.40",
+                "DeltaNetProduct": "47.9",
+                "AvailableCapacity": "1,133.87",
+                "TotalCapacity": "24,650.24"
+            }
+        &#93;,
+        "Ethanol": [
+            {
+                "Tank": "00422",
+                "Product": "Ethanol",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "13 9 12",
+                "GrossProduct": "1,692.9",
+                "NetProduct": "1,692.9",
+                "Temp": "71.8",
+                "Density": "46.7",
+                "TotalWater": "0.0",
+                "TruckCount": "5.00",
+                "LastNetProduct": "1,724.7",
+                "Available": "947.62",
+                "DeltaNetProduct": "-31.8",
+                "AvailableCapacity": "530.59",
+                "TotalCapacity": "2,234.47"
+            }
+        &#93;,
+        "Full Range Reformate": [
+            {
+                "Tank": "00220",
+                "Product": "Full Range Reformate",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "8 10 4",
+                "GrossProduct": "1,421.7",
+                "NetProduct": "1,421.7",
+                "Temp": "83.2",
+                "Density": "51.7",
+                "TotalWater": "0.0",
+                "TruckCount": "1.00",
+                "LastNetProduct": "1,563.9",
+                "Available": "302.86",
+                "DeltaNetProduct": "-142.2",
+                "AvailableCapacity": "3,095.17",
+                "TotalCapacity": "4,536.12"
+            }
+        &#93;,
+        "GASOLINE": [
+            {
+                "Tank": "00215",
+                "Product": "GASOLINE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "5 0 15",
+                "GrossProduct": "902.4",
+                "NetProduct": "902.4",
+                "Temp": "81.4",
+                "Density": "62.7",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "904.2",
+                "Available": "12.74",
+                "DeltaNetProduct": "-1.8",
+                "AvailableCapacity": "3,371.34",
+                "TotalCapacity": "4,287.44"
+            },
+            {
+                "Tank": "00216",
+                "Product": "GASOLINE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "15 8 14",
+                "GrossProduct": "2,589.4",
+                "NetProduct": "2,589.4",
+                "Temp": "84.0",
+                "Density": "62.2",
+                "TotalWater": "0.0",
+                "TruckCount": "8.00",
+                "LastNetProduct": "3,196.8",
+                "Available": "1573.49",
+                "DeltaNetProduct": "-607.4",
+                "AvailableCapacity": "1,979.73",
+                "TotalCapacity": "4,613.30"
+            },
+            {
+                "Tank": "00217",
+                "Product": "GASOLINE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "25 2 4",
+                "GrossProduct": "4,089.6",
+                "NetProduct": "4,089.6",
+                "Temp": "69.3",
+                "Density": "60.7",
+                "TotalWater": "0.0",
+                "TruckCount": "16.00",
+                "LastNetProduct": "4,234.0",
+                "Available": "3100.52",
+                "DeltaNetProduct": "-144.3",
+                "AvailableCapacity": "454.60",
+                "TotalCapacity": "4,570.75"
+            },
+            {
+                "Tank": "00435",
+                "Product": "GASOLINE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "23 0 12",
+                "GrossProduct": "14,425.5",
+                "NetProduct": "14,425.5",
+                "Temp": "77.1",
+                "Density": "60.7",
+                "TotalWater": "0.0",
+                "TruckCount": "63.00",
+                "LastNetProduct": "12,334.4",
+                "Available": "11673.32",
+                "DeltaNetProduct": "2,091.1",
+                "AvailableCapacity": "10,637.97",
+                "TotalCapacity": "25,235.27"
+            }
+        &#93;,
+        "ISOMERATE": [
+            {
+                "Tank": "00218",
+                "Product": "ISOMERATE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "7 6 9",
+                "GrossProduct": "1,157.1",
+                "NetProduct": "1,157.1",
+                "Temp": "68.6",
+                "Density": "81.3",
+                "TotalWater": "89.1",
+                "TruckCount": "0.00",
+                "LastNetProduct": "1,500.6",
+                "Available": "0.00",
+                "DeltaNetProduct": "-343.6",
+                "AvailableCapacity": "3,295.79",
+                "TotalCapacity": "4,549.97"
+            },
+            {
+                "Tank": "00219",
+                "Product": "ISOMERATE",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "21 10 9",
+                "GrossProduct": "3,400.1",
+                "NetProduct": "3,400.1",
+                "Temp": "105.0",
+                "Density": "79.2",
+                "TotalWater": "0.0",
+                "TruckCount": "12.00",
+                "LastNetProduct": "2,939.9",
+                "Available": "2407.57",
+                "DeltaNetProduct": "460.2",
+                "AvailableCapacity": "987.41",
+                "TotalCapacity": "4,514.25"
+            }
+        &#93;,
+        "JET": [
+            {
+                "Tank": "00411",
+                "Product": "JET",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "16 5 11",
+                "GrossProduct": "2,802.1",
+                "NetProduct": "2,802.1",
+                "Temp": "78.6(M)",
+                "Density": "50.5",
+                "TotalWater": "0.0",
+                "TruckCount": "14.00",
+                "LastNetProduct": "1,549.9",
+                "Available": "2589.64",
+                "DeltaNetProduct": "1,252.2",
+                "AvailableCapacity": "1,974.58",
+                "TotalCapacity": "4,808.34"
+            }
+        &#93;,
+        "JET A": [
+            {
+                "Tank": "00427",
+                "Product": "JET A",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "5 6 5",
+                "GrossProduct": "641.1",
+                "NetProduct": "641.1",
+                "Temp": "78.6(M)",
+                "Density": "49.9",
+                "TotalWater": "0.0",
+                "TruckCount": "2.00",
+                "LastNetProduct": "1,660.7",
+                "Available": "491.73",
+                "DeltaNetProduct": "-1,019.5",
+                "AvailableCapacity": "1,690.21",
+                "TotalCapacity": "2,338.42"
+            }
+        &#93;,
+        "JPTS": [
+            {
+                "Tank": "00409",
+                "Product": "JPTS",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "2 0 9",
+                "GrossProduct": "374.8",
+                "NetProduct": "374.8",
+                "Temp": "71.4",
+                "Density": "50.4",
+                "TotalWater": "0.0",
+                "TruckCount": "1.00",
+                "LastNetProduct": "375.2",
+                "Available": "184.80",
+                "DeltaNetProduct": "-0.4",
+                "AvailableCapacity": "4,593.79",
+                "TotalCapacity": "4,971.21"
+            },
+            {
+                "Tank": "00410",
+                "Product": "JPTS",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "23 2 3",
+                "GrossProduct": "3,974.0",
+                "NetProduct": "3,974.0",
+                "Temp": "70.5",
+                "Density": "50.3",
+                "TotalWater": "0.0",
+                "TruckCount": "22.00",
+                "LastNetProduct": "3,974.3",
+                "Available": "3808.31",
+                "DeltaNetProduct": "-0.3",
+                "AvailableCapacity": "822.57",
+                "TotalCapacity": "4,821.53"
+            },
+            {
+                "Tank": "00433",
+                "Product": "JPTS",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "7 9 11(M)",
+                "GrossProduct": "675.3",
+                "NetProduct": "675.3",
+                "Temp": "74.4(M)",
+                "Density": "52.2",
+                "TotalWater": "0.0",
+                "TruckCount": "3.00",
+                "LastNetProduct": "676.2",
+                "Available": "579.01",
+                "DeltaNetProduct": "-0.9",
+                "AvailableCapacity": "1,782.44",
+                "TotalCapacity": "2,464.08"
+            }
+        &#93;,
+        "LPG": [
+            {
+                "Tank": "09001",
+                "Product": "LPG",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "2 9 9",
+                "GrossProduct": "190.6",
+                "NetProduct": "190.6",
+                "Temp": "71.4(M)",
+                "Density": "117.6",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "99.1",
+                "Available": "149.87",
+                "DeltaNetProduct": "91.5",
+                "AvailableCapacity": "419.13",
+                "TotalCapacity": "612.30"
+            },
+            {
+                "Tank": "09003",
+                "Product": "LPG",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "1 0 7",
+                "GrossProduct": "45.2",
+                "NetProduct": "45.2",
+                "Temp": "74.6(M)",
+                "Density": "118.9",
+                "TotalWater": "0.0",
+                "TruckCount": "0.00",
+                "LastNetProduct": "76.9",
+                "Available": "2.70",
+                "DeltaNetProduct": "-31.7",
+                "AvailableCapacity": "566.30",
+                "TotalCapacity": "612.30"
+            }
+        &#93;,
+        "NHT-FEED": [
+            {
+                "Tank": "00406",
+                "Product": "NHT-FEED",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "10 4 15",
+                "GrossProduct": "5,445.4",
+                "NetProduct": "5,445.4",
+                "Temp": "84.1",
+                "Density": "69.6",
+                "TotalWater": "0.0",
+                "TruckCount": "11.00",
+                "LastNetProduct": "5,172.1",
+                "Available": "2278.97",
+                "DeltaNetProduct": "273.3",
+                "AvailableCapacity": "18,488.81",
+                "TotalCapacity": "24,033.16"
+            }
+        &#93;,
+        "SLOP": [
+            {
+                "Tank": "00404",
+                "Product": "SLOP",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "18 4 10",
+                "GrossProduct": "5,865.1",
+                "NetProduct": "5,865.1",
+                "Temp": "75.6",
+                "Density": "44.0",
+                "TotalWater": "0.0",
+                "TruckCount": "21.00",
+                "LastNetProduct": "6,254.8",
+                "Available": "3665.62",
+                "DeltaNetProduct": "-389.7",
+                "AvailableCapacity": "2,318.40",
+                "TotalCapacity": "8,230.59"
+            }
+        &#93;,
+        "ULSD": [
+            {
+                "Tank": "00408",
+                "Product": "ULSD",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "29 3 9",
+                "GrossProduct": "15,319.6",
+                "NetProduct": "15,319.6",
+                "Temp": "85.3",
+                "Density": "45.8",
+                "TotalWater": "20.1",
+                "TruckCount": "76.00",
+                "LastNetProduct": "14,376.5",
+                "Available": "12912.02",
+                "DeltaNetProduct": "943.1",
+                "AvailableCapacity": "8,699.98",
+                "TotalCapacity": "24,244.48"
+            },
+            {
+                "Tank": "00412",
+                "Product": "ULSD",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "8 9 8",
+                "GrossProduct": "2,411.3",
+                "NetProduct": "2,411.3",
+                "Temp": "92.0(M)",
+                "Density": "46.1",
+                "TotalWater": "39.8",
+                "TruckCount": "9.00",
+                "LastNetProduct": "1,946.8",
+                "Available": "1523.71",
+                "DeltaNetProduct": "464.5",
+                "AvailableCapacity": "7,428.90",
+                "TotalCapacity": "9,921.16"
+            },
+            {
+                "Tank": "00428",
+                "Product": "ULSD",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "3 7 11",
+                "GrossProduct": "604.4",
+                "NetProduct": "604.4",
+                "Temp": "74.0",
+                "Density": "46.0",
+                "TotalWater": "0.0",
+                "TruckCount": "2.00",
+                "LastNetProduct": "984.8",
+                "Available": "441.67",
+                "DeltaNetProduct": "-380.4",
+                "AvailableCapacity": "4,037.61",
+                "TotalCapacity": "4,646.48"
+            },
+            {
+                "Tank": "00429",
+                "Product": "ULSD",
+                "Gauge(Date) (Time)": "07-Nov-25 00:00",
+                "Gauge(Ft In 16)": "3 11 0",
+                "GrossProduct": "661.9",
+                "NetProduct": "661.9",
+                "Temp": "93.8",
+                "Density": "45.5",
+                "TotalWater": "0.0",
+                "TruckCount": "2.00",
+                "LastNetProduct": "2,536.3",
+                "Available": "435.07",
+                "DeltaNetProduct": "-1,874.4",
+                "AvailableCapacity": "4,010.86",
+                "TotalCapacity": "4,684.60"
+            }
+        &#93;
+    },
+    "Subtotal": {
+        "JP-8 ANTI-ICE": {
+            "GrossProduct": "0.0",
+            "NetProduct": "0.0",
+            "TotalWater": "0.0",
+            "LastNetProduct": "0.0",
+            "Available": "0.0",
+            "DeltaNetProduct": "0.0",
+            "AvailableCapacity": "124.6",
+            "TotalCapacity": "124.6"
+        },
+        "ATB": {
+            "GrossProduct": "5,144.2",
+            "NetProduct": "5,144.2",
+            "TotalWater": "0.0",
+            "LastNetProduct": "4,786.6",
+            "Available": "3,695.2",
+            "DeltaNetProduct": "357.5",
+            "AvailableCapacity": "16,095.2",
+            "TotalCapacity": "21,465.7"
+        },
+        "Crude": {
+            "GrossProduct": "6,054.6",
+            "NetProduct": "6,054.6",
+            "TotalWater": "15.8",
+            "LastNetProduct": "6,266.2",
+            "Available": "4,134.8",
+            "DeltaNetProduct": "-211.6",
+            "AvailableCapacity": "859.8",
+            "TotalCapacity": "7,007.2"
+        },
+        "DHT FEED": {
+            "GrossProduct": "23,102.5",
+            "NetProduct": "23,102.5",
+            "TotalWater": "0.0",
+            "LastNetProduct": "23,054.6",
+            "Available": "21,430.4",
+            "DeltaNetProduct": "47.9",
+            "AvailableCapacity": "1,133.9",
+            "TotalCapacity": "24,650.2"
+        },
+        "Ethanol": {
+            "GrossProduct": "1,692.9",
+            "NetProduct": "1,692.9",
+            "TotalWater": "0.0",
+            "LastNetProduct": "1,724.7",
+            "Available": "947.6",
+            "DeltaNetProduct": "-31.8",
+            "AvailableCapacity": "530.6",
+            "TotalCapacity": "2,234.5"
+        },
+        "Full Range Reformate": {
+            "GrossProduct": "1,421.7",
+            "NetProduct": "1,421.7",
+            "TotalWater": "0.0",
+            "LastNetProduct": "1,563.9",
+            "Available": "302.9",
+            "DeltaNetProduct": "-142.2",
+            "AvailableCapacity": "3,095.2",
+            "TotalCapacity": "4,536.1"
+        },
+        "GASOLINE": {
+            "GrossProduct": "22,006.9",
+            "NetProduct": "22,006.9",
+            "TotalWater": "0.0",
+            "LastNetProduct": "20,669.4",
+            "Available": "16,360.1",
+            "DeltaNetProduct": "1,337.5",
+            "AvailableCapacity": "16,443.6",
+            "TotalCapacity": "38,706.8"
+        },
+        "ISOMERATE": {
+            "GrossProduct": "4,557.1",
+            "NetProduct": "4,557.1",
+            "TotalWater": "89.1",
+            "LastNetProduct": "4,440.5",
+            "Available": "2,407.6",
+            "DeltaNetProduct": "116.6",
+            "AvailableCapacity": "4,283.2",
+            "TotalCapacity": "9,064.2"
+        },
+        "JET": {
+            "GrossProduct": "2,802.1",
+            "NetProduct": "2,802.1",
+            "TotalWater": "0.0",
+            "LastNetProduct": "1,549.9",
+            "Available": "2,589.6",
+            "DeltaNetProduct": "1,252.2",
+            "AvailableCapacity": "1,974.6",
+            "TotalCapacity": "4,808.3"
+        },
+        "JET A": {
+            "GrossProduct": "641.1",
+            "NetProduct": "641.1",
+            "TotalWater": "0.0",
+            "LastNetProduct": "1,660.7",
+            "Available": "491.7",
+            "DeltaNetProduct": "-1,019.5",
+            "AvailableCapacity": "1,690.2",
+            "TotalCapacity": "2,338.4"
+        },
+        "JPTS": {
+            "GrossProduct": "5,024.2",
+            "NetProduct": "5,024.2",
+            "TotalWater": "0.0",
+            "LastNetProduct": "5,025.7",
+            "Available": "4,572.1",
+            "DeltaNetProduct": "-1.5",
+            "AvailableCapacity": "7,198.8",
+            "TotalCapacity": "12,256.8"
+        },
+        "LPG": {
+            "GrossProduct": "235.8",
+            "NetProduct": "235.8",
+            "TotalWater": "0.0",
+            "LastNetProduct": "176.0",
+            "Available": "152.6",
+            "DeltaNetProduct": "59.8",
+            "AvailableCapacity": "985.4",
+            "TotalCapacity": "1,224.6"
+        },
+        "NHT-FEED": {
+            "GrossProduct": "5,445.4",
+            "NetProduct": "5,445.4",
+            "TotalWater": "0.0",
+            "LastNetProduct": "5,172.1",
+            "Available": "2,279.0",
+            "DeltaNetProduct": "273.3",
+            "AvailableCapacity": "18,488.8",
+            "TotalCapacity": "24,033.2"
+        },
+        "SLOP": {
+            "GrossProduct": "5,865.1",
+            "NetProduct": "5,865.1",
+            "TotalWater": "0.0",
+            "LastNetProduct": "6,254.8",
+            "Available": "3,665.6",
+            "DeltaNetProduct": "-389.7",
+            "AvailableCapacity": "2,318.4",
+            "TotalCapacity": "8,230.6"
+        },
+        "ULSD": {
+            "GrossProduct": "18,997.2",
+            "NetProduct": "18,997.2",
+            "TotalWater": "60.0",
+            "LastNetProduct": "19,844.4",
+            "Available": "15,312.5",
+            "DeltaNetProduct": "-847.2",
+            "AvailableCapacity": "24,177.4",
+            "TotalCapacity": "43,496.7"
+        }
+    },
+    "GrandTotal": {
+        "GrossProductTotal": "102,990.8",
+        "NetProductTotal": "102,990.8",
+        "TotalWater": "164.8",
+        "LastNetProduct": "102,189.4",
+        "Available": "801.4",
+        "DeltaNetProduct": "801.4",
+        "AvailableCapacity": "99,399.6",
+        "TotalCapacity": "204,178.0"
+    }
+}
+&#93;&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="tms6Data"><![CDATA[[
+	"6-Nov-2025":{
+    "date": "06-Nov-2025",
+    "products": [
+        {
+            "tank": "000003",
+            "productName": "REFORMATE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000020",
+            "productName": "REGULAR BASE",
+            "volume": "-4786",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000021",
+            "productName": "REGULAR BASE 2",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000031",
+            "productName": "91 CLEAR BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000040",
+            "productName": "JET-A BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000070",
+            "productName": "KEROSENE BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000080",
+            "productName": "DHT FEEDSTOCK",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000082",
+            "productName": "CETANE BLENDSTOCK",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000180",
+            "productName": "#2 ULSD BASE",
+            "volume": "-8634",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000508",
+            "productName": "LPG MIX BASE",
+            "volume": "-807",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000530",
+            "productName": "HSR/NAPHTHA BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000531",
+            "productName": "LSR/NAPHTHA BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000574",
+            "productName": "#4 OIL BASE",
+            "volume": "-4570",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000A40",
+            "productName": "JPTS BASE",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "000ETH",
+            "productName": "ETHANOL BASE",
+            "volume": "-591",
+            "stockAdjust": "558"
+        },
+        {
+            "tank": "002574",
+            "productName": "ATMOSPHERIC TOWER BOTTO",
+            "volume": "0",
+            "stockAdjust": "0"
+        },
+        {
+            "tank": "ISOM",
+            "productName": "ISOMERATE",
+            "volume": "0",
+            "stockAdjust": "0"
+        }
+    &#93;,
+    "StockHolders": {
+        "Saratoga Rack Marketing": [
+            {
+                "tank": "000020",
+                "productName": "REGULAR BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000031",
+                "productName": "91 CLEAR BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Tartan Oil, LLC": [
+            {
+                "tank": "000020",
+                "productName": "REGULAR BASE",
+                "volume": "-4786",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000021",
+                "productName": "REGULAR BASE 2",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000070",
+                "productName": "KEROSENE BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000082",
+                "productName": "CETANE BLENDSTOCK",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "-8634",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000574",
+                "productName": "#4 OIL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "-591",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "002574",
+                "productName": "ATMOSPHERIC TOWER BOTTO",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "The San Antonio Refinery": [
+            {
+                "tank": "000003",
+                "productName": "REFORMATE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000020",
+                "productName": "REGULAR BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000021",
+                "productName": "REGULAR BASE 2",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000031",
+                "productName": "91 CLEAR BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000040",
+                "productName": "JET-A BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000070",
+                "productName": "KEROSENE BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000080",
+                "productName": "DHT FEEDSTOCK",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000082",
+                "productName": "CETANE BLENDSTOCK",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000508",
+                "productName": "LPG MIX BASE",
+                "volume": "-807",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000530",
+                "productName": "HSR/NAPHTHA BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000531",
+                "productName": "LSR/NAPHTHA BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000574",
+                "productName": "#4 OIL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000A40",
+                "productName": "JPTS BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "002574",
+                "productName": "ATMOSPHERIC TOWER BOTTO",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "ISOM",
+                "productName": "ISOMERATE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Lazarus Nixon Refinery": [
+            {
+                "tank": "000531",
+                "productName": "LSR/NAPHTHA BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Poet Ethanol Products": [
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Vantage - ADM": [
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Kinder Morgan": [
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Biourja": [
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "558"
+            }
+        &#93;,
+        "Freepoint LLC": [
+            {
+                "tank": "000020",
+                "productName": "REGULAR BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000021",
+                "productName": "REGULAR BASE 2",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000531",
+                "productName": "LSR/NAPHTHA BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000574",
+                "productName": "#4 OIL BASE",
+                "volume": "-4570",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000ETH",
+                "productName": "ETHANOL BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Brownsville GTR LLC": [
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Texas TransChem": [
+            {
+                "tank": "000021",
+                "productName": "REGULAR BASE 2",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            },
+            {
+                "tank": "000531",
+                "productName": "LSR/NAPHTHA BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "Serv Energy LLC": [
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;,
+        "US Energy": [
+            {
+                "tank": "000180",
+                "productName": "#2 ULSD BASE",
+                "volume": "0",
+                "stockAdjust": "0"
+            }
+        &#93;
+    }
+}
+&#93;&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[{
+    "Name": "FreepointData",
+    "Inventory Date": "06-Nov-2025",
+    "PriorInventoryDate": "05-Nov-2025",
+    "pricingdate": "07-Nov-2025",
+    "PaymentDueDate": "12-Nov-2025",
+    "Products": {
+        "Crude": {
+            "Quantity (bbls)": "(20,436)",
+            "Settle Price": "59.75",
+            "Diff": "3.21",
+            "Total Price (Dollar/Gallon)": "1.4990",
+            "Total Price (Dollar/Barrel)": "62.960",
+            "Payment": "(1,286,651)"
+        },
+        "Gasoline - Domestic": {
+            "Quantity (bbls)": "6,268",
+            "Settle Price": "1.8178",
+            "Diff": "0.0193",
+            "Total Price (Dollar/Gallon)": "1.8371",
+            "Total Price (Dollar/Barrel)": "77.158",
+            "Payment": "483,620"
+        },
+        "Gasoline - Export": {
+            "Quantity (bbls)": "(144)",
+            "Settle Price": "1.8178",
+            "Diff": "(0.0909)",
+            "Total Price (Dollar/Gallon)": "1.7269",
+            "Total Price (Dollar/Barrel)": "72.530",
+            "Payment": "(10,473)"
+        },
+        "ULSD - Domestic": {
+            "Quantity (bbls)": "8,019",
+            "Settle Price": "2.3814",
+            "Diff": "0.0233",
+            "Total Price (Dollar/Gallon)": "2.4047",
+            "Total Price (Dollar/Barrel)": "100.995",
+            "Payment": "809,922"
+        },
+        "ULSHO - Export": {
+            "Quantity (bbls)": "0",
+            "Settle Price": "2.3814",
+            "Diff": "(0.0770)",
+            "Total Price (Dollar/Gallon)": "2.3044",
+            "Total Price (Dollar/Barrel)": "96.783",
+            "Payment": "0"
+        },
+        "ATB": {
+            "Quantity (bbls)": "4,928",
+            "Settle Price": "1.6727",
+            "Diff": "(0.1231)",
+            "Total Price (Dollar/Gallon)": "1.5496",
+            "Total Price (Dollar/Barrel)": "65.085",
+            "Payment": "320,706"
+        },
+        "JPTS (includes sales to TSAR)": {
+            "Quantity (bbls)": "(2)",
+            "Settle Price": "2.2071",
+            "Diff": "0.0300",
+            "Total Price (Dollar/Gallon)": "2.2371",
+            "Total Price (Dollar/Barrel)": "93.958",
+            "Payment": "(150)"
+        },
+        "DHT Feed": {
+            "Quantity (bbls)": "48",
+            "Settle Price": "2.4821",
+            "Diff": "(0.1490)",
+            "Total Price (Dollar/Gallon)": "2.3331",
+            "Total Price (Dollar/Barrel)": "97.989",
+            "Payment": "4,694"
+        },
+        "Naphtha": {
+            "Quantity (bbls)": "273",
+            "Settle Price": "1.9403",
+            "Diff": "(0.6520)",
+            "Total Price (Dollar/Gallon)": "1.2883",
+            "Total Price (Dollar/Barrel)": "54.108",
+            "Payment": "14,788"
+        },
+        "Isomerate": {
+            "Quantity (bbls)": "117",
+            "Settle Price": "1.9403",
+            "Diff": "(0.6020)",
+            "Total Price (Dollar/Gallon)": "1.3383",
+            "Total Price (Dollar/Barrel)": "56.208",
+            "Payment": "6,559"
+        },
+        "Reformate": {
+            "Quantity (bbls)": "(142)",
+            "Settle Price": "1.9403",
+            "Diff": "(0.2176)",
+            "Total Price (Dollar/Gallon)": "1.7227",
+            "Total Price (Dollar/Barrel)": "72.354",
+            "Payment": "(10,289)"
+        }
+    },
+    "Total": {
+        "TotalQuantity (bbls)": "(1,072)",
+        "TotalPayment": "332,725"
+    }
+}&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 11_6_25.pdf"&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate"><![CDATA[["6-Nov-2025"&#93;&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
 			</ee:message>
