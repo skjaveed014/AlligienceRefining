@@ -287,7 +287,7 @@ output application/x-www-form-urlencoded
 		</http:request>
 	</sub-flow>
 	<sub-flow name="all-sheets-and-tables-creation-subflow" doc:id="1ca9ea8a-b980-4b8d-a11f-75b91ad4e8e9" >
-		<http:request method="PUT" doc:name="creates new Inventory&amp;Sales workbook" doc:id="7dd115e0-4357-48c0-9009-673e42e623d4" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++ &quot;/&quot; ++ vars.workbookName ++ &quot;.xlsx:/content&quot;]" target="inventoryAndSalesWorkbookId5" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration">
+		<http:request method="PUT" doc:name="creates new Inventory&amp;Sales workbook" doc:id="7dd115e0-4357-48c0-9009-673e42e623d4" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++ &quot;/&quot; ++ vars.workbookName ++ &quot;.xlsx:/content&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -308,8 +308,23 @@ output application/json
 			</ee:variables>
 		</ee:transform>
 		<foreach doc:name="For Each inventorySheetNames" doc:id="b11e64d5-6045-4332-8e48-88dd8aadf83f" collection='#[vars."inventorySheetNames"]'>
-			<!-- [STUDIO:"get previous inventory&sales workbookId"]<http:request method="GET" doc:name="get previous inventory&amp;sales workbookId" doc:id="b22c8b1d-a4d0-42b6-b5aa-fd892db756d8" config-ref="HTTP_Graph_API_configuration"/> [STUDIO] -->
-			<set-variable value="01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV" doc:name="previousInventoryWorkbookId" doc:id="bd2e1e6b-7878-4f6d-8e09-39e5ed075a4c" variableName="previousInventoryWorkbookId"/>
+			<set-variable value='#[%dw 2.0&#10;output application/json&#10;var year = (vars.idpResponseData.Date as Date {format: "d-MMM-yyyy"}).year&#10;---&#10;year - 1]' doc:name="Set Variable" doc:id="f1e8397e-6c85-406b-ad7c-42aff3fde40f" variableName="prevYear"/>
+			<http:request method="GET" doc:name="get previous inventory and sales workbook id " doc:id="2f723da8-68de-41c0-a711-bda2afafe107" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/Inventory_&amp;_Sales_Workbooks/Inventory_&amp;_Sales_" ++ vars.prevYear ++ ".xlsx"]' target="previousInventoryWorkbookId" targetValue="#[payload.id]">
+				<http:body ><![CDATA[#[""]]]></http:body>
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<!-- [STUDIO:"previousInventoryWorkbookId"]<set-variable value="01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV" doc:name="previousInventoryWorkbookId" doc:id="bd2e1e6b-7878-4f6d-8e09-39e5ed075a4c" variableName="previousInventoryWorkbookId" /> [STUDIO] -->
+			<http:request method="GET" doc:name="get previous inventory&amp;sales 31 dec values" doc:id="b22c8b1d-a4d0-42b6-b5aa-fd892db756d8" config-ref="HTTP_Graph_API_configuration" url="#[&quot;https://graph.microsoft.com/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/tables/InventoryTable/columns/30-Sep-&quot; ++ vars.prevYear]" target="oct31" targetValue="#[payload.values]">
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
 			<http:request method="GET" doc:name="gets row-count" doc:id="de81542e-b16a-4b50-96a9-5e8185710f75" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/tables/&quot; ++ vars.tableNames[vars.counter - 1] ++ &quot;/rows/count&quot;]" target="row-count" targetValue="#[payload.value]">
 				<http:body><![CDATA[#[""]]]></http:body>
 				<http:headers><![CDATA[#[output application/json
@@ -385,6 +400,19 @@ output application/json
 }]]]></http:headers>
 			</http:request>
 		</foreach>
+		<http:request method="POST" doc:name="31Sept column add" doc:id="e64a8075-fbbe-4255-b4ed-bf6fc01f430b" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/InventoryTable/columns/add"]' >
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values":vars.oct31
+}]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
 		<flow-ref doc:name="calling token" doc:id="22ac9202-6078-4a66-9125-01083af83c92" name="get-token-subflow" />
 		<set-variable value="#[[p('tms6.exports.tableName'), p('tms6.receipts.tableName')]]" doc:name="exportsReceiptsTableNames" doc:id="65d9a305-af9a-4538-a788-6a3d9828a657" variableName="exportsReceiptsTableNames"/>
 		<foreach doc:name="For Each exports and reciepts table" doc:id="96ac38d4-9ee9-42e0-889a-51b1b720c477" collection="#[vars.exportsReceiptsTableNames]">

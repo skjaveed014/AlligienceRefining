@@ -209,7 +209,6 @@ output application/json
             "Payment": "(4,049,706)"
         },
         "Gasoline - Domestic": {
-            "Settle Price": "1.8178",
             "Quantity (bbls)": "19,734",
             "Settle Price": "1.8486",
             "Diff": "0.0193",
