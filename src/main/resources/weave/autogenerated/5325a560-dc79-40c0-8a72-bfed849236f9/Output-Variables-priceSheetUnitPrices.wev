@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_5325a560_dc79_40c0_8a72_bfed849236f9_Output_Variables_priceSheetUnitPrices = Any
+

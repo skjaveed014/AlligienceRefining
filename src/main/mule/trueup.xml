@@ -40,7 +40,8 @@ output application/x-www-form-urlencoded
 				<ee:set-payload ><![CDATA[vars.date]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="4ae47584-dde7-44cd-8b4c-a11a9383a21d" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
+		<flow-ref doc:name="calling get-assembly-report-values" doc:id="0ee43c64-da84-4021-b788-17e7e23ba5f4" name="get-assembly-report-values" />
+		<flow-ref doc:name="calling get-volumes-from-inventory-by-inventory-date-subflow" doc:id="4ae47584-dde7-44cd-8b4c-a11a9383a21d" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
 		<ee:transform doc:name="Transform Message" doc:id="823e68b9-70f0-4ecc-a3b4-a0f3436ca47b" >
 			<ee:message >
 			</ee:message>
@@ -90,39 +91,66 @@ var values = vars.quantity[1 to -1] map $[0]
 			<ee:variables >
 				<ee:set-variable variableName="trueUpRowsPayload" ><![CDATA[%dw 2.0
 output application/json
-var rows=if ((vars.rows) == 1) vars.rows + 1 else vars.rows + 2
-var date=vars.date
-var p1 = vars.freepointData.Products // here not extracted prods it means after getting inventory data
+ 
+var rows = if (vars.rows == 1) 2 else vars.rows + 3
+var date = vars.date
+var p1 = vars.freepointData.Products
 var p2 = vars.frpPurchasedSet
-
+ 
+var header = [
+    "Date",
+    "Product",
+    "T-SAR Inventory",
+    "Freepoint Purchased",
+    "Difference"
+]
+ 
 ---
 {
-  values: p1 pluck ((v, k, i) ->
-    do {
-      var r = rows + i
-      var qty1 = v."Quantity (bbls)"
-      var qty2 = p2[k] default null
-      var key = upper(trim(k as String))
-
-      var formula =
-        if (key contains "CRUDE")
-          "=D" ++ r ++ "+" ++ "C" ++ r
-        else
-          "=D" ++ r ++ "-" ++ "C" ++ r
-
-      ---
-      [ date, k, qty1,qty2, formula ]
-    }
-  ) ++ [["","","","",""]]
-}]]></ee:set-variable>
+  values:
+      [header] ++                              // Add header first
+      (
+        p1 pluck ((v, k, i) -> do {
+            var r = rows + i
+            var qty1 = v."Quantity (bbls)"
+            var qty2 = p2[k] default null
+            var key = upper(trim(k as String))
+ 
+            var formula =
+              if (key contains "CRUDE")
+                "=D" ++ r ++ "+" ++ "C" ++ r
+              else
+                "=D" ++ r ++ "-" ++ "C" ++ r
+ 
+            ---
+            [ date, k, qty1, qty2, formula ]
+        })
+      )
+}
+ ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="POST" doc:name="add rows to trueup" doc:id="f241f60c-ad12-4752-805a-168d3af502d5" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/trueup/tables/trueupTable/rows/add"]'>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;---&#10;if (vars.rows == 1)&#10;&#10;    {&#10;        range: "A1:" ++ "E" ++ (sizeOf(vars.prods) - 3)&#10;    }&#10;&#10;else&#10;&#10;    {&#10;        range: &#10;            "A" ++ (vars.rows + 2) &#10;            ++ ":" &#10;            ++ "E" ++ (vars.rows + 1 + (sizeOf(vars.prods) - 3))&#10;    }]' doc:name="Set Variable" doc:id="b537a0be-328b-40fd-ac4e-908eb75a2625" variableName="trueUpRange"/>
+		<http:request method="PATCH" doc:name="add rows to trueup" doc:id="f241f60c-ad12-4752-805a-168d3af502d5" url="#[&quot;https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/trueup/range(address='&quot; ++ vars.trueUpRange.range ++ &quot;')&quot;]">
 			<http:body ><![CDATA[#[vars.trueUpRowsPayload]]]></http:body>
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="POST" doc:name="Request" doc:id="9ad5982a-78d6-44f9-8200-25cc8c8de709" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/trueup/tables/add"]'>
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+  "address": vars.trueUpRange.range,
+  "hasHeaders": true
+}]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer"++ vars.token
 }]]]></http:headers>
 		</http:request>
 	</flow>

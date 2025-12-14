@@ -38,6 +38,7 @@ inventory.sheetName: "Inventory"
 mtd.sheetName: "MTD"
 tis.sheetName: "TIS"
 tms6.sheetName: "TMS6"
+assembly.sheetName: "FreepointBreakout"
 
 inventory.tableName: "InventoryTable"
 mtd.tableName: "MTD_Table"
@@ -48,6 +49,7 @@ tms6.receipts.tableName: "TMS6_Receipts_Table"
 stockholdersLookup.tableName: "Stockholders_LookUp_Table"
 priceForFunding.tableName: "PricesForFunding_Table"
 productNameLookup.tableName: "ProductName_Lookup_Table"
+assembly.tableName: "Assembly_Table"
 
 
 freepoint.folderName: "Freepoint_Workbooks"

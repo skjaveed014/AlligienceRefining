@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_fecce2a4_fa87_480c_a493_f4167e0c994d_Output_Variables_tables = Array<"TMS6_Table" | "TMS6_Receipts_Table" | "TMS6_Exports_Table">
+

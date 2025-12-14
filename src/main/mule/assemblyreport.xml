@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="assemblyreportSub_Flow" doc:id="fecce2a4-fa87-480c-a493-f4167e0c994d" >
+		<try doc:name="Try" doc:id="4f56bf5b-5f79-4e43-a752-ac8f3b5766a1" >
+			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="36d1a95d-cf9e-442f-b28f-72408bd138e0" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('assembly.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" target="existInvColIndex" targetValue="#[payload.index]">
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="e7b4c03c-91e5-4fbf-9ed8-7843136425eb" variableName="flag" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="be99ca64-c81e-425e-b975-fb7f35bf915d" type="HTTP:NOT_FOUND" >
+					<logger level="INFO" doc:name="Logger" doc:id="21e81c98-20b7-4ed9-9ab0-ffdca0b907ab" message="-----ItemNotFound--------" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="a54db2fc-55e3-4fa9-8427-22a12fd55e09" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="ede20afd-4848-4730-bedf-5c42b48c2ebe" name="get-columnCountAndColumns-of-inventory-subflow" />
+		<ee:transform doc:name="Transform Message" doc:id="5746cc89-e5a2-4ceb-a0cc-c10a4ee06488" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(vars.inventoryDate as Date { format: "d-MMM-yyyy" }) as String { format: "dd-MMM-yyyy" }
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="calling get-volumes-from-inventory-by-inventory-date-subflow" doc:id="e319d35c-420b-4873-ab02-a27e76e8ac1c" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
+		<ee:transform doc:name="Transform Message" doc:id="53067e6e-23ef-4810-91fd-6b574e0c777b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[{
+	"A1002":vars.tisTankrawData."00215",
+	"A1003":vars.tisTankrawData."00216",
+	"A1004":vars.tisTankrawData."00217",
+	"A1005":vars.tisTankrawData."00435",
+"A1006":round(vars.invForfrp.C1004[0] + vars.invForfrp.C1005[0] + vars.invForfrp.C1011[0]),
+//c1004+c1005+c1011
+"A1008":round(vars.invForfrp.C1019[0]),
+//c1019
+"A1008":round(vars.invForfrp.C1017[0]),
+//c10017
+"A1009":round(vars.invForfrp.C1042[0]-vars.invForfrp.C1037[0]),
+//c1042-c1037
+"A1010":round(vars.invForfrp.C1040[0]),
+//c1040
+"A1011":round(vars.invForfrp.C1046[0]),
+//c1046
+"A1012":round(vars.invForfrp.C1051[0]),
+//c1051
+"A1013":round(vars.invForfrp.C1050[0]),
+//c1050
+"A1014":round(vars.invForfrp.C1045[0] default 0)
+//c1045
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="invOrBreakoutTableName" ><![CDATA[p('assembly.tableName')]]></ee:set-variable>
+				<ee:set-variable variableName="sheet" ><![CDATA[p('assembly.sheetName')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="b7795670-2952-46f3-9648-b80c75291c69" name="get-columnCountAndColumns-of-inventory-subflow"/>
+		<flow-ref doc:name="calling get-Inventory-template-columns-subflow" doc:id="67fd6c35-d022-4144-aea5-ab3d976c129e" name="get-Inventory-template-columns-subflow"/>
+		<ee:transform doc:name="Transform Message" doc:id="1bcfbc10-62d8-47af-aa2a-eb14771e8d15" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="assemblyProductsData" ><![CDATA[%dw 2.0
+output application/json
+var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"}) 
+				as String {format: "EEEE"}
+
+---
+{
+  "Date": vars."inventoryDate",
+  "weekday": weekday,
+  "A1002":vars.tisTankrawData."00215",
+	"A1003":vars.tisTankrawData."00216",
+	"A1004":vars.tisTankrawData."00217",
+	"A1005":vars.tisTankrawData."00435",
+"A1006":round(vars.invForfrp.C1004[0] + vars.invForfrp.C1005[0] + vars.invForfrp.C1011[0]),
+//c1004+c1005+c1011
+"A1007":round(vars.invForfrp.C1019[0]),
+//c1019
+"A1008":round(vars.invForfrp.C1007[0]),
+//c10017
+"A1009":round(vars.invForfrp.C1042[0]-vars.invForfrp.C1037[0]),
+//c1042-c1037
+"A1010":-(round(vars.invForfrp.C1040[0])),
+//c1040
+"A1011":round(vars.invForfrp.C1046[0]),
+//c1046
+"A1012":-(round(vars.invForfrp.C1051[0])),
+//c1051
+"A1013":round(vars.invForfrp.C1050[0]),
+//c1050
+"A1014":round(vars.invForfrp.C1045[0] default 0),
+//c1045
+"A1015":round(vars.invForfrp.C1061[0] default 0)
+//c1061
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="d73e3fde-ce7e-4c61-86f2-49dfead43ab1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var formulas = vars."inventoryReplacedFormulas"
+var data = vars.assemblyProductsData
+---
+formulas map (row) ->
+  row map (cell) ->
+    if (cell startsWith "=") cell
+    else if (cell == "Date") 
+        (data.Date as Date { format: "d-MMM-yyyy" }) as String { format: "dd-MMM-yyyy" }
+    else if (cell == "weekday") 
+        data.weekday
+    else if (data[cell]? != null) 
+        data[cell]
+    else 
+        cell
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="f4624b3a-d10f-41b9-a929-b0851bedccd8" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/add"]'>
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values":payload
+}]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+</mule>

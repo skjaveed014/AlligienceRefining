@@ -213,6 +213,13 @@ output application/json
 				<ee:set-payload ><![CDATA[(payload as Date {format: "dd-MMM-yyyy"}) as String {format: "d-MMM-yyyy"}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<http:request method="GET" doc:name="get sample formulae column from inv" doc:id="e45458ad-956c-400a-a106-445dc734670b" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/Date"]' target="sampleColumn" targetValue="#[payload.values]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
 		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="acb71fb0-eb50-4f93-a17f-37257c95aa0a" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/" ++ payload]' target="dateVolumes" targetValue="#[payload.values]">
 			<http:headers ><![CDATA[#[output application/java
 ---
@@ -229,15 +236,25 @@ output application/json
 		</http:request>
 		<ee:transform doc:name="Transform Message" doc:id="7a2b8c31-0e4f-4ad6-89d6-7c35c2286290" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="invForfrp" ><![CDATA[%dw 2.0
+output application/json
+var input1=vars.sampleColumn
+var input2=vars.dateVolumes
+---
+input1 map (item, index) -> {
+    (item[0]): input2[index][0]
+}]]></ee:set-variable>
+				<ee:set-variable variableName="x" ><![CDATA[%dw 2.0
 output application/json
 var input1=vars.sar
 var input2=vars.dateVolumes
 ---
 input1 map (item, index) -> {
     (item[0]): input2[index][0]
-}]]></ee:set-payload>
-			</ee:message>
+}]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="Transform Message" doc:id="26ee830f-1dd8-4290-a441-e334bd55328f" >
 			<ee:message >
@@ -250,45 +267,71 @@ output application/json
   "Products":
   {
     "Crude": {
-      "Quantity (bbls)": payload."Crude Received from Pipeline"[0]
+      "Quantity (bbls)": round(vars.x.."Crude Received from Pipeline"[0] default 0)
     },
     "Gasoline - Domestic": {
-      "Quantity (bbls)": payload."Gasoline - Q"[0]
+      "Quantity (bbls)": round(vars.y.CBOB[1] default 0)
     },
     "Gasoline - Export": {
-      "Quantity (bbls)": 2
+      "Quantity (bbls)": round(vars.y."CBOB for Export"[1] default 0)
     },
     "ULSD - Domestic": {
-      "Quantity (bbls)": 
-        (payload."Jet estimated production"[0] as Number) +
-        (payload."ULSD estimated production"[0] as Number)
+      "Quantity (bbls)": round(vars.y.ULSD[1] default 0)
     },
     "ULSHO - Export": {
-      "Quantity (bbls)": payload."ULSD for Export"[0]
+      "Quantity (bbls)": round(vars.y."ULSD for Export"[1] default 0)
     },
     "ATB": {
-      "Quantity (bbls)": payload."ATB estimated production"[0]
+      "Quantity (bbls)": round(vars.y.ATB[1] default 0)
     },
     "JPTS (includes sales to TSAR)": {
-      "Quantity (bbls)": 
-        (payload."JPTS production"[0] as Number) -
-        (payload."JPTS - Q"[0] default 0)
+      "Quantity (bbls)": round(vars.y."JPTS(includes Sales to TSAR)"[0] default 0)
     },
     "DHT Feed": {
-      "Quantity (bbls)": payload."DHT feed/LSD est. production/(feed to DHT)"[0]
+      "Quantity (bbls)": round(vars.x."DHT feed/LSD est. production/(feed to DHT)"[0] default 0)
     },
     "Naphtha": {
-      "Quantity (bbls)": payload."Naphtha production Tnk406"[0]
+      "Quantity (bbls)": round(vars.x."Naphtha production Tnk406"[0] default 0)
     },
     "Isomerate": {
-      "Quantity (bbls)": payload."Isomerate/LSR/Dehex est. production"[0]
+      "Quantity (bbls)": round(vars.x."Isomerate/LSR/Dehex est. production"[0] default 0)
     },
     "Reformate": {
-      "Quantity (bbls)": payload."Heavy/Full Ref. estimated production"[0]
+      "Quantity (bbls)": round(vars.x."Heavy/Full Ref. estimated production"[0] default 0)
     }
   }
 }
 ]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="get-assembly-report-values" doc:id="5325a560-dc79-40c0-8a72-bfed849236f9" >
+		<http:request method="GET" doc:name="get Products-Date column data" doc:id="eff48716-43eb-4ecd-a73d-ea11f2743cb3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/Products"]' target="assbProds" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="1cb7b78e-38c7-4193-acdf-3d7a343a94b3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/" ++ (vars.inventoryDate as Date {format: "d-MMM-yyyy"} as String {format: "d-MMM-yy"})]' target="assbDateVolumes" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="407acde7-0e85-4f8a-a960-5e4237ed08d7" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="y" ><![CDATA[%dw 2.0
+output application/json
+var input1=vars.assbProds
+var input2=vars.assbDateVolumes
+---
+input1 map (item, index) -> {
+    (item[0]): input2[index][0]
+}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 	</sub-flow>

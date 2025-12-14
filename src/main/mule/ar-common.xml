@@ -155,7 +155,7 @@ read(data, "application/json")]]></ee:set-variable>
 		</choice>
 	</sub-flow>
 	<sub-flow name="get-columnCountAndColumns-of-inventory-subflow" doc:id="63fbb482-aa57-4e4a-a86f-52f918e5230e" >
-		<http:request method="GET" doc:name="gets inventoryColumnCount" doc:id="73c32de1-f156-4b89-9940-c33a7adc8cb5" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++&quot;/columns/count&quot;]" target="inventoryColumnCount" targetValue="#[payload.value]">
+		<http:request method="GET" doc:name="gets inventoryColumnCount" doc:id="73c32de1-f156-4b89-9940-c33a7adc8cb5" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++&quot;/columns/count&quot;]" target="inventoryOrBreakoutColumnCount" targetValue="#[payload.value]">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -169,7 +169,7 @@ read(data, "application/json")]]></ee:set-variable>
 				<ee:set-variable variableName="numberToColumn" ><![CDATA[%dw 2.0
 output application/json
 
-var columnCount = if (vars.flag == "update") vars.existInvColIndex else vars.inventoryColumnCount
+var columnCount = if (vars.flag == "update") vars.existInvColIndex else vars.inventoryOrBreakoutColumnCount
 var nextColumnCount = columnCount + 1
 var preColumnCount = columnCount - 1
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -195,7 +195,7 @@ fun toExcelColumn(n) =
 		</ee:transform>
 	</sub-flow>
 	<sub-flow name="get-Inventory-template-columns-subflow" doc:id="6609f9f3-e772-4103-a2ca-71e3e0b8a940" >
-		<http:request method="GET" doc:name="get inventory products column " doc:id="8695e943-a0ff-4b4c-b86b-ec0e82429097" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/1&quot;]" >
+		<http:request method="GET" doc:name="get inventory products column " doc:id="8695e943-a0ff-4b4c-b86b-ec0e82429097" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/1&quot;]" >
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -213,7 +213,7 @@ output application/json
 payload.values]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<http:request method="GET" doc:name="gets the formulasColumns from Inventory sheet" doc:id="5c00fa2a-6843-4175-b1ee-7c3a6a89dcb0" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/Inventory/range(address='B1:B&quot; ++ (vars.inventoryRowCount)  as String ++&quot;')&quot;]" >
+		<http:request method="GET" doc:name="gets the formulasColumns from Inventory sheet" doc:id="5c00fa2a-6843-4175-b1ee-7c3a6a89dcb0" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ vars.sheet ++ &quot;/range(address='B1:B&quot; ++ (vars.inventoryRowCount)  as String ++&quot;')&quot;]" >
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -299,8 +299,8 @@ output application/x-www-form-urlencoded
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="tableNames" ><![CDATA[[p('inventory.tableName'), p('mtd.tableName'), p('tis.tableName'), p('tms6.tableName')]]]></ee:set-variable>
-				<ee:set-variable variableName="inventorySheetNames" ><![CDATA[[p('inventory.sheetName'), p('mtd.sheetName'), p('tis.sheetName'), p('tms6.sheetName')]]]></ee:set-variable>
+				<ee:set-variable variableName="tableNames" ><![CDATA[[p('inventory.tableName'), p('mtd.tableName'), p('tis.tableName'),p('assembly.tableName'), p('tms6.tableName')]]]></ee:set-variable>
+				<ee:set-variable variableName="inventorySheetNames" ><![CDATA[[p('inventory.sheetName'), p('mtd.sheetName'), p('tis.sheetName'),p('assembly.sheetName'), p('tms6.sheetName')]]]></ee:set-variable>
 				<ee:set-variable variableName="inventoryWorkbookTemplateValues" ><![CDATA[%dw 2.0
 output application/json
 ---
@@ -344,6 +344,7 @@ if(payload== p('inventory.sheetName')) ("A1:B" ++ (vars."row-count" + 1))
 else if(payload == p('mtd.sheetName')) ("A1:I" ++ (vars."row-count" + 1))
 else if(payload == p('tis.sheetName')) ("A1:B" ++ (vars."row-count" + 1))
 else if (payload == p('tms6.sheetName')) ("A1:B" ++ (vars."row-count" + 1))
+else if(payload == p('assembly.sheetName')) ("A1:C" ++ (vars."row-count" + 1))
 else "no sheet found"]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
@@ -405,12 +406,27 @@ output application/json
 output application/json
 ---
 {
-	"values":vars.oct31
+	"values":[["30-Sep-2025"]] ++ vars.oct31 - vars.oct31[0] 
 }]]]></http:body>
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="POST" doc:name="mtd new month creation and post data" doc:id="630b5121-1bc2-49c7-b2ff-03f257cd34f2" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/add&quot;]">
+			<ee:repeatable-file-store-stream bufferUnit="MB" />
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+var emptyRow = [""]   // change count as needed
+---
+{
+   "values":[["SEP-2025-END"]] ++ ((1 to 199) map (() -> emptyRow))
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
 		<flow-ref doc:name="calling token" doc:id="22ac9202-6078-4a66-9125-01083af83c92" name="get-token-subflow" />
@@ -444,7 +460,7 @@ output application/json
 output application/json
 ---
 {
-	"address": vars."inventorySheetNames"[3] ++ "!" ++ vars.tms6Range.rangeStart ++ ":" ++ vars.tms6Range.rangeEnd,
+	"address": vars."inventorySheetNames"[4] ++ "!" ++ vars.tms6Range.rangeStart ++ ":" ++ vars.tms6Range.rangeEnd,
 	"hasHeaders": true
 }]]]></http:body>
 				<http:headers ><![CDATA[#[output application/json
@@ -454,7 +470,7 @@ output application/json
 }]]]></http:headers>
 			</http:request>
 			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"name": vars."exportsReceiptsTableNames"[vars.counter - 1]&#10;}]' doc:name="new table name" doc:id="b8b48ca5-8608-46d9-b8c7-63e90bad988b" />
-			<http:request method="PATCH" doc:name="update table name" doc:id="98ce4a35-037a-4a2c-80d7-3407a428e80e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ vars.&quot;inventorySheetNames&quot;[3]  ++ &quot;/tables/&quot; ++ vars.&quot;autoGeneratedTableName&quot;]" >
+			<http:request method="PATCH" doc:name="update table name" doc:id="98ce4a35-037a-4a2c-80d7-3407a428e80e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot; ++ vars.&quot;inventorySheetNames&quot;[4]  ++ &quot;/tables/&quot; ++ vars.&quot;autoGeneratedTableName&quot;]" >
 				<http:headers ><![CDATA[#[output application/json
 ---
 {

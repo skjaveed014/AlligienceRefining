@@ -67,6 +67,14 @@ vars."aggregatedTMS6Data"]]></ee:set-variable>
 				</on-error-continue>
 			</error-handler>
 		</try>
+		<ee:transform doc:name="Transform Message" doc:id="c9ab6070-5874-44ce-83ef-207bad9e537d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="invOrBreakoutTableName" ><![CDATA[p('inventory.tableName')]]></ee:set-variable>
+				<ee:set-variable variableName="sheet" ><![CDATA[p('inventory.sheetName')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="6f044ad9-6d64-401e-b201-d5f4465f9da4" name="get-columnCountAndColumns-of-inventory-subflow" />
 		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="35e90aaa-3fbd-459a-a204-bafe32d6a133" name="get-Inventory-template-columns-subflow" />
 		<ee:transform doc:name="inventoryProductsData" doc:id="8f487cdc-f621-45c3-9dd4-ecc419acb632" >
@@ -119,16 +127,16 @@ var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"})
   "C1043": vars."aggregatedTMS6Data".TMS6_Table."JET-A BASE" default "0",
   "C1044": vars."aggregatedTMS6Data".TMS6_Table."KEROSENE BASE" default "0",
   "C1045": vars."aggregatedTMS6Data".TMS6_Table."JPTS BASE" default "0",
-  "C1046": -(vars."aggregatedTMS6Data".TMS6_Table."#2 ULSD BASE") default "0",
+  "C1046": -((vars."aggregatedTMS6Data".TMS6_Table."#2 ULSD BASE") default "0") - (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume default "0",
   "C1047": -(vars."aggregatedTMS6Data".TMS6_Table."LPG MIX BASE") default "0",
   "C1048": vars."aggregatedTMS6Data".TMS6_Table."HSR/NAPHTHA BASE" default "0",
   "C1049": vars."aggregatedTMS6Data".TMS6_Table."LSR/NAPHTHA BASE" default "0",
   "C1050": -(vars."aggregatedTMS6Data".TMS6_Table."#4 OIL BASE") default "0",
-  "C1051": vars."aggregatedTMS6Data".TMS6_Table."exports"."#2 ULSD BASE" default "0",
+  "C1051": (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume default "0",
   "C1052": vars."aggregatedTMS6Data".TMS6_Table."DHT FEEDSTOCK" default "0",
   "C1058": "0",//Product to Elmendorf
   "C1060": "0", 
-  "C1061": "21364" // METER CONTROL
+  "C1061": vars.meterControl // METER CONTROL
 }
 ]]></ee:set-variable>
 			</ee:variables>
@@ -182,5 +190,6 @@ output application/json
 				<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="71ab369d-4805-4bad-a2eb-74c439f5639e" name="MTD-Sub_Flow" />
 			</otherwise>
 		</choice>
+		<flow-ref doc:name="Flow Reference" doc:id="eb51a8f7-7265-4321-a85a-bfaafcd24b2d" name="assemblyreportSub_Flow"/>
 	</sub-flow>
 </mule>

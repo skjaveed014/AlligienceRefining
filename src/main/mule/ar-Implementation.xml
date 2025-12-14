@@ -6285,6 +6285,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 }]]></ee:set-variable>
 				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_1_25.pdf"]]></ee:set-variable>
 				<ee:set-variable variableName="inventoryDate"><![CDATA[["1-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["20076"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>
@@ -7588,6 +7589,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 }]]></ee:set-variable>
 				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_2_25.pdf"]]></ee:set-variable>
 				<ee:set-variable variableName="inventoryDate"><![CDATA[["2-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["22860"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>
@@ -11265,6 +11267,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 }]]></ee:set-variable>
 				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_5_25_3 Day.pdf"]]></ee:set-variable>
 				<ee:set-variable variableName="inventoryDate"><![CDATA[["3-Oct-2025","4-Oct-2025","5-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["22192"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>

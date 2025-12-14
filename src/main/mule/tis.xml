@@ -232,6 +232,14 @@ values: [[date]] ++ coldata.values ++ [[""],[""],[vars."replacedFormulas".values
 		</choice>
 	</sub-flow>
 	<sub-flow name="get-tis-data-by-inventory-date-subflow" doc:id="797f0205-5fc4-474f-93f4-960309a7bc37" >
+		<http:request method="GET" doc:name="get tis tank column" doc:id="9be6c6f6-c708-457c-9efd-24eb5abad4bd" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Tank&quot;]" target="tisTankColumn" targetValue="#[payload.values]">
+			<http:body><![CDATA[#[""]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
 		<http:request method="GET" doc:name="get tis product column" doc:id="66b82182-2edb-40e3-a438-0be31b48556e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Product&quot;]" target="tisProductColumn" targetValue="#[payload.values]">
 			<http:body><![CDATA[#[""]]]></http:body>
 			<http:headers><![CDATA[#[output application/json
@@ -254,6 +262,14 @@ values: [[date]] ++ coldata.values ++ [[""],[""],[vars."replacedFormulas".values
 				<ee:set-variable variableName="tisRawData" ><![CDATA[%dw 2.0
 output application/json
 var products= vars."tisProductColumn"
+var data = vars."tisValues"
+---
+(products[1 to sizeOf(products) - 1] map ((p, i) ->
+    {(p[0]): data[i + 1][0]}
+)) reduce ((acc, item) -> acc ++ item)]]></ee:set-variable>
+				<ee:set-variable variableName="tisTankRawData" ><![CDATA[%dw 2.0
+output application/json
+var products= vars."tisTankColumn"
 var data = vars."tisValues"
 ---
 (products[1 to sizeOf(products) - 1] map ((p, i) ->
