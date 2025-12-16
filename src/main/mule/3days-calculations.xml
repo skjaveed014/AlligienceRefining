@@ -369,6 +369,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 							<ee:set-variable variableName="date" ><![CDATA[payload]]></ee:set-variable>
 							<ee:set-variable variableName="sheetName" ><![CDATA["Daily"
 ]]></ee:set-variable>
+							<ee:set-variable variableName="inventoryDate" ><![CDATA[payload]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
 					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow"/>

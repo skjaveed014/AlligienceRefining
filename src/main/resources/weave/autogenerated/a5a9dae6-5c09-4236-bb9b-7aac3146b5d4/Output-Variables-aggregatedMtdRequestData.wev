@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_a5a9dae6_5c09_4236_bb9b_7aac3146b5d4_Output_Variables_aggregatedMtdRequestData = {| values: Any |}
+
