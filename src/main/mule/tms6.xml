@@ -45,6 +45,9 @@ output application/json
 				<when expression='#[payload=="TMS6_Exports_Table"]' >
 					<flow-ref doc:name="calling tms6-exports-data-Sub_Flow" doc:id="de9cb3e5-e791-483f-bf73-fc0bf996f64b" name="tms6-exports-data-subflow" />
 				</when>
+				<when expression='#[payload == "TMS6_Receipts_Table"]'>
+					<flow-ref doc:name="calling receipts-sub-flow" doc:id="d9ce0aec-3aed-4ed1-880a-ce7254d73048" name="receipts-sub-flow"/>
+				</when>
 				<otherwise >
 					<logger level="INFO" doc:name="Logger" doc:id="aba291f8-2bd6-44e0-8bbe-465002633ce0" />
 				</otherwise>
@@ -97,6 +100,60 @@ vars.data[0] filter (p) -> not (vars.existTanks contains (p.tank as String))]]><
 			<flow-ref doc:name="calling check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="7ce55dee-af37-4798-ae0d-b979315b9f35" name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" />
 			<flow-ref doc:name="calling tms6-post-subflow" doc:id="a43ce17e-0163-48b3-bc60-e071d38d767c" name="tms6-post-subflow" />
 		</foreach>
+	</sub-flow>
+	<sub-flow name="receipts-sub-flow" doc:id="550f540e-cdf5-4aaf-bcfa-6862083eb94e" >
+		<http:request method="GET" doc:name="gets stockholderLookupValues" doc:id="fde1ca10-0329-4491-b9ef-181c2981ced2" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.stockholders-Lookup.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('stockholdersLookup.tableName') ++ &quot;/rows?\$select=values&quot;]" target="stockholderLookupValues" targetValue="#[payload.value]" >
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer " ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="receipts stockholders lookup" doc:id="8353ee16-b4be-4a42-9def-97581915cbdd" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="receiptsStockholdersLookup" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.stockholderLookupValues
+    filter ($.values[0] contains "Receipt")
+    map {
+        stockholder: $.values[0][0],
+        product: $.values[0][1]
+    }
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="overeriding receiptsdata" doc:id="7e5066e8-1841-4c80-a102-803b8d12bd8e" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="receiptsData" ><![CDATA[%dw 2.0
+output application/json
+
+var input2 = vars.receiptsStockholdersLookup
+
+// "000ETH ETHANOL BASE" -> "ETHANOL BASE"
+fun trimProduct(p) =
+    (p splitBy " ")[1 to -1] joinBy " "
+
+---
+[(
+    flatten(vars.receiptsData)
+)
+filter ((item) ->
+    sizeOf(
+        input2
+            filter ((s) ->
+                upper(trimProduct(s.product))
+                    == upper(item.productName)
+            )
+    ) > 0
+)]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 	</sub-flow>
 	<sub-flow name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="586972d7-3bb1-4819-adbb-7f2df84d5d3e" >
 		<choice doc:name="Choice" doc:id="1daec891-1fb1-4eed-ad36-151358431bc9" >
@@ -296,7 +353,7 @@ var stockholdersPDFData = vars.tms6Data.StockHolders
 
 // Extract only the stockholder name part, cleaned
 fun cleanName(name) =
-    trim((name splitBy " ")[2 to -1] joinBy " ")
+    trim((trim(name) splitBy " ")[2 to -1] joinBy " ")
 
 ---
 stockholdersPDFData[0]

@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_550f540e_cdf5_4aaf_bcfa_6862083eb94e_Input_Variables_numberToColumn = {|
+  Number: Any, 
+  CurrentColumn: String, 
+  NextColumn: String, 
+  PreviousColumn: String
+|}
+
