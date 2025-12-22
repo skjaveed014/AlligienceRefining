@@ -16,9 +16,9 @@ output application/json
 var d = payload //date will come here
 ---
 {
- "my":(d as Date {format: "dd-MMM-yyyy"}) as String {format: "MMM-yyyy"},
- "month":(d as Date {format: "dd-MMM-yyyy"}) as String {format: "MMM"},
- "year":(d as Date {format: "dd-MMM-yyyy"}) as String {format: "yyyy"},
+ "my":(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM-yyyy"},
+ "month":(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM"},
+ "year":(d as Date {format: "d-MMM-yyyy"}) as String {format: "yyyy"},
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>

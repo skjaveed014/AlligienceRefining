@@ -74,27 +74,27 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
-			<artifactId>mule-plugin-idp-action-79d49089-659c-4f2a-b4c2-41000e6f1844</artifactId>
-			<version>1.0.0</version>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>mule4-microsoft-excel-online-connector</artifactId>
+			<version>1.1.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
 			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
 			<artifactId>mule-plugin-idp-action-85b98b9c-fd26-4637-85a2-f597b7fe512c</artifactId>
-			<version>1.0.0</version>
+			<version>1.1.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
+			<artifactId>mule-plugin-idp-action-79d49089-659c-4f2a-b4c2-41000e6f1844</artifactId>
+			<version>1.4.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
 			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
 			<artifactId>mule-plugin-idp-action-ff2f86c0-89d1-4b9f-b6ee-475b09ae34a8</artifactId>
-			<version>1.0.0</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.connectors</groupId>
-			<artifactId>mule4-microsoft-excel-online-connector</artifactId>
-			<version>1.1.1</version>
+			<version>1.8.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>

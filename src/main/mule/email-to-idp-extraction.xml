@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="read-email-to-idp-extraction-subflow" doc:id="a5058022-215c-491e-b60b-47217d266306" >
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var dateStr = (now() as String {format: "yyyy-MM-dd"})&#10;---&#10;"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages?\$filter=receivedDateTime%20ge%20" &#10;  ++ dateStr ++ "T00:00:00Z&amp;\$orderby=receivedDateTime%20desc"]' doc:name="Set Variable" doc:id="5ce6b8e1-7c9a-4d4a-b45e-b94e41e4f8d3" variableName="fetchMailUrl"/>
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var dateStr = (now() as String {format: "yyyy-MM-dd"})&#10;---&#10;"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages?\$filter=receivedDateTime%20ge%20" &#10;  ++ dateStr ++ "T00:00:00Z&amp;\$orderby=receivedDateTime%20desc&amp;\$top=1"]' doc:name="Set Variable" doc:id="5ce6b8e1-7c9a-4d4a-b45e-b94e41e4f8d3" variableName="fetchMailUrl"/>
 		<!-- [STUDIO:"reads Email"]<http:request method="GET" doc:name="reads Email" doc:id="b169c572-8af9-4890-8ad7-67f84aa8eef4" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/mailFolders/inbox/messages?$top=1">
 			<http:headers><![CDATA[#[output application/json
 &#45;&#45;-
@@ -23,7 +23,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:request>
 		<!-- [STUDIO:"mailId"]<set-variable value="#[payload.value.id[0&#93;&#93;" doc:name="mailId" doc:id="c8ce2009-3c04-4109-a273-d5bc667ab167" variableName="mailId" /> [STUDIO] -->
 		<!-- [STUDIO:"reads the mail-attachments"]<logger level="INFO" doc:name="reads the mail-attachments" doc:id="71839b73-6ed3-4bb5-9de3-db1c4eb83a3e" /> [STUDIO] -->
-		<foreach doc:name="For Each email" doc:id="c7460f50-48d7-4bd3-9ad6-d356761c2678" collection="#[payload.value]">
+		<choice doc:name="Choice" doc:id="4d15d8fd-2ed0-4bf6-bc27-f7e416171666" >
+			<when expression="#[!isEmpty(payload.value)]">
+				<foreach doc:name="For Each email" doc:id="c7460f50-48d7-4bd3-9ad6-d356761c2678" collection="#[payload.value]">
 			<choice doc:name="checks for the attachments in the Mail" doc:id="99595607-4874-460e-bb51-4132e71ce4a9">
 			<when expression="#[payload.hasAttachments == true]">
 				<!-- [STUDIO:"Read Attachments"]<http:request method="GET" doc:name="Read Attachments" doc:id="df12aaaf-c9e5-43b1-8d22-10c47f763667" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/messages/" ++ vars.mailId as String ++ "/attachments"&#93;' target="attachments" targetValue="#[payload.value&#93;">
@@ -34,9 +36,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 }&#93;&#93;&#93;></http:headers>
 				</http:request> [STUDIO] -->
 				<!-- [STUDIO:"calling pdf-idf-routing-subflow"]<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="9d4f7592-d29a-4fc1-9b0b-257830bd8b87" name="pdf-idf-routing-subflow" /> [STUDIO] -->
-					<ee:transform doc:name="Transform Message" doc:id="177b9f01-98e5-4bfa-8ad1-2ab4a7cb2eff" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+					<ee:transform doc:name="Transform Message" doc:id="177b9f01-98e5-4bfa-8ad1-2ab4a7cb2eff">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 var base = "https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages/"
 var endpath = "/attachments"
@@ -49,29 +51,29 @@ var mailid = payload.id
 						</ee:message>
 					</ee:transform>
 					<http:request method="GET" doc:name="read attachments in each mail" doc:id="9306055c-4e09-4be7-8fa1-30dc4367365c" url="#[payload.url]">
-						<http:headers ><![CDATA[#[output application/java
+						<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 					</http:request>
 					<foreach doc:name="For Each attachment" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
-						<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="36d660df-a568-4614-ba1b-e8943722e63e" variableName="pdfName"/>
-						<ee:transform doc:name="pdf-binary" doc:id="922647d5-c3d7-4204-ae91-543474e061b1" >
-							<ee:message >
-								<ee:set-payload ><![CDATA[%dw 2.0
+						<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="36d660df-a568-4614-ba1b-e8943722e63e" variableName="pdfName" />
+						<ee:transform doc:name="pdf-binary" doc:id="922647d5-c3d7-4204-ae91-543474e061b1">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/java
 import dw::core::Binaries
 ---
 Binaries::fromBase64(payload.contentBytes)]]></ee:set-payload>
 							</ee:message>
-							<ee:variables >
-								<ee:set-variable variableName="pdfName" ><![CDATA[payload.name]]></ee:set-variable>
+							<ee:variables>
+								<ee:set-variable variableName="pdfName"><![CDATA[payload.name]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
-						<ee:transform doc:name="idp request data" doc:id="f71ef000-ba06-44c3-a595-f033b9241016" >
-							<ee:message >
-								<ee:set-payload ><![CDATA[%dw 2.0
+						<ee:transform doc:name="idp request data" doc:id="f71ef000-ba06-44c3-a595-f033b9241016">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output multipart/form-data
 ---
 {
@@ -90,29 +92,34 @@ output multipart/form-data
 }]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="1cfd09ae-251a-466d-8208-46602f33b039" name="pdf-idf-routing-subflow"/>
+						<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="1cfd09ae-251a-466d-8208-46602f33b039" name="pdf-idf-routing-subflow" />
 					</foreach>
 			</when>
-			<otherwise>
+						<otherwise>
 				<logger level="INFO" doc:name="NO ATTACHMENTS" doc:id="1bc9bb5c-7b6a-4730-a886-727233b68f22" message="-----NO ATTACHMENTS-----" />
 			</otherwise>
 		</choice>
 		</foreach>
-		<ee:transform doc:name="idpResponseData" doc:id="233ea1c1-6428-4fc1-8867-a644ea049134" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="InventoryDate" ><![CDATA[vars."tsar-idp-response".InventoryDate ]]></ee:set-variable>
-				<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
+				<!-- [STUDIO:"idpResponseData"]<ee:transform doc:name="idpResponseData" doc:id="07d2547b-d1df-47ee-9609-3b66c7faada1" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="InventoryDate" ><![CDATA[vars."tsar-idp-response".InventoryDate &#93;&#93;></ee:set-variable>
+						<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 {	"Date": vars."idpResponseData".InventoryDate  ,
 	"Elmendorf": vars."elmendorfIdpResponse",
 	"TSAR": vars."tsarIdpResponse",
 	"TMS6": vars."tms6Data",
 	"Freepoint": vars."freepointIdpResponse"
-}]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
+}&#93;&#93;></ee:set-variable>
+					</ee:variables>
+				</ee:transform> [STUDIO] -->
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="no mails" doc:id="6c5313b8-a49d-4e1f-8a9a-3afb83ee57e2" message="NO MAILS YET"/>
+			</otherwise>
+		</choice>
 	</sub-flow>
 	<sub-flow name="pdf-idf-routing-subflow" doc:id="52e0406b-4c91-496d-8ec2-5a4a9a396997" >
 		<choice doc:name="routing pdfs to respective idp" doc:id="4edb50b9-6e4c-4b53-abbf-6332905f16cd" >

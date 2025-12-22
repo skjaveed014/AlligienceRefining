@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:idp-ar-tis-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100" xmlns:idp-ar-freepoint-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100"
-	xmlns:idp-ar-tms6-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100"
-	xmlns:idp-freepoint-invoice-idp-180="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180" xmlns:idp-tms6-100="http://www.mulesoft.org/schema/mule/idp-tms6-100" xmlns:idp-alligience-tms6-dp-110="http://www.mulesoft.org/schema/mule/idp-alligience-tms6-dp-110" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:idp-freepoint-invoice-idp-100="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100" xmlns:idp-elmendrof-inventory-pdf-100="http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:idp-ar-tms6-idp-180="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180" xmlns:idp-ar-tms6-idp-170="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170"
+	xmlns:idp-ar-tis-idp-140="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140"
+	xmlns:idp-ar-tis-idp-130="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130" xmlns:idp-ar-tms6-idp-150="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150" xmlns:idp-ar-freepoint-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110" xmlns:idp-ar-tms6-idp-140="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140" xmlns:idp-ar-tms6-idp-130="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130" xmlns:idp-ar-tis-idp-120="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120" xmlns:idp-ar-tms6-idp-120="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120" xmlns:idp-ar-tms6-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110" xmlns:idp-ar-tis-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110" xmlns:idp-ar-tis-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100" xmlns:idp-ar-freepoint-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100" xmlns:idp-ar-tms6-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100" xmlns:idp-freepoint-invoice-idp-180="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180" xmlns:idp-tms6-100="http://www.mulesoft.org/schema/mule/idp-tms6-100" xmlns:idp-alligience-tms6-dp-110="http://www.mulesoft.org/schema/mule/idp-alligience-tms6-dp-110" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:idp-freepoint-invoice-idp-100="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100" xmlns:idp-elmendrof-inventory-pdf-100="http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100/current/mule-idp-elmendrof-inventory-pdf-100.xsd
@@ -15,25 +15,57 @@ http://www.mulesoft.org/schema/mule/idp-tms6-100 http://www.mulesoft.org/schema/
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180/current/mule-idp-freepoint-invoice-idp-180.xsd
 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100/current/mule-idp-ar-tms6-idp-100.xsd
 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100/current/mule-idp-ar-freepoint-idp-100.xsd
-http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100/current/mule-idp-ar-tis-idp-100.xsd">
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100/current/mule-idp-ar-tis-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110/current/mule-idp-ar-tis-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110/current/mule-idp-ar-tms6-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120/current/mule-idp-ar-tms6-idp-120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120/current/mule-idp-ar-tis-idp-120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130/current/mule-idp-ar-tms6-idp-130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140/current/mule-idp-ar-tms6-idp-140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110/current/mule-idp-ar-freepoint-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150/current/mule-idp-ar-tms6-idp-150.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130/current/mule-idp-ar-tis-idp-130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140/current/mule-idp-ar-tis-idp-140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170/current/mule-idp-ar-tms6-idp-170.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180/current/mule-idp-ar-tms6-idp-180.xsd">
+	<idp-ar-freepoint-idp-110:config name="IDP___AR_Freepoint_IDP___1_1_0_Config" doc:name="IDP - AR-Freepoint-IDP - 1.1.0 Config" doc:id="d861f760-7bb1-483b-a204-3ea621dc310c" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="360000" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
+	<idp-ar-tis-idp-140:config name="IDP___AR_TIS_IDP___1_4_0_Config" doc:name="IDP - AR-TIS-IDP - 1.4.0 Config" doc:id="a2457e37-2e56-4469-9230-65b9b84da64d" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="360000" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
+	<idp-ar-tms6-idp-180:config name="IDP___AR_TMS6_IDP___1_8_0_Config" doc:name="IDP - AR-TMS6-IDP - 1.8.0 Config" doc:id="01a397e4-6bf3-496a-9c9f-725bce26dc4c" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="360000" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
 	<sub-flow name="freepoint-idp-extraction-sublow" doc:id="22efc239-0d1f-4966-b7ac-210889ff7a72" >
-		<idp-ar-freepoint-idp-100:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="134b61b3-1e76-4a6e-a79c-ff34f3695a19" config-ref="IDP___AR_Freepoint_IDP___1_0_0_Config"/>
+		<idp-ar-freepoint-idp-110:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="676808e1-032c-4179-b05b-1dbff6bf1a21" config-ref="IDP___AR_Freepoint_IDP___1_1_0_Config"/>
 		<try doc:name="Try" doc:id="0fcbe098-d4aa-49c5-a25a-b2085b9a19a9" >
-			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e1761641-9663-43dd-a30d-43c6009f976e" millisBetweenRetries="45000">
-				<idp-ar-freepoint-idp-100:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="0d68af01-b02c-4440-9c90-1c78181cae73" config-ref="IDP___AR_Freepoint_IDP___1_0_0_Config" execution-id="#[payload.id]"/>
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e1761641-9663-43dd-a30d-43c6009f976e">
+				<idp-ar-freepoint-idp-110:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="d5d04439-dcb3-466f-81b5-c90400d24898" config-ref="IDP___AR_Freepoint_IDP___1_1_0_Config" execution-id="#[payload.id]"/>
 				<choice doc:name="checks for status = SUCCEEDED" doc:id="132230ae-3266-4c1d-baa6-22fe5af3af4e" >
 					<when expression='#[payload.status == "SUCCEEDED"]'>
 						<ee:transform doc:name="freepointIdpResponse" doc:id="5afdb7ae-ca08-4417-9fa4-19609ed4a8f0">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-								<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[%dw 2.0
+								<ee:set-variable variableName="tempFreepointIdpResponse" ><![CDATA[%dw 2.0
 output application/json
 var data = payload.fields.FreepointData.value
 ---
 read(data, "application/json")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+						<ee:transform doc:name="Transform Message" doc:id="dbc71f2b-b726-4881-afc3-280fc68e0793" >
+							<ee:message >
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.tempFreepointIdpResponse]]></ee:set-variable>
+								<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempFreepointIdpResponse."Inventory Date"
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+								<ee:set-variable variableName="frpPdfName" ><![CDATA[vars.pdfName]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
 					</when>
 					<otherwise >
 						<ee:transform doc:name="Transform Message" doc:id="211dd45d-ea8f-43af-9cb3-fc194e87591f" >
@@ -53,24 +85,44 @@ output application/json
 		</try>
 	</sub-flow>
 	<sub-flow name="tms6-idp-extraction-subflow" doc:id="aceb36ca-bbd9-4fd0-9aba-6b177089a10c" >
-		<idp-ar-tms6-idp-100:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="2ead46a9-f1e0-4370-98cd-858cf886b0e5" config-ref="IDP___AR_TMS6_IDP___1_0_0_Config"/>
+		<idp-ar-tms6-idp-180:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="0e864e3d-af74-4e62-91ab-ca664452437e" config-ref="IDP___AR_TMS6_IDP___1_8_0_Config">
+		</idp-ar-tms6-idp-180:postdocumentactionexecution>
 		<try doc:name="Try" doc:id="1c7b5e8f-8218-4681-9556-56cc1d1940ca" >
-			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="434077f1-7463-4fc4-8490-6176d81be0c0" millisBetweenRetries="45000">
-				<idp-ar-tms6-idp-100:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="7770aa6c-7802-45fe-97d9-c758c834a83d" config-ref="IDP___AR_TMS6_IDP___1_0_0_Config" execution-id="#[payload.id]"/>
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="434077f1-7463-4fc4-8490-6176d81be0c0">
+				<idp-ar-tms6-idp-180:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="5cc02efb-d681-491a-aa79-b970bfb9a75d" config-ref="IDP___AR_TMS6_IDP___1_8_0_Config" execution-id="#[payload.id]"/>
 				<choice doc:name="checks for status = SUCCEEDED" doc:id="4f237160-5815-48e2-be23-2ae3a515ea58" >
 					<when expression='#[payload.status == "SUCCEEDED"]'>
 						<ee:transform doc:name="var tms6Data" doc:id="36f15003-4b53-4160-a3d5-86baeabecae1">
 			<ee:message />
 			<ee:variables>
-								<ee:set-variable variableName="tms6Data" ><![CDATA[%dw 2.0
+								<ee:set-variable variableName="tempTms6Data" ><![CDATA[%dw 2.0
 output application/json
 
-var data = payload.fields.data.value
+var data = payload.fields.TMS6Data.value
 
 ---
 read(data, "application/json")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+						<ee:transform doc:name="Transform Message" doc:id="7d78406e-b4e9-4114-b7a5-7bcbfd476cd9" >
+							<ee:message >
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="tms6Data" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.tms6Data ++ [(vars.tempTms6Data.InventoryDate) : vars.tempTms6Data]]]></ee:set-variable>
+								<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempTms6Data.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
 					</when>
 					<otherwise >
 						<ee:transform doc:name="Transform Message" doc:id="60ec7813-2ed5-4850-93e8-381e7117e46f" >
@@ -90,10 +142,10 @@ output application/json
 		</try>
 	</sub-flow>
 	<sub-flow name="tis-idp-extraction-subflow" doc:id="01012676-2bf1-4d80-81e6-45acfe78e470" >
-		<idp-ar-tis-idp-100:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="46f2c3a3-764f-443a-8461-768d7944049b" config-ref="IDP___AR_TIS_IDP___1_0_0_Config"/>
+		<idp-ar-tis-idp-140:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="f5080e1b-8b46-4174-bea0-62095091dcba" config-ref="IDP___AR_TIS_IDP___1_4_0_Config"/>
 		<try doc:name="Try" doc:id="96a51d56-d9c4-4872-8f27-c3b79dc40e17" >
-			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e9fad768-bf0e-4f2c-9ff7-956e79656854" millisBetweenRetries="45000">
-				<idp-ar-tis-idp-100:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="d7fd9118-a01d-4b74-9158-eae3d1f69f6b" config-ref="IDP___AR_TIS_IDP___1_0_0_Config" execution-id="#[payload.id]"/>
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e9fad768-bf0e-4f2c-9ff7-956e79656854">
+				<idp-ar-tis-idp-140:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="f8e3ca0f-0c44-4f80-967c-9eed8021e991" config-ref="IDP___AR_TIS_IDP___1_4_0_Config" execution-id="#[payload.id]"/>
 				<choice doc:name="checks for status = SUCCEEDED" doc:id="4e707442-c4eb-47a9-9fcb-0e0ce9d386f1" >
 					<when expression='#[payload.status == "SUCCEEDED"]'>
 						<ee:transform doc:name="Transform Message" doc:id="0f9fe6f9-3cce-4afb-89b6-217c23cf0875" >
@@ -124,7 +176,7 @@ output application/json
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-						<ee:set-variable variableName="elmendorfIdpResponse" ><![CDATA[%dw 2.0
+						<ee:set-variable variableName="tempElmendorfIdpResponse" ><![CDATA[%dw 2.0
 output application/json
 
 var data = payload.fields.TisData.value
@@ -133,19 +185,57 @@ var data = payload.fields.TisData.value
 read(data, "application/json")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+				<ee:transform doc:name="Transform Message" doc:id="8d749789-49a9-4fbe-8f2c-170c91fce380" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="elmendorfIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.elmendorfIdpResponse ++ [(vars.tempElmendorfIdpResponse.InventoryDate) : vars.tempElmendorfIdpResponse]]]></ee:set-variable>
+						<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempElmendorfIdpResponse.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
 			</when>
 			<when expression='#[(lower(vars."pdfName") contains "san antonio")]'>
 				<ee:transform doc:name="tsarIdpResponse" doc:id="56052154-515f-4a71-8b3d-2eda54baf526" >
 					<ee:message >
 					</ee:message>
 					<ee:variables >
-						<ee:set-variable variableName="tsarIdpResponse" ><![CDATA[%dw 2.0
+						<ee:set-variable variableName="tempTsarIdpResponse" ><![CDATA[%dw 2.0
 output application/json
 
 var data = payload.fields.TisData.value
 
 ---
 read(data, "application/json")]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<ee:transform doc:name="Transform Message" doc:id="e065740e-3329-4465-804c-b4df77c849a1" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="tsarIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.tsarIdpResponse ++ [(vars.tempTsarIdpResponse.InventoryDate) : vars.tempTsarIdpResponse]]]></ee:set-variable>
+						<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempTsarIdpResponse.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 			</when>

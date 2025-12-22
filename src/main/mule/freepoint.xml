@@ -210,7 +210,7 @@ output application/json
 	<sub-flow name="get-volumes-from-inventory-by-inventory-date-subflow" doc:id="61cbcd1b-96ba-44a0-847b-ea4b4420b7f3" >
 		<ee:transform doc:name="Transform Message" doc:id="bd065a2c-365b-4a96-a7f4-fd932bde90e0" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[(payload as Date {format: "dd-MMM-yyyy"}) as String {format: "d-MMM-yyyy"}]]></ee:set-payload>
+				<ee:set-payload ><![CDATA[(payload as Date {format: "d-MMM-yyyy"}) as String {format: "d-MMM-yyyy"}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<http:request method="GET" doc:name="get sample formulae column from inv" doc:id="e45458ad-956c-400a-a106-445dc734670b" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/Date"]' target="sampleColumn" targetValue="#[payload.values]">

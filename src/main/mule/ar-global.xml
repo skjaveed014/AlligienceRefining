@@ -21,7 +21,4 @@ http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/
 		<http:request-connection host="${http.graphApi.host}" protocol="HTTPS" port="${http.graphApi.port}"/>
 	</http:request-config>
 	<configuration-properties doc:name="Configuration properties" doc:id="d9f68474-128d-4c0b-9ca8-bd5666088f73" file="properties.yaml" />
-	<idp-ar-freepoint-idp-100:config name="IDP___AR_Freepoint_IDP___1_0_0_Config" doc:name="IDP - AR-Freepoint-IDP - 1.0.0 Config" doc:id="43d034d4-ad36-41b5-a8bd-63f00bac150d" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
-	<idp-ar-tis-idp-100:config name="IDP___AR_TIS_IDP___1_0_0_Config" doc:name="IDP - AR-TIS-IDP - 1.0.0 Config" doc:id="f5d265fc-c168-4377-8627-6de58ecb5e86" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
-	<idp-ar-tms6-idp-100:config name="IDP___AR_TMS6_IDP___1_0_0_Config" doc:name="IDP - AR-TMS6-IDP - 1.0.0 Config" doc:id="fc188680-a30c-4ccd-b79e-94abd0a4d5f0" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="${idp.responseTimeout}" property_client-id="${idp.clientId}" property_client-secret="${idp.clientSecret}" />
 </mule>

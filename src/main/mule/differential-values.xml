@@ -20,7 +20,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/json
 var d = vars.freepointIdpResponse."Inventory Date"
 ---
-(d as Date {format: "dd-MMM-yyyy"}) as String {format: "MMM-yyyy"}
+(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM-yyyy"}
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>

@@ -21,7 +21,7 @@ http.path.usedRange: "/range/usedRange"
 idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
 idp.port: "443"
 idp.protocol: "HTTPS"
-idp.responseTimeout: "30000"
+idp.responseTimeout: "120000"
 idp.clientId: "58e295be816e4999858a7ebf507b11ce"
 idp.clientSecret: "5f004Bd0F1F0445299f43b1Be34a6443"
 
