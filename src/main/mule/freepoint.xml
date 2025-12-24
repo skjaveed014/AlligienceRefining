@@ -17,70 +17,156 @@ output application/x-www-form-urlencoded
 	"grant_type":"client_credentials"
 }]]]></http:body>
 		</http:request>
-		<http:request method="GET" doc:name="get rowcount of frpdata sheet" doc:id="fb1c9f70-6375-48ad-a35e-de2ed66fd2ff" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/usedRange(valuesOnly=true)/rowCount"]' target="rowCount" targetValue="#[payload.value]">
-			<http:headers><![CDATA[#[output application/java
+		<ee:transform doc:name="Transform Message" doc:id="e0f21bf2-1603-4985-a7c3-1c382f1f3e17" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/usedRange(valuesOnly=true)/rowCount"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="freepoint-common-requestor-Sub_Flow" doc:id="a5e650d7-af8d-4e2a-9d24-ccb75e1c90db" name="freepoint-common-requestor-Sub_Flow"/>
+		<set-variable value="#[payload.value]" doc:name="Set Variable" doc:id="0ccfb2ad-9122-40a0-9fc1-cad02566f8fa" variableName="rowCount"/>
+		<!-- [STUDIO:"get rowcount of frpdata sheet"]<http:request method="GET" doc:name="get rowcount of frpdata sheet" doc:id="fb1c9f70-6375-48ad-a35e-de2ed66fd2ff" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/usedRange(valuesOnly=true)/rowCount"&#93;' target="rowCount" targetValue="#[payload.value&#93;">
+			<http:headers><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
-		<http:request method="GET" doc:name="get frp sample products" doc:id="75fefc65-f35c-4948-a04a-825ce22a44a7" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/tables/Table1/columns/Products" target="sampleProducts" targetValue="#[payload.values]">
-			<http:headers><![CDATA[#[output application/java
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="6077f64a-d400-4815-8133-72c5d45d8d32" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/tables/Table1/columns/Products"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="freepoint-common-requestor-Sub_Flow" doc:id="fa5614f8-6b92-4088-aca5-b81e8e95a0c3" name="freepoint-common-requestor-Sub_Flow"/>
+		<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="cf8db6d3-1ba4-406a-984e-a18d1358db7e" variableName="sampleProducts"/>
+		<!-- [STUDIO:"get frp sample products"]<http:request method="GET" doc:name="get frp sample products" doc:id="75fefc65-f35c-4948-a04a-825ce22a44a7" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/tables/Table1/columns/Products" target="sampleProducts" targetValue="#[payload.values&#93;">
+			<http:headers><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var rowCount = vars.rowCount&#10;var productCount = sizeOf(vars.sampleProducts)&#10;---&#10;{&#10;    range: &#10;        if (rowCount == 1)&#10;            "A1:J" ++ productCount&#10;        else&#10;            "A" ++ (rowCount + 2) ++ ":" ++ "J" ++ ((rowCount + 1) + productCount)&#10;}]' doc:name="Setting new table range" doc:id="db911c9d-0e1e-4700-a536-ec2df472df26" variableName="range" />
 		<set-variable value='#["freepoint_" ++ vars.date replace "-" with "_"]' doc:name="Setting table name" doc:id="dd1a3803-9385-4a43-bb6f-6b208c7b95bc" variableName="tableName" />
-		<http:request method="POST" doc:name="adding tables to freepoindata" doc:id="1d4d8449-79fc-4144-8dc9-ea87dd85d538" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName++ "/tables/add"]'>
+		<ee:transform doc:name="adding tables to freepoindata" doc:id="47e5fc72-5430-4f95-9267-80420278466d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName++ "/tables/add"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "address": vars.range.range,
+  "hasHeaders": true
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="c895c419-b95a-40d1-b408-8d2a64659844" name="freepoint-common-requestor-Sub_Flow"/>
+		<!-- [STUDIO:"adding tables to freepoindata"]<http:request method="POST" doc:name="adding tables to freepoindata" doc:id="1d4d8449-79fc-4144-8dc9-ea87dd85d538" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName++ "/tables/add"&#93;'>
 			<http:body><![CDATA[#[{
   "address": vars.range.range,
   "hasHeaders": true
-}]]]></http:body>
+}&#93;&#93;&#93;></http:body>
 			<http:headers><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="df035caa-2ee4-4a59-ba5c-bc7761c84a09" >
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<ee:transform doc:name="renaming table in frpdata" doc:id="df035caa-2ee4-4a59-ba5c-bc7761c84a09" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="tableRenameUrl" ><![CDATA[%dw 2.0
 output application/json
 ---
-"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<http:request method="PATCH" doc:name="renaming table in frpdata" doc:id="9b19fede-06ff-42bc-81a8-6cda34b9d6a6" url="#[vars.tableRenameUrl]">
-			<http:body><![CDATA[#[%dw 2.0
+"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
+				<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
     "name":vars.tableName
-}]]]></http:body>
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="52e2fbf8-ef88-4dc2-a86f-b399569571ee" name="freepoint-common-requestor-Sub_Flow"/>
+		<!-- [STUDIO:"renaming table in frpdata"]<http:request method="PATCH" doc:name="renaming table in frpdata" doc:id="9b19fede-06ff-42bc-81a8-6cda34b9d6a6" url="#[vars.tableRenameUrl&#93;">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+    "name":vars.tableName
+}&#93;&#93;&#93;></http:body>
 			<http:headers><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
-		<http:request method="GET" doc:name="get sample number format from frp sheet" doc:id="b1d62f92-34c7-4ece-b96a-797b1e477b6d" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/usedRange(valuesOnly=true)" target="sampleFormat" targetValue="#[payload.numberFormat]">
-			<http:headers><![CDATA[#[output application/java
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<ee:transform doc:name="get sample number format from frp sheet" doc:id="b043d5de-d1f2-4d63-ac90-8638c8a4d35a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/usedRange(valuesOnly=true)"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="3af91dbc-9612-44c5-861e-91c22ae48d19" name="freepoint-common-requestor-Sub_Flow"/>
+		<set-variable value="#[payload.numberFormat]" doc:name="Set Variable" doc:id="6a913ada-f090-4cbd-a693-41d99c0945eb" variableName="sampleFormat"/>
+		<!-- [STUDIO:"get sample number format from frp sheet"]<http:request method="GET" doc:name="get sample number format from frp sheet" doc:id="b1d62f92-34c7-4ece-b96a-797b1e477b6d" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/usedRange(valuesOnly=true)" target="sampleFormat" targetValue="#[payload.numberFormat&#93;">
+			<http:headers><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
-		<http:request method="GET" doc:name="get sample table formulas" doc:id="63177840-b6fd-4a76-9eb6-2e4f159bb5c2" url="#[&quot;https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:J&quot; ++ sizeOf(vars.sampleProducts) ++ &quot;')?%24select=formulas&quot;]">
-			<http:headers><![CDATA[#[output application/java
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<ee:transform doc:name="get sample table formulas" doc:id="2bbafff4-acaa-4308-8fbb-0898df3fb08a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:J" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="freepoint-common-requestor-Sub_Flow" doc:id="065f811a-5a78-4eb8-8626-cd464f6f1e4d" name="freepoint-common-requestor-Sub_Flow"/>
+		<!-- [STUDIO:"get sample table formulas"]<http:request method="GET" doc:name="get sample table formulas" doc:id="63177840-b6fd-4a76-9eb6-2e4f159bb5c2" url="#[&quot;https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:J&quot; ++ sizeOf(vars.sampleProducts) ++ &quot;')?%24select=formulas&quot;&#93;">
+			<http:headers><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
 		<ee:transform doc:name="incremented formulas" doc:id="245e32a0-167b-4235-9635-c684d8352cb4">
 			<ee:message>
 			</ee:message>
@@ -334,5 +420,15 @@ input1 map (item, index) -> {
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+	</sub-flow>
+	<sub-flow name="freepoint-common-requestor-Sub_Flow" doc:id="e4a216ac-835e-4341-b81b-d04e5a094a22" >
+		<http:request method="#[vars.vmethod]" doc:name="freepoint common requestor" doc:id="a6199a5f-ca67-451a-a233-ebdb48d6d76d" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
 	</sub-flow>
 </mule>

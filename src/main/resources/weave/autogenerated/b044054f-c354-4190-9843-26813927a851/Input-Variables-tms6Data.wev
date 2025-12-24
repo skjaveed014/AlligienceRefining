@@ -1,0 +1,22 @@
+%dw 2.0
+
+type auto_b044054f_c354_4190_9843_26813927a851_Input_Variables_tms6Data = {|
+  date: String, 
+  products: Array<{|    tank: String,     productName: String,     volume: String,     stockAdjust: String  |}>, 
+  StockHolders: {|
+    "Saratoga Rack Marketing": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Tartan Oil, LLC": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "The San Antonio Refinery": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Lazarus Nixon Refinery": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Poet Ethanol Products": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Vantage - ADM": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Kinder Morgan": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    Biourja: Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Freepoint LLC": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Brownsville GTR LLC": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Texas TransChem": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "Serv Energy LLC": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>, 
+    "US Energy": Array<{|      tank: String,       productName: String,       volume: String,       stockAdjust: String    |}>
+  |}
+|}
+

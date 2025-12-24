@@ -1,0 +1,18 @@
+%dw 2.0
+
+type auto_1069c413_fd22_4a5a_9178_ee4a18d6456d_Input_Variables_freepointData = {|
+  Products*: {|
+    Crude: {| "Quantity (bbls)": Any |}, 
+    "Gasoline - Domestic": {| "Quantity (bbls)": Any |}, 
+    "Gasoline - Export": {| "Quantity (bbls)": Number |}, 
+    "ULSD - Domestic": {| "Quantity (bbls)": Number |}, 
+    "ULSHO - Export": {| "Quantity (bbls)": Any |}, 
+    ATB: {| "Quantity (bbls)": Any |}, 
+    "JPTS (includes sales to TSAR)": {| "Quantity (bbls)": Any |}, 
+    "DHT Feed": {| "Quantity (bbls)": Any |}, 
+    Naphtha: {| "Quantity (bbls)": Any |}, 
+    Isomerate: {| "Quantity (bbls)": Any |}, 
+    Reformate: {| "Quantity (bbls)": Any |}
+  |}
+|}
+

@@ -324,7 +324,7 @@ output application/json
 var input1 = vars.freepointIdpResponse
 
 // Function to parse string like "26-Aug-2025" into a date
-fun toDate(str) = (str as Date { format: "dd-MMM-yyyy" })
+fun toDate(str) = (str as Date { format: "d-MMM-yyyy" })
 
 var startDate = toDate(input1.PriorInventoryDate) + |P1D|   // day after prior inventory date
 var endDate = toDate(input1."Inventory Date")
@@ -332,7 +332,7 @@ var endDate = toDate(input1."Inventory Date")
 // Generate all dates between startDate and endDate (inclusive)
 fun dateRange(from, to) =
     if (from > to) [] 
-    else [from as String {format: "dd-MMM-yyyy"}] ++ dateRange(from + |P1D|, to)
+    else [from as String {format: "d-MMM-yyyy"}] ++ dateRange(from + |P1D|, to)
 
 var datesList = dateRange(startDate, endDate)
 

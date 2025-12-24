@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_63fbb482_aa57_4e4a_a86f_52f918e5230e_Input_Variables_tanksCountInSheet = Any
-

@@ -18,7 +18,7 @@ http.path.usedRange: "/range/usedRange"
 
 
 
-idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
+idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com111"
 idp.port: "443"
 idp.protocol: "HTTPS"
 idp.responseTimeout: "120000"
@@ -56,4 +56,9 @@ freepoint.folderName: "Freepoint_Workbooks"
 inventory_&_sales.foldername: "Inventory_&_Sales_Workbooks"
 workbook.freepoint.sample.workbookId: "01NVG26FR4GIIBJ5JK4VAJYBF7KK7Q7XOJ"
 freepoint.sample.sheetName: "Freepoint-Sample-Sheet.xlsx"
+
+mail:
+  to: "dharani.p@aa2it.com"
+  from: "dpatteboyina@mdwhub.com"
+  cc: "javeed.s@aa2it.com"
 
