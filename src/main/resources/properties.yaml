@@ -3,7 +3,7 @@ graphApi.auth.protocol: "HTTPS"
 graphApi.auth.host: "login.microsoftonline.com"
 graphApi.auth.port: "443"
 graphApi.auth.clientId: "4c5cf168-670d-4681-96f6-01b98b8fd79e"
-graphApi.auth.clientSecret: "7Gk8Q~LlwETRGls.54RDQ2TyXDqKNUNIKw5~TbwC"
+graphApi.auth.clientSecret: "qTy8Q~9onOmXgnIxG7GkjO9KVQt.EpsvhWImmar4"
 graphApi.auth.scope: "https://graph.microsoft.com/.default"
 graphApi.auth.grantType: "client_credentials"
 
@@ -18,7 +18,7 @@ http.path.usedRange: "/range/usedRange"
 
 
 
-idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com111"
+idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
 idp.port: "443"
 idp.protocol: "HTTPS"
 idp.responseTimeout: "120000"
