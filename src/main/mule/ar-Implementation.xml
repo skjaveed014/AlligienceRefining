@@ -6310,43 +6310,43 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<logger level="INFO" doc:name="Logger" doc:id="cc8fc0d5-6f0a-4e70-b24e-c14cd57e63bf" message="other data"/>
 			</otherwise>
 		</choice> [STUDIO] -->
-		<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="completeSet" ><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 vars.inventoryDate map (item, index) -> {
     Date: item,
-    Elmendorf: vars.elmendorfIdpResponse[item],
-    "TSAR": vars."tsarIdpResponse"[item],
-	"TMS6": vars."tms6Data"[item],
+    Elmendorf: vars.elmendorfIdpResponse[item&#93;,
+    "TSAR": vars."tsarIdpResponse"[item&#93;,
+	"TMS6": vars."tms6Data"[item&#93;,
     Freepoint: vars.freepointIdpResponse
 }
-]]></ee:set-variable>
-				<ee:set-variable variableName="meterControl" ><![CDATA["20076"]]></ee:set-variable>
+&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="meterControl" ><![CDATA["20076"&#93;&#93;></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
-		<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet]">
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet&#93;">
 			<ee:transform doc:name="idpResponseData" doc:id="a7fef172-80b3-4a96-8c60-7b8c84c24e58">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
 				<ee:set-variable variableName="idpResponseData"><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 {	"Date": payload.Date  ,
 	"Elmendorf": payload.Elmendorf,
 	"TSAR": payload.TSAR,
 	"TMS6": payload.TMS6,
 	"Freepoint": payload.Freepoint
-}]]></ee:set-variable>
-					<ee:set-variable variableName="inventoryDate" ><![CDATA[payload.Date]]></ee:set-variable>
+}&#93;&#93;></ee:set-variable>
+					<ee:set-variable variableName="inventoryDate" ><![CDATA[payload.Date&#93;&#93;></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			<flow-ref doc:name="calling email-reading-to-inventory-subflow" doc:id="f620afb2-6629-4b42-b2e9-30f5c0909a64" name="email-reading-to-inventory-subflow" />
-		</foreach>
+		</foreach> [STUDIO] -->
 		<flow-ref doc:name="Flow Reference" doc:id="64da74af-4987-4506-8bde-3271b6f5eee7" name="3days-calculationsSub_Flow"/>
 	</sub-flow>
 	<sub-flow name="email-reading-to-inventory-subflow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:idp-freepoint-invoice-idp-170="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170" xmlns:idp-freepoint-invoice-idp-160="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-160"
-	xmlns:idp-freepoint-invoice-idp-150="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-150"
-	xmlns:idp-freepoint-invoice-idp-140="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-140" xmlns:idp-freepoint-invoice-idp-120="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-120" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:idp-freepoint-invoice-idp-170="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170"
+	xmlns:idp-freepoint-invoice-idp-160="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-160"
+	xmlns:idp-freepoint-invoice-idp-150="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-150" xmlns:idp-freepoint-invoice-idp-140="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-140" xmlns:idp-freepoint-invoice-idp-120="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-120" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110/current/mule-idp-freepoint-invoice-idp-110.xsd
@@ -10,141 +10,8 @@ http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-120 http://www.mul
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-140 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-140/current/mule-idp-freepoint-invoice-idp-140.xsd
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-150 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-150/current/mule-idp-freepoint-invoice-idp-150.xsd
 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-160 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-160/current/mule-idp-freepoint-invoice-idp-160.xsd
-http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170/current/mule-idp-freepoint-invoice-idp-170.xsd">
-	<!-- [STUDIO:"3days-calculationsFlow"]<flow name="3days-calculationsFlow" doc:id="8b578d22-da5d-48b9-b7f8-0292193f9cb5" >
-		<http:listener doc:name="Listener" doc:id="760d5d01-4d20-4e88-9a49-27959e686617" config-ref="HTTP_Listener_config" path="3dayscalc"/>
-		<http:request method="POST" doc:name="tokengeneration" doc:id="27b8bee1-9368-473e-8107-938008b936e0" url="https://login.microsoftonline.com/82bd2b79-844a-4f08-bd21-0949a05fcedb/oauth2/v2.0/token" target="token" targetValue="#[payload.access_token&#93;">
-			<http:body><![CDATA[#[%dw 2.0
-output application/x-www-form-urlencoded
-&#45;&#45;-
-{
-	"client_id":"37f36d2d-0a89-483f-aef6-cf7610581a74",
-	"client_secret":"Yoz8Q~qYZ7o.2c2zur3EWhLTu.aSWjHZSlsNxa6-",
-	"scope":"https://graph.microsoft.com/.default",
-	"grant_type":"client_credentials"
-}&#93;&#93;&#93;></http:body>
-		</http:request>
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var dateStr = (now() as String {format: "yyyy-MM-dd"})&#10;&#45;&#45;-&#10;"https://graph.microsoft.com/v1.0/users/dpatteboyina@mdwhub.com/messages?\$filter=receivedDateTime%20ge%20" &#10;  ++ dateStr ++ "T00:00:00Z&amp;\$orderby=receivedDateTime%20desc"&#93;' doc:name="Set Variable" doc:id="555e1236-c3ef-4a60-8b11-c46cc4a64e48" variableName="fetchMailUrl"/>
-		<http:request method="GET" doc:name="fetchingmails" doc:id="fcede46b-2fc6-4140-8f35-fb897c1c43e3" url='#[vars.fetchMailUrl&#93;' >
-			<http:headers ><![CDATA[#[output application/java
-&#45;&#45;-
-{
-	"Authorization" : "Bearer " ++ vars.token
-}&#93;&#93;&#93;></http:headers>
-		</http:request>
-		<foreach doc:name="For Each" doc:id="772ee581-8e8a-4fca-adab-a581b4bb48b4" collection="#[payload.value&#93;">
-			<choice doc:name="Choice" doc:id="1be3496f-b888-4ebe-94c4-ae3af8c4012c">
-			<when expression="#[payload.hasAttachments== true&#93;">
-					<ee:transform doc:name="Transform Message" doc:id="845cb811-d7e0-42e5-b26a-67cac9064847">
-				<ee:message>
-					<ee:set-payload><![CDATA[%dw 2.0
-output application/java
-var base = "https://graph.microsoft.com/v1.0/users/dpatteboyina@mdwhub.com/messages/"
-var endpath = "/attachments"
-var mailid = payload.id
-&#45;&#45;-
-{
-    url: base ++ mailid ++ endpath
-}
-&#93;&#93;></ee:set-payload>
-				</ee:message>
-			</ee:transform>
-					<http:request method="GET" doc:name="fetching mail data" doc:id="c9e31d9a-cac0-4e9c-9c69-cc189a772770" url="#[payload.url&#93;">
-						<http:headers><![CDATA[#[output application/java
-&#45;&#45;-
-{
-	"Authorization" : "Bearer" ++ vars.token
-}&#93;&#93;&#93;></http:headers>
-					</http:request>
-					<foreach doc:name="For Each" doc:id="dd40ed06-3017-48cc-afe8-526784bf316a" collection="#[payload.value&#93;">
-						<ee:transform doc:name="Transform Message" doc:id="f2a32248-c956-43b7-86b4-51ccb8c75ff2">
-						<ee:message>
-								<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
-import dw::core::Binaries
-&#45;&#45;-
-Binaries::fromBase64(payload.contentBytes)&#93;&#93;></ee:set-payload>
-						</ee:message>
-							<ee:variables >
-								<ee:set-variable variableName="pdfNames" ><![CDATA[payload.name&#93;&#93;></ee:set-variable>
-							</ee:variables>
-					</ee:transform>
-						<ee:transform doc:name="Transform Message" doc:id="3e1389ee-6e16-4dc5-8b20-09fec2aa814a" >
-							<ee:message >
-								<ee:set-payload ><![CDATA[%dw 2.0
-output multipart/form-data
-&#45;&#45;-
-{
-    parts : {
-        file : {
-            headers : {
-                "Content-Disposition" : {
-                    "name": "file",
-                    "filename": vars.pdfNames
-                    },
-                "Content-Type" : "application/pdf"
-                },
-            content : payload
-            }
-        }
-}&#93;&#93;></ee:set-payload>
-							</ee:message>
-						</ee:transform>
-						<flow-ref doc:name="Flow Reference" doc:id="70652de7-317b-4941-b0f2-98ff70a5188b" name="3days-calculationsSub_Flow"/>
-					</foreach>
-				</when>
-				<otherwise >
-					<ee:transform doc:name="Transform Message" doc:id="aa704aba-e84a-456d-a133-c5f252a1579f" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[payload&#93;&#93;></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-				</otherwise>
-		</choice>
-		</foreach>
-		<ee:transform doc:name="Transform Message" doc:id="189fd845-ccb2-47d0-ac37-f3b0e17bbef1" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="inventoryDates" ><![CDATA[%dw 2.0
-output application/json
-
-var input1 = payload
-
-// function to parse string like "26-Aug-2025" into a date
-fun toDate(str) = (str as Date { format: "dd-MMM-yyyy" })
-
-var startDate = toDate(input1.PriorInventoryDate) + |P1D|   // day after prior inventory date
-var endDate = toDate(input1."Inventory Date")
-
-// generate all dates between startDate and endDate (inclusive)
-fun dateRange(from, to) =
-    if (from > to) [&#93; 
-    else [from as String {format: "dd-MMM-yyyy"}&#93; ++ dateRange(from + |P1D|, to)
-
-&#45;&#45;-
-dateRange(startDate, endDate)
-&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<choice doc:name="Choice" doc:id="ac8ee16d-fc6b-4719-964f-c506e313c779" >
-			<when expression="#[sizeOf(vars.inventoryDates)&gt;1&#93;"/>
-			<otherwise >
-				<flow-ref doc:name="Flow Reference" doc:id="0b7ccaff-2a23-4909-a39a-e8ccd203be37" name="table-creation-addDateColumn"/>
-			</otherwise>
-		</choice>
-	</flow> [STUDIO] -->
-	<!-- [STUDIO:"3days-calculationsFlow"]<flow name="3days-calculationsFlow" doc:id="8c2f076e-0287-469e-b537-e7e45475926b" >
-		<http:listener doc:name="Listener" doc:id="b837996c-987a-4f29-8ae7-46f3a8084b1b" config-ref="HTTP_Listener_config" path="/3dayscalc"/>
-		<ee:transform doc:name="Transform Message" doc:id="8e24092a-75ee-4a2b-bda5-dfc7211ef035" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="invData" ><![CDATA[payload&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="2af78e90-289c-4c16-8d84-c5b7c0161412" name="3days-calculationsSub_Flow"/>
-	</flow> [STUDIO] -->
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-170/current/mule-idp-freepoint-invoice-idp-170.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
 	<flow name="3days-calculationsFlow" doc:id="40171e6f-0614-48fc-a146-32fbe1935e30" >
 		<http:listener doc:name="Listener" doc:id="0e31df76-5c77-4f51-8d06-3c5d0ad772a5" config-ref="HTTP_Listener_config" path="/qb"/>
 		<flow-ref doc:name="Flow Reference" doc:id="455eae1b-aca7-4a98-aa24-788c42b9b329" name="3days-calculationsSub_Flow"/>
@@ -303,22 +170,22 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<flow-ref doc:name="calling month sheet creation flow" doc:id="e2fec088-ad7d-4da8-9a93-fb993bd97159" name="months-sheet-creationFlow"/>
-		<ee:transform doc:name="Transform Message" doc:id="a02e25cc-0360-45a5-9571-48b77b425f84" >
-			<ee:message >
+		<ee:transform doc:name="Transform Message" doc:id="a02e25cc-0360-45a5-9571-48b77b425f84">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
-				<ee:set-variable variableName="pdfName" ><![CDATA[vars.frpPdfName]]></ee:set-variable>
+			<ee:variables>
+				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+				<ee:set-variable variableName="pdfName"><![CDATA[vars.frpPdfName]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<choice doc:name="Choice" doc:id="3120fa90-34e8-4123-93c8-83b25d95ba9c" >
+		<choice doc:name="Choice" doc:id="3120fa90-34e8-4123-93c8-83b25d95ba9c">
 			<when expression='#[(vars.pdfName splitBy " ")[2] endsWith "_3"]'>
 				<ee:transform doc:name="sheet2" doc:id="c35cfc3a-6923-4e1a-9984-3f5ee11358ee">
 			<ee:message>
 			</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="sheetName" ><![CDATA["3days"]]></ee:set-variable>
-						<ee:set-variable variableName="days3" ><![CDATA[%dw 2.0
+					<ee:variables>
+						<ee:set-variable variableName="sheetName"><![CDATA["3days"]]></ee:set-variable>
+						<ee:set-variable variableName="days3"><![CDATA[%dw 2.0
 output application/json
 
 var input1 = vars.freepointIdpResponse
@@ -348,56 +215,53 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
     tableDate: tableDate
 }
 ]]></ee:set-variable>
-						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
-						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
+						<ee:set-variable variableName="freepointData"><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+						<ee:set-variable variableName="pricingDate"><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
 					</ee:variables>
 		</ee:transform>
-				<ee:transform doc:name="Transform Message" doc:id="9ff3581d-aa5b-41ba-b35f-7b059aaae178" >
-					<ee:message >
+				<ee:transform doc:name="Transform Message" doc:id="9ff3581d-aa5b-41ba-b35f-7b059aaae178">
+					<ee:message>
 					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="date" ><![CDATA[vars.days3.tableDate]]></ee:set-variable>
+					<ee:variables>
+						<ee:set-variable variableName="date"><![CDATA[vars.days3.tableDate]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<flow-ref doc:name="calling table creation add date column flow" doc:id="4a753f31-f0e0-4e11-bd6d-1f2c31a11e3b" name="freepoint-table-creation-add-date-column"/>
-				<set-variable value='"Sheet1"' doc:name="Set Variable" doc:id="1f3fe00e-c224-426d-b107-bf6529cddb23" variableName="sheetName"/>
+				<flow-ref doc:name="calling table creation add date column flow" doc:id="4a753f31-f0e0-4e11-bd6d-1f2c31a11e3b" name="freepoint-table-creation-add-date-column" />
+				<set-variable value='"Sheet1"' doc:name="Set Variable" doc:id="1f3fe00e-c224-426d-b107-bf6529cddb23" variableName="sheetName" />
 				<foreach doc:name="For Each" doc:id="7513f803-e4a4-41bb-bc20-e56567bc3873" collection="#[vars.days3.dates]">
-					<ee:transform doc:name="Transform Message" doc:id="cb037ec1-7d90-4951-9f67-aafae8a819de" >
-						<ee:message >
+					<ee:transform doc:name="Transform Message" doc:id="cb037ec1-7d90-4951-9f67-aafae8a819de">
+						<ee:message>
 						</ee:message>
-						<ee:variables >
-							<ee:set-variable variableName="date" ><![CDATA[payload]]></ee:set-variable>
-							<ee:set-variable variableName="sheetName" ><![CDATA["Daily"
+						<ee:variables>
+							<ee:set-variable variableName="date"><![CDATA[payload]]></ee:set-variable>
+							<ee:set-variable variableName="sheetName"><![CDATA["Daily"
 ]]></ee:set-variable>
-							<ee:set-variable variableName="inventoryDate" ><![CDATA[payload]]></ee:set-variable>
+							<ee:set-variable variableName="inventoryDate"><![CDATA[payload]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
-					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow"/>
-					<flow-ref doc:name="calling get-assembly-report-values" doc:id="913c9de9-2d08-470b-8fa9-3ebbe3bfc344" name="get-assembly-report-values"/>
+					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow" />
+					<flow-ref doc:name="calling get-assembly-report-values" doc:id="913c9de9-2d08-470b-8fa9-3ebbe3bfc344" name="get-assembly-report-values" />
 					<flow-ref doc:name="calling individual 3days sub flow" doc:id="c8e0b0a5-a5ae-4238-bd67-1127c913cf1e" name="get-volumes-from-inventory-by-inventory-date-subflow" />
-					<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="freepoint-table-creation-add-date-column"/>
-					<flow-ref doc:name="calling trueup flow" doc:id="6a69e424-861a-47ce-b312-b7a1efba0c4c" name="trueupFlow"/>
-					<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoiceSub_Flow"/>
+					<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="freepoint-table-creation-add-date-column" />
+					<flow-ref doc:name="calling trueup flow" doc:id="6a69e424-861a-47ce-b312-b7a1efba0c4c" name="trueupFlow" />
+					<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoiceSub_Flow" />
 				</foreach>
 			</when>
-			<otherwise >
+			<otherwise>
 				<ee:transform doc:name="sheet1" doc:id="818cdbd2-ea76-4a07-be3d-40c14fac804b">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
-						<ee:set-variable variableName="sheetName" ><![CDATA["Daily"]]></ee:set-variable>
-						<ee:set-variable variableName="date" ><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-variable>
-						<ee:set-variable variableName="freepointData" ><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
-						<ee:set-variable variableName="pricingDate" ><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
+						<ee:set-variable variableName="sheetName"><![CDATA["Daily"]]></ee:set-variable>
+						<ee:set-variable variableName="date"><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-variable>
+						<ee:set-variable variableName="freepointData"><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
+						<ee:set-variable variableName="pricingDate"><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-				<flow-ref doc:name="calling table creation add date column" doc:id="c6e6bc49-e047-410e-9052-8e4e3b7cc5fa" name="freepoint-table-creation-add-date-column"/>
-				<flow-ref doc:name="calling trueup flow" doc:id="ba1f7b64-431c-4d2e-8dd3-bc2088ffe26a" name="trueupFlow"/>
-				<flow-ref doc:name="calling qb invoice" doc:id="72c649e3-02ab-48d6-b4ce-dc12e1a88228" name="qb-invoiceSub_Flow"/>
+				<flow-ref doc:name="calling table creation add date column" doc:id="c6e6bc49-e047-410e-9052-8e4e3b7cc5fa" name="freepoint-table-creation-add-date-column" />
+				<flow-ref doc:name="calling trueup flow" doc:id="ba1f7b64-431c-4d2e-8dd3-bc2088ffe26a" name="trueupFlow" />
+				<flow-ref doc:name="calling qb invoice" doc:id="72c649e3-02ab-48d6-b4ce-dc12e1a88228" name="qb-invoiceSub_Flow" />
 			</otherwise>
 		</choice>
 	</sub-flow>
-	<!-- [STUDIO:"3days-calculationsSub_Flow"]<sub-flow name="3days-calculationsSub_Flow" doc:id="9e99c9cf-3f06-4f8f-a564-b620a6e15695" >
-		<logger level="INFO" doc:name="Logger" doc:id="1b1405c1-31b1-43e1-9399-0ff7e19d1145" />
-	</sub-flow> [STUDIO] -->
 </mule>

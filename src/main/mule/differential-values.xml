@@ -81,11 +81,23 @@ sample map ((item) -> do {
 			<ee:variables>
 				<ee:set-variable variableName="diffValueColPayload"><![CDATA[%dw 2.0
 output application/json
-//var date= "26-Aug-2025"
-var input1 =vars.arrangedDiffValuesSet
---- 
-[["differential per gal"]] ++ (input1 map ((item) -> [ (item pluck ((v, k) -> v))[0] ])) ++ [[""],[""],[""]]
-]]></ee:set-variable>
+
+var input1 = vars.arrangedDiffValuesSet
+
+---
+[["differential per gal"]]
+++
+(
+  input1 map (item) ->
+    [
+      if ((keysOf(item)[0] indexOf "Crude") != -1)
+        ""
+      else
+        valuesOf(item)[0]
+    ]
+)
+++
+[[""], [""], [""]]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 	</sub-flow>

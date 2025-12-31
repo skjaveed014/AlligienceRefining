@@ -39,6 +39,19 @@ var input2 = vars.priceSheetUnitPrices //unit prices of the next date of today f
             {(item[0][0]): item[1][0]}
     )
 ]]></ee:set-variable>
+				<ee:set-variable variableName="crudeSlateBarl" ><![CDATA[%dw 2.0
+output application/json
+
+var input1 = vars.pricesSheetProds //products names from prices sheet
+var input2 = vars.priceSheetUnitPrices //unit prices of the next date of today from unit prices sheet
+---
+(input1 zip input2)
+    map ((item, index) ->
+    	if((item[0][0] indexOf "Crude") != -1)
+    	    {(item[0][0]): item[1][0]}
+        else
+            null
+    )]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="Transform Message" doc:id="f9d6c201-b9ac-4064-9cad-a7c6ab12ee16" >
