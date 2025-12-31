@@ -6313,6 +6313,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		</choice>
 =======
 		</choice> [STUDIO] -->
+<<<<<<< HEAD
+>>>>>>> parent of d091029 (commit changes for crude unit price and differential)
+=======
 >>>>>>> parent of d091029 (commit changes for crude unit price and differential)
 		<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
@@ -6333,7 +6336,11 @@ vars.inventoryDate map (item, index) -> {
 			</ee:variables>
 		</ee:transform>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet&#93;">
+=======
+		<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet]">
+>>>>>>> parent of d091029 (commit changes for crude unit price and differential)
 =======
 		<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet]">
 >>>>>>> parent of d091029 (commit changes for crude unit price and differential)
