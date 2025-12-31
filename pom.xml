@@ -110,6 +110,7 @@
 			<version>1.9.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
+<<<<<<< HEAD
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
@@ -118,6 +119,8 @@
 		</dependency>
 =======
 >>>>>>> parent of 2a683ad (added error handling)
+=======
+>>>>>>> parent of d091029 (commit changes for crude unit price and differential)
 	</dependencies>
 
 	<repositories>

@@ -59,7 +59,7 @@ output application/json
 	"Authorization" : "Bearer" ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 		</http:request> [STUDIO] -->
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var rowCount = vars.rowCount&#10;var productCount = sizeOf(vars.sampleProducts)&#10;---&#10;{&#10;    range: &#10;        if (rowCount == 1)&#10;            "A1:L" ++ productCount&#10;        else&#10;            "A" ++ (rowCount + 2) ++ ":" ++ "L" ++ ((rowCount + 1) + productCount)&#10;}]' doc:name="Setting new table range" doc:id="db911c9d-0e1e-4700-a536-ec2df472df26" variableName="range" />
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var rowCount = vars.rowCount&#10;var productCount = sizeOf(vars.sampleProducts)&#10;---&#10;{&#10;    range: &#10;        if (rowCount == 1)&#10;            "A1:J" ++ productCount&#10;        else&#10;            "A" ++ (rowCount + 2) ++ ":" ++ "J" ++ ((rowCount + 1) + productCount)&#10;}]' doc:name="Setting new table range" doc:id="db911c9d-0e1e-4700-a536-ec2df472df26" variableName="range" />
 		<set-variable value='#["freepoint_" ++ vars.date replace "-" with "_"]' doc:name="Setting table name" doc:id="dd1a3803-9385-4a43-bb6f-6b208c7b95bc" variableName="tableName" />
 		<ee:transform doc:name="adding tables to freepoindata" doc:id="47e5fc72-5430-4f95-9267-80420278466d" >
 			<ee:message >
@@ -147,8 +147,6 @@ output application/json
 	"Authorization" : "Bearer" ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 		</http:request> [STUDIO] -->
-		<flow-ref doc:name="calling get-price-for-funding-subflow" doc:id="ce4f4a75-2525-450e-8fac-c01c2cfc0e01" name="get-price-for-funding-subflow" />
-		<flow-ref doc:name="calling get-differential-subflow" doc:id="86d4eb5b-990a-4e34-8b56-da2d96f48098" name="get-differential-subflow" />
 		<ee:transform doc:name="get sample table formulas" doc:id="2bbafff4-acaa-4308-8fbb-0898df3fb08a" >
 			<ee:message >
 			</ee:message>
@@ -157,7 +155,7 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:L" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"]]></ee:set-variable>
+"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:J" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -175,47 +173,31 @@ output application/json
 			<ee:variables>
 				<ee:set-variable variableName="incrFormulae"><![CDATA[%dw 2.0
 output application/json
+ 
+var rowCount = vars.rowCount  // number of already existing rows
+var totalRows = sizeOf(vars.sampleProducts) - 1 // number of new formula sets to generate or new table size .here subtracting -1 is for not to consider the last total row coz they have seperate formulae coz it needs to add all the above rows right?
+ 
+// only the formula rows, no blanks or SUM
+var baseFormulas = payload.formulas
 
-var rowCount = vars.rowCount
-var totalRows = sizeOf(vars.sampleProducts) - 1
-
-var baseFormulas: Array<Array<String | Number>> =payload.formulas
-// Function to replace ALL cell references using scan and reduce
-fun incrementAllCellRefs(formula: String, offset: Number): String = do {
-  var matches = formula scan /([A-Z]+)(\d+)/
-  ---
-  if (isEmpty(matches)) formula
-  else matches reduce ((match, acc = formula) -> 
-    acc replace (match[0]) with (match[1] ++ ((match[2] as Number) + offset) as String)
+// Function to replace only cell references (letter followed by number that's preceded by = or operator)
+fun incrementRowInFormula(formula: String, newRow: Number) = 
+  formula replace /([\=\+\*\-\/\(])([A-Z]+)(\d+)/ with ((matchArray, index) ->
+    matchArray[1] ++ matchArray[2] ++ (newRow as String)
   )
-}
-
-var offset = rowCount + 1 // Calculate offset based on existing rows
-
+ 
 ---
-if(rowCount == 1) baseFormulas
+
+if(rowCount == 1) payload.formulas 
+// if there is no table in data sheet then formulas need not to increment, it can simply add into data sheet from sample sheet
 else
-  baseFormulas map (row, rowIndex) ->
-    if (rowIndex == 0) row  // Keep header row unchanged
-    else row map (cell) ->
-      cell match {
-        case s is String -> if (s startsWith "=") incrementAllCellRefs(s, offset) else s
-        else -> cell
-      }]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="a67d64d4-5ccf-4122-a67a-06a8cc44f2c6" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="incrFormulae" ><![CDATA[%dw 2.0
-output application/json
----
-vars.incrFormulae map (row) -> 
-  row map (cell) -> 
-    if (cell == "x") vars.crudeSlateBarl.Crude[0]
-    else if (cell == "y") vars.diffValueSet.Crude
-    else cell]]></ee:set-variable>
+(
+  (1 to totalRows) map (x) ->
+    baseFormulas[x - 1] default [] map (f) ->
+      incrementRowInFormula(f, rowCount + 1 + x)
+) ++  [ ["", "", "", "", "=SUM(J" ++ (rowCount+3)++":J" ++ (rowCount +1 + totalRows) ++ ")"]
+]
+]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<ee:transform doc:name="setting column formulas" doc:id="6c47bec2-8626-497d-8bc8-c50cc525ed5a">
@@ -238,6 +220,8 @@ var data = vars.incrFormulae
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<flow-ref doc:name="calling get-price-for-funding-subflow" doc:id="ce4f4a75-2525-450e-8fac-c01c2cfc0e01" name="get-price-for-funding-subflow" />
+		<flow-ref doc:name="calling get-differential-subflow" doc:id="86d4eb5b-990a-4e34-8b56-da2d96f48098" name="get-differential-subflow" />
 		<ee:transform doc:name="first 3 columns set" doc:id="8452a966-1db8-4619-a4c8-a5225213126a">
 			<ee:message>
 			</ee:message>
