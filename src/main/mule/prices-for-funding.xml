@@ -64,13 +64,4 @@ var lookup = input2 reduce ((acc, item) -> acc ++ item)
 			</ee:variables>
 		</ee:transform>
 	</sub-flow>
-	<sub-flow name="get-crude-slate-su-flow" doc:id="ab5cc840-ffb8-430e-8caf-3442ae9822c3" >
-		<http:request method="GET" doc:name="get crude slate value by inventoryDate" doc:id="df6562da-240d-4f8f-958e-2d2cf9ce70b3" url='#["https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/CrudeSlate_Table/columns/" ++ vars.inventoryDate]' target="meterControl" targetValue="#[payload.values[1][0] as String]" >
-			<http:headers ><![CDATA[#[output application/java
----
-{
-	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
-	</sub-flow>
 </mule>

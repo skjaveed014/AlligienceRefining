@@ -21,5 +21,4 @@ http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/
 		<http:request-connection host="${http.graphApi.host}" protocol="HTTPS" port="${http.graphApi.port}"/>
 	</http:request-config>
 	<configuration-properties doc:name="Configuration properties" doc:id="d9f68474-128d-4c0b-9ca8-bd5666088f73" file="properties.yaml" />
-	<configuration doc:name="Configuration" doc:id="c9c1f8e1-bf78-4316-a83f-40a87115b198" defaultErrorHandler-ref="global-error-handlingError_Handler" />
 </mule>

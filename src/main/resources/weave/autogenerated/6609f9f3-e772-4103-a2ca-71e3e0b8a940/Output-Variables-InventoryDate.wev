@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_6609f9f3_e772_4103_a2ca_71e3e0b8a940_Output_Variables_Inventorydate = Any
+

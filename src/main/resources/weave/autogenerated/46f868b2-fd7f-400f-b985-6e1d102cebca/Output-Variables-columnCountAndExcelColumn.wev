@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_46f868b2_fd7f_400f_b985_6e1d102cebca_Output_Variables_columnCountAndExcelColumn = {|
+  PresentColumnNumber: Any, 
+  PresentColumn: String, 
+  NextColumnNumber: Any, 
+  NextColumn: String
+|}
+

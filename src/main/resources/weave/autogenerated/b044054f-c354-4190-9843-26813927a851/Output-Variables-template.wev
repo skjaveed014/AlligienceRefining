@@ -1,7 +1,0 @@
-%dw 2.0
-
-type auto_b044054f_c354_4190_9843_26813927a851_Output_Variables_template = {|
-  index: Number, 
-  values: Null
-|}
-

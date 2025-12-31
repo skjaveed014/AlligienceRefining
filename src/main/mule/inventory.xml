@@ -170,27 +170,13 @@ formulas map (row) ->
 	</sub-flow>
 	<sub-flow name="inventoryAndAssembly_Sub_Flow" doc:id="a5a9dae6-5c09-4236-bb9b-7aac3146b5d4" >
 		<try doc:name="Try" doc:id="8c8325fd-a291-4267-992f-070181756aeb" >
-			<ee:transform doc:name="Transform Message" doc:id="bd46569b-3e6d-4886-98ad-7cc89b6651ad" >
-				<ee:message >
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-					<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/" ++ vars."inventoryDate" as String]]></ee:set-variable>
-					<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<flow-ref doc:name="inventory-common-requester-sub-flow" doc:id="56e4b181-43c1-40eb-ba2b-d03011b22db6" name="inventory-common-requester-sub-flow"/>
-			<set-variable value="#[payload.index]" doc:name="Set Variable" doc:id="55b51d93-b435-4f48-8cd3-c3ecc54269f3" variableName="existInvColIndex"/>
-			<!-- [STUDIO:"checks for date present in Inventory Table or Not"]<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="e19e6b0c-1ba1-4d96-9651-9a614431caab" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;" target="existInvColIndex" targetValue="#[payload.index&#93;">
+			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="e19e6b0c-1ba1-4d96-9651-9a614431caab" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" target="existInvColIndex" targetValue="#[payload.index]">
 			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
+}]]]></http:headers>
+		</http:request>
 			<set-variable value="update" doc:name="flag=update" doc:id="389fd69a-312c-4646-969f-b6b4c4da0f96" variableName="flag" />
 			<error-handler >
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50fcef09-ec79-43a4-a8b0-e093954a726d" type="HTTP:NOT_FOUND" >
@@ -201,7 +187,6 @@ output application/json
 		</try>
 		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="5f155b2d-ae85-482a-a476-ae65a2981859" name="get-columnCountAndColumns-of-inventory-subflow" />
 		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="9dab4f3e-a7e2-497f-930f-7b331f929173" name="get-Inventory-template-columns-subflow" />
-		<flow-ref doc:name="Flow Reference" doc:id="e9f5e9f1-bd87-42f7-b1f2-fd43efed7916" name="get-crude-slate-su-flow"/>
 		<ee:transform doc:name="inventoryProductsData" doc:id="9f572f8e-c9f8-4b1e-843f-5e512e8dd3a9" >
 			<ee:message />
 			<ee:variables >
@@ -329,81 +314,35 @@ formulas map (row) ->
 		</ee:transform>
 		<choice doc:name="checks for whether to update or insert the inventory sheet" doc:id="1ac36035-b0c6-4d7c-a2a9-d7856457faa6" >
 			<when expression='#[vars.flag == "update"]' >
-				<!-- [STUDIO:"Inventory-update-request"]<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="c5e7ccaf-3042-4efa-85c3-8b2a3f2640b6" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.existInvColIndex&#93;" >
+				<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="c5e7ccaf-3042-4efa-85c3-8b2a3f2640b6" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.existInvColIndex]" >
 					<http:body ><![CDATA[#[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 { 
 	values: vars."inventoryRequestData"
-}&#93;&#93;&#93;></http:body>
+}]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
-				<ee:transform doc:name="Transform Message" doc:id="47f708cb-f40a-4d4d-96e1-c8109afbf5ca" >
-					<ee:message >
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
-						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/" ++ vars.existInvColIndex]]></ee:set-variable>
-						<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
-output application/json
----
-{ 
-	values: vars."inventoryRequestData"
-}]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<flow-ref doc:name="inventory-common-requester-sub-flow" doc:id="a78fef9b-abb5-433a-81a1-9b1a2f943f40" name="inventory-common-requester-sub-flow"/>
+}]]]></http:headers>
+				</http:request>
 			</when>
 			<otherwise >
-				<!-- [STUDIO:"Inventory-insert-request"]<http:request method="POST" doc:name="Inventory-insert-request" doc:id="aee297c0-6faf-47b4-9329-96e5095bc63b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/add&quot;&#93;" >
+				<http:request method="POST" doc:name="Inventory-insert-request" doc:id="aee297c0-6faf-47b4-9329-96e5095bc63b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/add&quot;]" >
 					<http:body ><![CDATA[#[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 { 
 	values: vars."inventoryRequestData"
-}&#93;&#93;&#93;></http:body>
+}]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
-				<ee:transform doc:name="Transform Message" doc:id="b6f2118c-c44b-4a47-8f2b-dfe7005dfd32" >
-					<ee:message >
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
-						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/add"]]></ee:set-variable>
-						<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
-output application/json
----
-{ 
-	values: vars."inventoryRequestData"
-}]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="23434532-6fe3-444b-b0f5-d101497fcf98" name="inventory-common-requester-sub-flow"/>
+}]]]></http:headers>
+				</http:request>
 			</otherwise>
 		</choice>
-	</sub-flow>
-	<sub-flow name="inventory-common-requester-sub-flow" doc:id="1069c413-fd22-4a5a-9178-ee4a18d6456d" >
-		<http:request method="#[vars.vmethod]" doc:name="inventory commmon requestor" doc:id="c99523af-c38c-4278-96ca-0f15e4119ec9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
----
-{
-	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
 	</sub-flow>
 </mule>

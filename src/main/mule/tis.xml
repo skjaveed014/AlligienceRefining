@@ -51,25 +51,13 @@ output application/json
 			</ee:variables>
 		</ee:transform>
 		<try doc:name="Try" doc:id="88de3dce-c2f2-4ace-b040-121dd0a19cbd" >
-			<ee:transform doc:name="Transform Message" doc:id="7c9cd697-fe0f-41ec-94e2-69a009609ca6">
-			<ee:message>
-			</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/" ++ vars."inventoryDate" as String]]></ee:set-variable>
-					<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-				</ee:variables>
-		</ee:transform>
-			<flow-ref doc:name="calling" doc:id="1fe89af6-ceb9-4e86-a460-b62b065aeca6" name="tis-common-requestor-subFlow"/>
-			<!-- [STUDIO:"checks for date col present in tis sheet or not"]<http:request method="GET" doc:name="checks for date col present in tis sheet or not" doc:id="0b53c230-44dd-4482-a820-cd41c848043a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;" >
+			<http:request method="GET" doc:name="checks for date col present in tis sheet or not" doc:id="0b53c230-44dd-4482-a820-cd41c848043a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" >
 				<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-			</http:request> [STUDIO] -->
+}]]]></http:headers>
+			</http:request>
 			<set-variable value="update" doc:name="flag=update" doc:id="cdb53adb-4ffc-4db7-90b5-3e19e1ebaa7e" variableName="flag" />
 			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="560e6090-7bca-449d-8401-ed45d7e44005" variableName="columnId" />
 			<error-handler >
@@ -79,26 +67,13 @@ output application/json
 				</on-error-continue>
 			</error-handler>
 		</try>
-		<ee:transform doc:name="gets tis column count" doc:id="df6cad73-ef0b-4574-8379-47fd11139f69" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/count"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="fab7880e-eb80-4225-a67d-cc373bcdae77" name="tis-common-requestor-subFlow"/>
-		<set-variable value='#[payload."value"]' doc:name="Set Variable" doc:id="f8c2998d-8880-4dc7-82c6-958d441209fb" variableName="tisColumnCount"/>
-		<!-- [STUDIO:"gets tis column count"]<http:request method="GET" doc:name="gets tis column count" doc:id="e5535d76-d20b-4834-969a-d65f87453341" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/count&quot;&#93;" target="tisColumnCount" targetValue='#[payload."value"&#93;'>
+		<http:request method="GET" doc:name="gets tis column count" doc:id="e5535d76-d20b-4834-969a-d65f87453341" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/count&quot;]" target="tisColumnCount" targetValue='#[payload."value"]'>
 			<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
+}]]]></http:headers>
+		</http:request>
 		<ee:transform doc:name="columnCountAndExcelColumn" doc:id="6b14dfab-3f65-43f7-a4b2-c1e97d0cbd8f" >
 			<ee:message />
 			<ee:variables >
@@ -125,25 +100,13 @@ fun toExcelColumn(n) =
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="get tank template column index=0" doc:id="b845a6de-7ac0-47e6-a956-108b33797af4" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/itemAt(index=0)/range"]]></ee:set-variable>
-				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="calling tis-common-requestor-subFlow" doc:id="37534a32-9d70-4f5a-9d96-fc518ae6714b" name="tis-common-requestor-subFlow"/>
-		<!-- [STUDIO:"get tank template column index=0"]<http:request method="GET" doc:name="get tank template column index=0" doc:id="32da6544-23a2-4894-9ab7-83eabc0a39c1" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/itemAt(index=0)/range&quot;&#93;" >
+		<http:request method="GET" doc:name="get tank template column index=0" doc:id="32da6544-23a2-4894-9ab7-83eabc0a39c1" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/itemAt(index=0)/range&quot;]" >
 			<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
+}]]]></http:headers>
+		</http:request>
 		<ee:transform doc:name="var tisProductsColumn, replacedFormulas" doc:id="93e59e3a-8c9d-44d8-9e87-28b5b7c9e78f" >
 			<ee:message >
 			</ee:message>
@@ -205,27 +168,14 @@ var colCount= vars.tisColumnCount
 }]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<ee:transform doc:name="adds new tanks template to table" doc:id="6a6078d8-76b1-46d6-80f3-eb2d77b115a2">
-					<ee:message>
-						<ee:set-payload ><![CDATA[vars."newTanksTemplate"]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
-						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tablename') ++ "/rows/add"]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<flow-ref doc:name="calling tis-common-requestor-subFlow" doc:id="d641146b-f977-4290-9465-5ae5e1147b69" name="tis-common-requestor-subFlow"/>
-				<!-- [STUDIO:"adds new tanks template to table"]<http:request method="POST" doc:name="adds new tanks template to table" doc:id="f7904cc8-40ef-4e9f-b9b0-1947ec767e44" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tablename') ++ &quot;/rows/add&quot;&#93;" >
-					<http:body ><![CDATA[#[vars."newTanksTemplate"&#93;&#93;&#93;></http:body>
+				<http:request method="POST" doc:name="adds new tanks template to table" doc:id="f7904cc8-40ef-4e9f-b9b0-1947ec767e44" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tablename') ++ &quot;/rows/add&quot;]" >
+					<http:body ><![CDATA[#[vars."newTanksTemplate"]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
+}]]]></http:headers>
+				</http:request>
 				<set-variable value='#[Tanks: vars."tisTemplate".Tanks ++ [vars."newTanks"]]' doc:name="adding new tanks in tis template" doc:id="93491357-5d87-4916-85a1-d1d796b3231c" variableName="tisTemplate" />
 			</when>
 			<otherwise >
@@ -260,120 +210,52 @@ values: [[date]] ++ coldata.values ++ [[""],[""],[vars."replacedFormulas".values
 		</ee:transform>
 		<choice doc:name="checks for tis sheet update or insert" doc:id="d5c4e47a-10e2-4def-adc5-200b29d6b52c" >
 			<when expression='#[vars.flag == "update"]' >
-				<ee:transform doc:name="tis sheet updation" doc:id="a4f0fd11-06f7-474b-84f3-98ed7dc0beab">
-					<ee:message>
-						<ee:set-payload><![CDATA[vars."tisRequestData"]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
-						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/" ++ vars."columnId"]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="999c77df-7f19-4bfa-b1c2-542451349216" name="tis-common-requestor-subFlow"/>
-				<!-- [STUDIO:"tis sheet updation"]<http:request method="PATCH" doc:name="tis sheet updation" doc:id="14a94ad3-3052-4afe-9ead-a858c36addc5" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;columnId&quot;&#93;" >
-					<http:body ><![CDATA[#[vars."tisRequestData"&#93;&#93;&#93;></http:body>
+				<http:request method="PATCH" doc:name="tis sheet updation" doc:id="14a94ad3-3052-4afe-9ead-a858c36addc5" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;columnId&quot;]" >
+					<http:body ><![CDATA[#[vars."tisRequestData"]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
+}]]]></http:headers>
+				</http:request>
 			</when>
 			<otherwise >
-				<ee:transform doc:name="Transform Message" doc:id="3450f75f-8627-42e7-b3e2-3457ece9988f">
-					<ee:message>
-						<ee:set-payload><![CDATA[vars."tisRequestData"]]></ee:set-payload>
-					</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/add"]]></ee:set-variable>
-						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="60e4c70c-21ba-4b80-ad0d-24959798bfde" name="tis-common-requestor-subFlow"/>
-				<!-- [STUDIO:"tis sheet insertion"]<http:request method="POST" doc:name="tis sheet insertion" doc:id="6fa40168-a8ab-4965-8370-99d0eec60c64" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/add&quot;&#93;" >
-					<http:body ><![CDATA[#[vars."tisRequestData"&#93;&#93;&#93;></http:body>
+				<http:request method="POST" doc:name="tis sheet insertion" doc:id="6fa40168-a8ab-4965-8370-99d0eec60c64" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/add&quot;]" >
+					<http:body ><![CDATA[#[vars."tisRequestData"]]]></http:body>
 					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
+}]]]></http:headers>
+				</http:request>
 			</otherwise>
 		</choice>
 	</sub-flow>
 	<sub-flow name="get-tis-data-by-inventory-date-subflow" doc:id="797f0205-5fc4-474f-93f4-960309a7bc37" >
-		<ee:transform doc:name="get tis tank column" doc:id="d0b2580d-c7ee-4fe1-bff0-3bc8c2cc3d2f" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/Tank"]]></ee:set-variable>
-				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="4b5321d7-ebe4-4990-a999-812e6724a51a" name="tis-common-requestor-subFlow"/>
-		<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="7ac59d84-e0c3-457f-9c7b-3f7aa525b2b1" variableName="tisTankColumn"/>
-		<!-- [STUDIO:"get tis tank column"]<http:request method="GET" doc:name="get tis tank column" doc:id="9be6c6f6-c708-457c-9efd-24eb5abad4bd" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Tank&quot;&#93;" target="tisTankColumn" targetValue="#[payload.values&#93;">
-			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+		<http:request method="GET" doc:name="get tis tank column" doc:id="9be6c6f6-c708-457c-9efd-24eb5abad4bd" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Tank&quot;]" target="tisTankColumn" targetValue="#[payload.values]">
+			<http:body><![CDATA[#[""]]]></http:body>
 			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
-		<ee:transform doc:name="get tis product column" doc:id="1bb29394-6019-4a3a-b945-db70f8e30081" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/Product"]]></ee:set-variable>
-				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="50a934a0-0448-411a-8728-4889b0d9d4f2" name="tis-common-requestor-subFlow"/>
-		<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="778f30b1-9d6f-4545-973a-601248a299d7" variableName="tisProductColumn"/>
-		<!-- [STUDIO:"get tis product column"]<http:request method="GET" doc:name="get tis product column" doc:id="66b82182-2edb-40e3-a438-0be31b48556e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Product&quot;&#93;" target="tisProductColumn" targetValue="#[payload.values&#93;">
-			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get tis product column" doc:id="66b82182-2edb-40e3-a438-0be31b48556e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/Product&quot;]" target="tisProductColumn" targetValue="#[payload.values]">
+			<http:body><![CDATA[#[""]]]></http:body>
 			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
-		<ee:transform doc:name="get tis values by date" doc:id="5e02b8a3-90d9-43cf-9330-a996cb3c4fda" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
-				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
-output application/json
----
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/" ++ vars."inventoryDate" as String]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="569fe3db-b7f2-4b4d-bcb2-ae12e7b2d8e7" name="tis-common-requestor-subFlow"/>
-		<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="70318f73-918c-4a71-8b9e-1210443903db" variableName="tisValues"/>
-		<!-- [STUDIO:"get tis values by date"]<http:request method="GET" doc:name="get tis values by date" doc:id="80882e11-6863-45cb-875a-b7d2a96984d6" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;" target="tisValues" targetValue="#[payload.values&#93;">
-			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get tis values by date" doc:id="80882e11-6863-45cb-875a-b7d2a96984d6" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('tis.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String]" target="tisValues" targetValue="#[payload.values]">
+			<http:body><![CDATA[#[""]]]></http:body>
 			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
+---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
+}]]]></http:headers>
+		</http:request>
 		<ee:transform doc:name="tisRawData in key and value pair" doc:id="c6044e68-3452-4c27-a567-113ec4ff46fd">
 			<ee:message />
 			<ee:variables>
@@ -411,15 +293,6 @@ mapObject ((arr, key) -> (key): ((arr map $.value) reduce ($$ + $) default 0))]]
 			
 </ee:variables>
 		</ee:transform>
-	</sub-flow>
-	<sub-flow name="tis-common-requestor-subFlow" doc:id="230017ab-08e4-4c87-b7f5-cc76248b63f4" >
-		<http:request method="#[vars.vmethod]" doc:name="tis common requestor" doc:id="bbb82675-e329-4d85-9046-c04a02a9e6a9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:headers ><![CDATA[#[output application/java
----
-{
-	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
 	</sub-flow>
 	
 	
