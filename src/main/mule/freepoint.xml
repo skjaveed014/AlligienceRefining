@@ -415,7 +415,7 @@ output application/json
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="1cb7b78e-38c7-4193-acdf-3d7a343a94b3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/" ++ (vars.inventoryDate as Date {format: "d-MMM-yyyy"} as String {format: "d-MMM-yyyy"})]' target="assbDateVolumes" targetValue="#[payload.values]" >
+		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="1cb7b78e-38c7-4193-acdf-3d7a343a94b3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/" ++ (vars.inventoryDate as Date {format: "d-MMM-yyyy"} as String {format: "d-MMM-yy"})]' target="assbDateVolumes" targetValue="#[payload.values]" >
 			<http:headers ><![CDATA[#[output application/java
 ---
 {

@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140 http://www.mul
 		</outlook365:oauth-client-credentials-connection>
 	</outlook365:outlook365-config>
 	<error-handler name="global-error-handlingError_Handler" doc:id="33ebf513-0093-4659-b05e-3be1082c4871" >
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dc183dbc-8c69-4fd5-8507-e0167d9b5a8c" type="IDP-AR-TIS-IDP-150:BAD_REQUEST, IDP-AR-TIS-IDP-150:PARSING, IDP-AR-TIS-IDP-150:NOT_FOUND,">
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dc183dbc-8c69-4fd5-8507-e0167d9b5a8c" type="IDP-AR-TIS-IDP-150:BAD_REQUEST, IDP-AR-TIS-IDP-150:PARSING, IDP-AR-TIS-IDP-150:NOT_FOUND,&#10;IDP-AR-TMS6-IDP-180:BAD_REQUEST, IDP-AR-TMS6-IDP-180:PARSING, IDP-AR-TMS6-IDP-180:NOT_FOUND,&#10;IDP-AR-FREEPOINT-IDP-110:BAD_REQUEST, IDP-AR-FREEPOINT-IDP-110:PARSING, IDP-AR-FREEPOINT-IDP-110:NOT_FOUND">
 			<ee:transform doc:name="error body" doc:id="babc886d-616d-49f4-8899-cd49cfb81051" >
 				<ee:message />
 				<ee:variables >
