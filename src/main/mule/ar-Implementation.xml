@@ -19,8 +19,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="4fc1e17b-b877-422e-91a4-fc3a59a1849c" name="read-email-to-idp-extraction-subflow" />
-		<!-- [STUDIO:"Choice"]<choice doc:name="Choice" doc:id="1913a0d7-75a2-4037-84b4-e3b0d8472a97" >
-			<when expression='#[payload.date == "1-Oct-2025"&#93;'>
+		<choice doc:name="Choice" doc:id="1913a0d7-75a2-4037-84b4-e3b0d8472a97" >
+			<when expression='#[payload.date == "1-Oct-2025"]'>
 				<ee:transform doc:name="oct 1 data" doc:id="01d1b919-d120-4f2a-95fb-daf6fa66c04c">
 			<ee:message />
 			<ee:variables>
@@ -100,7 +100,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "0.00"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "Crude": {
@@ -125,7 +125,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacityTotal": "130,076.5"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tsarIdpResponse"><![CDATA[[
 	"1-Oct-2025":{
     "RefineryName": "The San Antonio Refinery",
@@ -151,7 +151,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "124.56",
                 "TotalCapacity": "124.56"
             }
-        &#93;,
+        ],
         "ATB": [
             {
                 "Tank": "00096",
@@ -221,7 +221,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,366.16",
                 "TotalCapacity": "2,512.69"
             }
-        &#93;,
+        ],
         "Crude": [
             {
                 "Tank": "00401",
@@ -240,7 +240,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,073.41",
                 "TotalCapacity": "7,007.76"
             }
-        &#93;,
+        ],
         "DHT FEED": [
             {
                 "Tank": "00095",
@@ -259,7 +259,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "12,101.09",
                 "TotalCapacity": "24,653.69"
             }
-        &#93;,
+        ],
         "Ethanol": [
             {
                 "Tank": "00422",
@@ -278,7 +278,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "547.14",
                 "TotalCapacity": "2,234.55"
             }
-        &#93;,
+        ],
         "Full Range Reformate": [
             {
                 "Tank": "00220",
@@ -297,7 +297,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,723.87",
                 "TotalCapacity": "4,536.34"
             }
-        &#93;,
+        ],
         "GASOLINE": [
             {
                 "Tank": "00215",
@@ -367,7 +367,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "10,464.73",
                 "TotalCapacity": "25,233.26"
             }
-        &#93;,
+        ],
         "ISOMERATE": [
             {
                 "Tank": "00218",
@@ -403,7 +403,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,718.57",
                 "TotalCapacity": "4,514.49"
             }
-        &#93;,
+        ],
         "JET": [
             {
                 "Tank": "00411",
@@ -422,7 +422,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,087.55",
                 "TotalCapacity": "4,809.02"
             }
-        &#93;,
+        ],
         "JET A": [
             {
                 "Tank": "00427",
@@ -441,7 +441,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "254.41",
                 "TotalCapacity": "2,338.56"
             }
-        &#93;,
+        ],
         "JPTS": [
             {
                 "Tank": "00409",
@@ -494,7 +494,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "2,507.14"
             }
-        &#93;,
+        ],
         "LPG": [
             {
                 "Tank": "09001",
@@ -530,7 +530,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "473.77",
                 "TotalCapacity": "612.30"
             }
-        &#93;,
+        ],
         "NHT-FEED": [
             {
                 "Tank": "00406",
@@ -549,7 +549,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "12,044.31",
                 "TotalCapacity": "24,036.29"
             }
-        &#93;,
+        ],
         "SLOP": [
             {
                 "Tank": "00404",
@@ -568,7 +568,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,528.45",
                 "TotalCapacity": "8,231.63"
             }
-        &#93;,
+        ],
         "ULSD": [
             {
                 "Tank": "00408",
@@ -638,7 +638,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,981.90",
                 "TotalCapacity": "4,685.07"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "JP-8 ANTI-ICE": {
@@ -803,7 +803,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacity": "204,235.7"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tms6Data"><![CDATA[[
 	"1-Oct-2025":{
     "date": "01-Oct-2025",
@@ -910,7 +910,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             "volume": "0",
             "stockAdjust": "0"
         }
-    &#93;,
+    ],
     "StockHolders": {
         "Saratoga Rack Marketing": [
             {
@@ -937,7 +937,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Tartan Oil, LLC": [
             {
                 "tank": "000020",
@@ -987,7 +987,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "The San Antonio Refinery": [
             {
                 "tank": "000003",
@@ -1091,7 +1091,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Lazarus Nixon Refinery": [
             {
                 "tank": "000531",
@@ -1099,7 +1099,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Poet Ethanol Products": [
             {
                 "tank": "000ETH",
@@ -1107,7 +1107,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Vantage - ADM": [
             {
                 "tank": "000ETH",
@@ -1115,7 +1115,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Kinder Morgan": [
             {
                 "tank": "000ETH",
@@ -1123,7 +1123,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Biourja": [
             {
                 "tank": "000ETH",
@@ -1131,7 +1131,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "562"
             }
-        &#93;,
+        ],
         "Freepoint LLC": [
             {
                 "tank": "000020",
@@ -1169,7 +1169,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Brownsville GTR LLC": [
             {
                 "tank": "000180",
@@ -1177,7 +1177,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Texas TransChem": [
             {
                 "tank": "000021",
@@ -1197,7 +1197,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Serv Energy LLC": [
             {
                 "tank": "000180",
@@ -1205,7 +1205,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "US Energy": [
             {
                 "tank": "000180",
@@ -1213,10 +1213,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;
+        ]
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[{
     "Name": "FreepointData",
     "Inventory Date": "01-Oct-2025",
@@ -1317,14 +1317,14 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalQuantity (bbls)": "(1,200)",
         "TotalPayment": "281,393"
     }
-}&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_1_25.pdf"&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="inventoryDate"><![CDATA[["1-Oct-2025"&#93;&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="meterControl" ><![CDATA["20076"&#93;&#93;></ee:set-variable>
+}]]></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_1_25.pdf"]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate"><![CDATA[["1-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["20076"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>
-			<when expression='#[payload.date == "2-Oct-2025"&#93;'>
+			<when expression='#[payload.date == "2-Oct-2025"]'>
 				<ee:transform doc:name="oct 1 data2" doc:id="f3e0a62c-157d-4e50-af5c-f937d3a6d00f">
 			<ee:message />
 			<ee:variables>
@@ -1404,7 +1404,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "0.00"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "Crude": {
@@ -1429,7 +1429,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacityTotal": "130,076.5"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tsarIdpResponse"><![CDATA[[
 	"2-Oct-2025":{
     "RefineryName": "The San Antonio Refinery",
@@ -1455,7 +1455,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "124.56",
                 "TotalCapacity": "124.56"
             }
-        &#93;,
+        ],
         "ATB": [
             {
                 "Tank": "00096",
@@ -1525,7 +1525,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,366.16",
                 "TotalCapacity": "2,512.69"
             }
-        &#93;,
+        ],
         "Crude": [
             {
                 "Tank": "00401",
@@ -1544,7 +1544,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,081.59",
                 "TotalCapacity": "7,007.90"
             }
-        &#93;,
+        ],
         "DHT FEED": [
             {
                 "Tank": "00095",
@@ -1563,7 +1563,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,910.50",
                 "TotalCapacity": "24,653.44"
             }
-        &#93;,
+        ],
         "Ethanol": [
             {
                 "Tank": "00422",
@@ -1582,7 +1582,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "637.07",
                 "TotalCapacity": "2,234.57"
             }
-        &#93;,
+        ],
         "Full Range Reformate": [
             {
                 "Tank": "00220",
@@ -1601,7 +1601,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,531.56",
                 "TotalCapacity": "4,536.42"
             }
-        &#93;,
+        ],
         "GASOLINE": [
             {
                 "Tank": "00215",
@@ -1671,7 +1671,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "9,308.92",
                 "TotalCapacity": "25,233.19"
             }
-        &#93;,
+        ],
         "ISOMERATE": [
             {
                 "Tank": "00218",
@@ -1707,7 +1707,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,678.80",
                 "TotalCapacity": "4,514.50"
             }
-        &#93;,
+        ],
         "JET": [
             {
                 "Tank": "00411",
@@ -1726,7 +1726,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "908.56",
                 "TotalCapacity": "4,809.06"
             }
-        &#93;,
+        ],
         "JET A": [
             {
                 "Tank": "00427",
@@ -1745,7 +1745,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,126.56",
                 "TotalCapacity": "2,338.63"
             }
-        &#93;,
+        ],
         "JPTS": [
             {
                 "Tank": "00409",
@@ -1798,7 +1798,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,225.42",
                 "TotalCapacity": "2,464.44"
             }
-        &#93;,
+        ],
         "LPG": [
             {
                 "Tank": "09001",
@@ -1834,7 +1834,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "478.57",
                 "TotalCapacity": "612.30"
             }
-        &#93;,
+        ],
         "NHT-FEED": [
             {
                 "Tank": "00406",
@@ -1853,7 +1853,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,822.87",
                 "TotalCapacity": "24,036.29"
             }
-        &#93;,
+        ],
         "SLOP": [
             {
                 "Tank": "00404",
@@ -1872,7 +1872,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,533.50",
                 "TotalCapacity": "8,231.71"
             }
-        &#93;,
+        ],
         "ULSD": [
             {
                 "Tank": "00408",
@@ -1942,7 +1942,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,079.48",
                 "TotalCapacity": "4,685.12"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "JP-8 ANTI-ICE": {
@@ -2107,7 +2107,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacity": "204,193.0"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tms6Data"><![CDATA[[
 	"2-Oct-2025":{
     "date": "02-Oct-2025",
@@ -2214,7 +2214,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             "volume": "0",
             "stockAdjust": "0"
         }
-    &#93;,
+    ],
     "StockHolders": {
         "Saratoga Rack Marketing": [
             {
@@ -2241,7 +2241,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Tartan Oil, LLC": [
             {
                 "tank": "000020",
@@ -2291,7 +2291,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "The San Antonio Refinery": [
             {
                 "tank": "000003",
@@ -2395,7 +2395,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Lazarus Nixon Refinery": [
             {
                 "tank": "000531",
@@ -2403,7 +2403,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Poet Ethanol Products": [
             {
                 "tank": "000ETH",
@@ -2411,7 +2411,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Vantage - ADM": [
             {
                 "tank": "000ETH",
@@ -2419,7 +2419,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Kinder Morgan": [
             {
                 "tank": "000ETH",
@@ -2427,7 +2427,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Biourja": [
             {
                 "tank": "000ETH",
@@ -2435,7 +2435,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "548"
             }
-        &#93;,
+        ],
         "Freepoint LLC": [
             {
                 "tank": "000020",
@@ -2473,7 +2473,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Brownsville GTR LLC": [
             {
                 "tank": "000180",
@@ -2481,7 +2481,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Texas TransChem": [
             {
                 "tank": "000021",
@@ -2501,7 +2501,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Serv Energy LLC": [
             {
                 "tank": "000180",
@@ -2509,7 +2509,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "US Energy": [
             {
                 "tank": "000180",
@@ -2517,10 +2517,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;
+        ]
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[{
     "Name": "FreepointData",
     "Inventory Date": "02-Oct-2025",
@@ -2621,14 +2621,14 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalQuantity (bbls)": "(3,842)",
         "TotalPayment": "59,950"
     }
-}&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_2_25.pdf"&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="inventoryDate"><![CDATA[["2-Oct-2025"&#93;&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="meterControl" ><![CDATA["22860"&#93;&#93;></ee:set-variable>
+}]]></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_2_25.pdf"]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate"><![CDATA[["2-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["22860"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>
-			<when expression='#[payload.date == "5-Oct-2025"&#93;'>
+			<when expression='#[payload.date == "5-Oct-2025"]'>
 				<ee:transform doc:name="oct 1 data1" doc:id="b636e392-5acb-4a45-a412-1d48b7a8e8d1">
 			<ee:message />
 			<ee:variables>
@@ -2708,7 +2708,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "0.00"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "Crude": {
@@ -2808,7 +2808,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "0.00"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "Crude": {
@@ -2908,7 +2908,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "0.00"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "Crude": {
@@ -2933,7 +2933,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacityTotal": "130,076.9"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tsarIdpResponse"><![CDATA[[
 	"3-Oct-2025":{
     "RefineryName": "The San Antonio Refinery",
@@ -2959,7 +2959,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "124.56",
                 "TotalCapacity": "124.56"
             }
-        &#93;,
+        ],
         "ATB": [
             {
                 "Tank": "00096",
@@ -3029,7 +3029,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,366.16",
                 "TotalCapacity": "2,512.69"
             }
-        &#93;,
+        ],
         "Crude": [
             {
                 "Tank": "00401",
@@ -3048,7 +3048,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "803.69",
                 "TotalCapacity": "7,007.90"
             }
-        &#93;,
+        ],
         "DHT FEED": [
             {
                 "Tank": "00095",
@@ -3067,7 +3067,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,957.04",
                 "TotalCapacity": "24,653.69"
             }
-        &#93;,
+        ],
         "Ethanol": [
             {
                 "Tank": "00422",
@@ -3086,7 +3086,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "506.61",
                 "TotalCapacity": "2,234.55"
             }
-        &#93;,
+        ],
         "Full Range Reformate": [
             {
                 "Tank": "00220",
@@ -3105,7 +3105,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,353.45",
                 "TotalCapacity": "4,536.40"
             }
-        &#93;,
+        ],
         "GASOLINE": [
             {
                 "Tank": "00215",
@@ -3175,7 +3175,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "10,790.16",
                 "TotalCapacity": "25,233.27"
             }
-        &#93;,
+        ],
         "ISOMERATE": [
             {
                 "Tank": "00218",
@@ -3211,7 +3211,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,719.90",
                 "TotalCapacity": "4,514.49"
             }
-        &#93;,
+        ],
         "JET": [
             {
                 "Tank": "00411",
@@ -3230,7 +3230,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "358.40",
                 "TotalCapacity": "4,809.06"
             }
-        &#93;,
+        ],
         "JET A": [
             {
                 "Tank": "00427",
@@ -3249,7 +3249,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "1,091.24",
                 "TotalCapacity": "2,338.63"
             }
-        &#93;,
+        ],
         "JPTS": [
             {
                 "Tank": "00409",
@@ -3302,7 +3302,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "327.03",
                 "TotalCapacity": "2,464.44"
             }
-        &#93;,
+        ],
         "LPG": [
             {
                 "Tank": "09001",
@@ -3338,7 +3338,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "542.29",
                 "TotalCapacity": "612.30"
             }
-        &#93;,
+        ],
         "NHT-FEED": [
             {
                 "Tank": "00406",
@@ -3357,7 +3357,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,615.41",
                 "TotalCapacity": "24,036.29"
             }
-        &#93;,
+        ],
         "SLOP": [
             {
                 "Tank": "00404",
@@ -3376,7 +3376,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,531.82",
                 "TotalCapacity": "8,231.71"
             }
-        &#93;,
+        ],
         "ULSD": [
             {
                 "Tank": "00408",
@@ -3446,7 +3446,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "493.03",
                 "TotalCapacity": "4,685.07"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "JP-8 ANTI-ICE": {
@@ -3635,7 +3635,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "124.56",
                 "TotalCapacity": "124.56"
             }
-        &#93;,
+        ],
         "ATB": [
             {
                 "Tank": "00096",
@@ -3705,7 +3705,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,366.16",
                 "TotalCapacity": "2,512.69"
             }
-        &#93;,
+        ],
         "Crude": [
             {
                 "Tank": "00401",
@@ -3724,7 +3724,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "660.29",
                 "TotalCapacity": "7,007.76"
             }
-        &#93;,
+        ],
         "DHT FEED": [
             {
                 "Tank": "00095",
@@ -3743,7 +3743,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "12,079.52",
                 "TotalCapacity": "24,653.69"
             }
-        &#93;,
+        ],
         "Ethanol": [
             {
                 "Tank": "00422",
@@ -3762,7 +3762,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "461.02",
                 "TotalCapacity": "2,234.56"
             }
-        &#93;,
+        ],
         "Full Range Reformate": [
             {
                 "Tank": "00220",
@@ -3781,7 +3781,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,246.62",
                 "TotalCapacity": "4,536.33"
             }
-        &#93;,
+        ],
         "GASOLINE": [
             {
                 "Tank": "00215",
@@ -3851,7 +3851,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "6,813.47",
                 "TotalCapacity": "25,233.14"
             }
-        &#93;,
+        ],
         "ISOMERATE": [
             {
                 "Tank": "00218",
@@ -3887,7 +3887,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,792.98",
                 "TotalCapacity": "4,514.47"
             }
-        &#93;,
+        ],
         "JET": [
             {
                 "Tank": "00411",
@@ -3906,7 +3906,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "553.99",
                 "TotalCapacity": "4,809.06"
             }
-        &#93;,
+        ],
         "JET A": [
             {
                 "Tank": "00427",
@@ -3925,7 +3925,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "155.07",
                 "TotalCapacity": "2,338.63"
             }
-        &#93;,
+        ],
         "JPTS": [
             {
                 "Tank": "00409",
@@ -3978,7 +3978,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "2,468.08"
             }
-        &#93;,
+        ],
         "LPG": [
             {
                 "Tank": "09001",
@@ -4014,7 +4014,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "516.86",
                 "TotalCapacity": "612.30"
             }
-        &#93;,
+        ],
         "NHT-FEED": [
             {
                 "Tank": "00406",
@@ -4033,7 +4033,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,544.98",
                 "TotalCapacity": "24,035.81"
             }
-        &#93;,
+        ],
         "SLOP": [
             {
                 "Tank": "00404",
@@ -4052,7 +4052,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,538.53",
                 "TotalCapacity": "8,231.71"
             }
-        &#93;,
+        ],
         "ULSD": [
             {
                 "Tank": "00408",
@@ -4122,7 +4122,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "4,054.87",
                 "TotalCapacity": "4,684.98"
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "JP-8 ANTI-ICE": {
@@ -4311,7 +4311,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "124.56",
                 "TotalCapacity": "124.56"
             }
-        &#93;,
+        ],
         "ATB": [
             {
                 "Tank": "00096",
@@ -4381,7 +4381,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,366.16",
                 "TotalCapacity": "2,512.69"
             }
-        &#93;,
+        ],
         "Crude": [
             {
                 "Tank": "00401",
@@ -4400,7 +4400,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "648.47",
                 "TotalCapacity": "7,007.76"
             }
-        &#93;,
+        ],
         "DHT FEED": [
             {
                 "Tank": "00095",
@@ -4419,7 +4419,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "12,257.38",
                 "TotalCapacity": "24,653.94"
             }
-        &#93;,
+        ],
         "Ethanol": [
             {
                 "Tank": "00422",
@@ -4438,7 +4438,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "391.20",
                 "TotalCapacity": "2,234.57"
             }
-        &#93;,
+        ],
         "Full Range Reformate": [
             {
                 "Tank": "00220",
@@ -4457,7 +4457,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,360.27",
                 "TotalCapacity": "4,536.34"
             }
-        &#93;,
+        ],
         "GASOLINE": [
             {
                 "Tank": "00215",
@@ -4527,7 +4527,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "5,448.35",
                 "TotalCapacity": "25,233.22"
             }
-        &#93;,
+        ],
         "ISOMERATE": [
             {
                 "Tank": "00218",
@@ -4563,7 +4563,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,923.52",
                 "TotalCapacity": "4,514.46"
             }
-        &#93;,
+        ],
         "JET": [
             {
                 "Tank": "00411",
@@ -4582,7 +4582,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "877.06",
                 "TotalCapacity": "4,808.92"
             }
-        &#93;,
+        ],
         "JET A": [
             {
                 "Tank": "00427",
@@ -4601,7 +4601,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "151.45",
                 "TotalCapacity": "2,338.79"
             }
-        &#93;,
+        ],
         "JPTS": [
             {
                 "Tank": "00409",
@@ -4654,7 +4654,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "0.00",
                 "TotalCapacity": "2,468.18"
             }
-        &#93;,
+        ],
         "LPG": [
             {
                 "Tank": "09001",
@@ -4690,7 +4690,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "576.43",
                 "TotalCapacity": "612.30"
             }
-        &#93;,
+        ],
         "NHT-FEED": [
             {
                 "Tank": "00406",
@@ -4709,7 +4709,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "11,592.54",
                 "TotalCapacity": "24,035.81"
             }
-        &#93;,
+        ],
         "SLOP": [
             {
                 "Tank": "00404",
@@ -4728,7 +4728,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "2,545.24",
                 "TotalCapacity": "8,231.71"
             }
-        &#93;,
+        ],
         "ULSD": [
             {
                 "Tank": "00408",
@@ -4798,7 +4798,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "AvailableCapacity": "4,685.12",
                 "TotalCapacity": ""
             }
-        &#93;
+        ]
     },
     "Subtotal": {
         "JP-8 ANTI-ICE": {
@@ -4963,7 +4963,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalCapacity": "204,195.5"
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="tms6Data"><![CDATA[[
 	"3-Oct-2025":{
     "date": "03-Oct-2025",
@@ -5070,7 +5070,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             "volume": "0",
             "stockAdjust": "0"
         }
-    &#93;,
+    ],
     "StockHolders": {
         "Saratoga Rack Marketing": [
             {
@@ -5097,7 +5097,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Tartan Oil, LLC": [
             {
                 "tank": "000020",
@@ -5147,7 +5147,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "The San Antonio Refinery": [
             {
                 "tank": "000003",
@@ -5251,7 +5251,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Lazarus Nixon Refinery": [
             {
                 "tank": "000531",
@@ -5259,7 +5259,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Poet Ethanol Products": [
             {
                 "tank": "000ETH",
@@ -5267,7 +5267,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Vantage - ADM": [
             {
                 "tank": "000ETH",
@@ -5275,7 +5275,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Kinder Morgan": [
             {
                 "tank": "000ETH",
@@ -5283,7 +5283,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Biourja": [
             {
                 "tank": "000ETH",
@@ -5291,7 +5291,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "732"
             }
-        &#93;,
+        ],
         "Freepoint LLC": [
             {
                 "tank": "000020",
@@ -5329,7 +5329,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Brownsville GTR LLC": [
             {
                 "tank": "000180",
@@ -5337,7 +5337,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Texas TransChem": [
             {
                 "tank": "000021",
@@ -5357,7 +5357,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Serv Energy LLC": [
             {
                 "tank": "000180",
@@ -5365,7 +5365,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "US Energy": [
             {
                 "tank": "000180",
@@ -5373,7 +5373,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;
+        ]
     }
 },
 "4-Oct-2025":{
@@ -5481,7 +5481,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             "volume": "0",
             "stockAdjust": "0"
         }
-    &#93;,
+    ],
     "StockHolders": {
         "Saratoga Rack Marketing": [
             {
@@ -5508,7 +5508,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Tartan Oil, LLC": [
             {
                 "tank": "000020",
@@ -5558,7 +5558,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "The San Antonio Refinery": [
             {
                 "tank": "000003",
@@ -5662,7 +5662,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Lazarus Nixon Refinery": [
             {
                 "tank": "000531",
@@ -5670,7 +5670,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Poet Ethanol Products": [
             {
                 "tank": "000ETH",
@@ -5678,7 +5678,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Vantage - ADM": [
             {
                 "tank": "000ETH",
@@ -5686,7 +5686,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Kinder Morgan": [
             {
                 "tank": "000ETH",
@@ -5694,7 +5694,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Biourja": [
             {
                 "tank": "000ETH",
@@ -5702,7 +5702,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "548"
             }
-        &#93;,
+        ],
         "Freepoint LLC": [
             {
                 "tank": "000020",
@@ -5740,7 +5740,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Brownsville GTR LLC": [
             {
                 "tank": "000180",
@@ -5748,7 +5748,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Texas TransChem": [
             {
                 "tank": "000021",
@@ -5768,7 +5768,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Serv Energy LLC": [
             {
                 "tank": "000180",
@@ -5776,7 +5776,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "US Energy": [
             {
                 "tank": "000180",
@@ -5784,7 +5784,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;
+        ]
     }
 },
 "5-Oct-2025":{
@@ -5892,7 +5892,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             "volume": "0",
             "stockAdjust": "0"
         }
-    &#93;,
+    ],
     "StockHolders": {
         "Saratoga Rack Marketing": [
             {
@@ -5919,7 +5919,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Tartan Oil, LLC": [
             {
                 "tank": "000020",
@@ -5969,7 +5969,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "The San Antonio Refinery": [
             {
                 "tank": "000003",
@@ -6073,7 +6073,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Lazarus Nixon Refinery": [
             {
                 "tank": "000531",
@@ -6081,7 +6081,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Poet Ethanol Products": [
             {
                 "tank": "000ETH",
@@ -6089,7 +6089,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Vantage - ADM": [
             {
                 "tank": "000ETH",
@@ -6097,7 +6097,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Kinder Morgan": [
             {
                 "tank": "000ETH",
@@ -6105,7 +6105,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Biourja": [
             {
                 "tank": "000ETH",
@@ -6113,7 +6113,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "534"
             }
-        &#93;,
+        ],
         "Freepoint LLC": [
             {
                 "tank": "000020",
@@ -6151,7 +6151,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Brownsville GTR LLC": [
             {
                 "tank": "000180",
@@ -6159,7 +6159,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Texas TransChem": [
             {
                 "tank": "000021",
@@ -6179,7 +6179,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "Serv Energy LLC": [
             {
                 "tank": "000180",
@@ -6187,7 +6187,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;,
+        ],
         "US Energy": [
             {
                 "tank": "000180",
@@ -6195,10 +6195,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
                 "volume": "0",
                 "stockAdjust": "0"
             }
-        &#93;
+        ]
     }
 }
-&#93;&#93;&#93;></ee:set-variable>
+]]]></ee:set-variable>
 				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[{
     "Name": "FreepointData",
     "Inventory Date": "05-Oct-2025",
@@ -6299,35 +6299,35 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         "TotalQuantity (bbls)": "(6,522)",
         "TotalPayment": "619,543"
     }
-}&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_5_25_3 Day.pdf"&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="inventoryDate"><![CDATA[["3-Oct-2025","4-Oct-2025","5-Oct-2025"&#93;&#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="meterControl" ><![CDATA["22192"&#93;&#93;></ee:set-variable>
+}]]></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName"><![CDATA["TSAR Invoice 10_5_25_3 Day.pdf"]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate"><![CDATA[["3-Oct-2025","4-Oct-2025","5-Oct-2025"]]]></ee:set-variable>
+						<ee:set-variable variableName="meterControl" ><![CDATA["22192"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 			</when>
 			<otherwise >
 				<logger level="INFO" doc:name="Logger" doc:id="cc8fc0d5-6f0a-4e70-b24e-c14cd57e63bf" message="other data"/>
 			</otherwise>
-		</choice> [STUDIO] -->
-		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="completeSet" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 vars.inventoryDate map (item, index) -> {
     Date: item,
-    Elmendorf: vars.elmendorfIdpResponse[item&#93;,
-    "TSAR": vars."tsarIdpResponse"[item&#93;,
-	"TMS6": vars."tms6Data"[item&#93;,
+    Elmendorf: vars.elmendorfIdpResponse[item],
+    "TSAR": vars."tsarIdpResponse"[item],
+	"TMS6": vars."tms6Data"[item],
     Freepoint: vars.freepointIdpResponse
 }
-&#93;&#93;></ee:set-variable>
-				<ee:set-variable variableName="meterControl" ><![CDATA["20076"&#93;&#93;></ee:set-variable>
+]]></ee:set-variable>
+				<ee:set-variable variableName="meterControl" ><![CDATA["20076"]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform> [STUDIO] -->
+		</ee:transform>
 		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="7cdcf9f3-6474-4a2a-b7b2-c0d8a734651d" collection="#[vars.completeSet&#93;">
 			<ee:transform doc:name="idpResponseData" doc:id="a7fef172-80b3-4a96-8c60-7b8c84c24e58">
 			<ee:message>
