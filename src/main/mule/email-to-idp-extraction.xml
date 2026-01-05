@@ -57,7 +57,8 @@ var mailid = payload.id
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 					</http:request>
-					<foreach doc:name="For Each attachment" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
+							<flow-ref doc:name="check-documents-existence-in-email" doc:id="098a5096-9120-4f07-a8f8-edf6cc3b2e46" name="check-documents-existence-in-email"/>
+							<foreach doc:name="For Each attachment" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
 						<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="36d660df-a568-4614-ba1b-e8943722e63e" variableName="pdfName" />
 						<ee:transform doc:name="pdf-binary" doc:id="922647d5-c3d7-4204-ae91-543474e061b1">
 							<ee:message>
@@ -137,5 +138,72 @@ output application/json
 				<logger level="INFO" doc:name="Logger" doc:id="5441c0ec-c032-4291-abf1-026653e92021" />
 			</otherwise>
 		</choice>
+	</sub-flow>
+	<sub-flow name="check-documents-existence-in-email" doc:id="34cc8f49-d10a-45d9-b843-3439d4e1fe5f" >
+		<ee:transform doc:name="check doc names" doc:id="f77d6e7d-4f09-46f3-a7b5-3268a54aed62" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="checkDocNames" ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Arrays
+
+var documentNames = payload.value.name
+// Required document patterns
+var requiredPatterns = [
+  "Product Summary Report",
+  "Elmendorf Ending Inventory",
+  "San Antonio Ending Inventory",
+  "TSAR Invoice"
+]
+
+// Extract date from document name
+fun extractDate(docName: String): String = 
+  if (docName matches /^\d{4}_\d{2}_\d{2}.*/) 
+    docName[0 to 9]
+  else if (docName matches /.*\d{1,2}_\d{1,2}_\d{2}\.pdf$/)
+    do {
+      var parts = (docName scan /(\d{1,2})_(\d{1,2})_(\d{2})/)[0]
+      ---
+      "2025_" ++ (if (sizeOf(parts[1]) == 1) "0" ++ parts[1] else parts[1]) ++ "_" ++ (if (sizeOf(parts[2]) == 1) "0" ++ parts[2] else parts[2])
+    }
+  else "unknown"
+
+var dates = ((documentNames map (dn) -> extractDate(dn)) filter (d) -> (d != "unknown")) distinctBy $
+
+// Check documents for a specific date
+fun checkDocumentsForDate(targetDate: String) = do {
+  var altDateFormat = do {
+    var parts = targetDate splitBy "_"
+    ---
+    (parts[1] as Number as String) ++ "_" ++ (parts[2] as Number as String) ++ "_" ++ parts[0][-2 to -1]
+  }
+  
+  var missingDocs = requiredPatterns filter (pattern) ->
+    not (documentNames some (docItem) -> 
+      (docItem contains pattern) and ((docItem contains targetDate) or (docItem contains altDateFormat)))
+  ---
+  {
+    date: targetDate replace "_" with "-",
+    status: isEmpty(missingDocs),
+    missingDocuments: missingDocs
+  }
+}
+---
+dates map (dt) -> checkDocumentsForDate(dt)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="9a31a45d-68d2-4274-85a1-39be89141972" collection="#[vars.checkDocNames]">
+			<choice doc:name="Choice" doc:id="add74412-44bf-40d0-b991-36eb347c208f">
+			<when expression="#[payload.status[0] == true]">
+					<logger level="INFO" doc:name="Logger" doc:id="df63c687-e1a8-4027-85ba-84f6ea30a157" message='"All the document names are present"'/>
+				</when>
+				<otherwise >
+					<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"missing documents are : " ++ (payload.missingDocuments joinBy ", ") ++ " for date - " ++ payload.date]' doc:name="Set Variable" doc:id="a1076790-d6f6-4fa9-9ec9-8f039d08cda9" variableName="missing"/>
+					<logger level="INFO" doc:name="Logger" doc:id="2ded2f0f-1bdb-4b7e-9e4a-608038c17252" message='#[vars.missing]'/>
+					<raise-error doc:name="Raise error" doc:id="d7a0cd68-9a78-4237-8c18-a07dee530404" type="CUSTOM:MISSING_DOCUMENTS" description="#[vars.missing]"/>
+				</otherwise>
+		</choice>
+		</foreach>
 	</sub-flow>
 </mule>

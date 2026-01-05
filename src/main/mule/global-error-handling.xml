@@ -83,24 +83,24 @@ output application/json
 			</ee:transform> [STUDIO] -->
 			<flow-ref doc:name="Calling Email Flow" doc:id="f10c67e5-aa74-47df-9487-b4420f6989f1" name="send_email_sub_flow" />
 		</on-error-propagate>
-		<!-- [STUDIO:"On Error Propagate"]<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bf987879-bd36-4527-a804-8efcff039392" type="CUSTOM:SF_PROCESSING_ERROR">
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bf987879-bd36-4527-a804-8efcff039392" type="CUSTOM:MISSING_DOCUMENTS">
 			<ee:transform doc:name="error body" doc:id="51ca8e89-48d5-474b-8bf2-1df352bd61dc" >
 				<ee:message />
 				<ee:variables >
 					<ee:set-variable variableName="vErrorMsg" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 {
-	"Info":"SF Processing Error",
-	"Po Name":vars.filename,
+	"Info":"Missing Documnets Error",
+	"Po Name":"missing docs",
 	"ErrorType": (error.errorType.namespace) ++ ":" ++ (error.errorType.identifier),
 	"ErrorMessage": error.description,
-	"Flow Name": (error.failingComponent splitBy"/")[0&#93;,
+	"Flow Name": (error.failingComponent splitBy"/")[0],
 	"Timestamp": now()
-}&#93;&#93;></ee:set-variable>
+}]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<ee:transform doc:name="Transform Message" doc:id="011187b7-8657-45a8-bae8-95d84b2a62cc" >
+			<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="011187b7-8657-45a8-bae8-95d84b2a62cc" >
 				<ee:message />
 				<ee:variables >
 					<ee:set-variable variableName="vLog" ><![CDATA[%dw 2.0
@@ -112,9 +112,9 @@ output application/json
 	"payload": vars.vErrorMsg default "Error"
 }&#93;&#93;></ee:set-variable>
 				</ee:variables>
-			</ee:transform>
+			</ee:transform> [STUDIO] -->
 			<flow-ref doc:name="Calling Email Flow" doc:id="4fe6b511-89f8-4287-ab65-4b35e3a47ca7" name="send_email_sub_flow" />
-		</on-error-propagate> [STUDIO] -->
+		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1b45ef15-f236-467e-a851-027bd335d880" type="ANY">
 			<ee:transform doc:name="error body" doc:id="7fabd46d-4ec2-4a2c-b863-2012915681e3">
 				<ee:message />
