@@ -149,11 +149,16 @@ output application/json
 import * from dw::core::Arrays
 
 var documentNames = payload.value.name
-// Required document patterns
-var requiredPatterns = [
+
+// Patterns that require date matching
+var dateRequiredPatterns = [
   "Product Summary Report",
   "Elmendorf Ending Inventory",
-  "San Antonio Ending Inventory",
+  "San Antonio Ending Inventory"
+]
+
+// Patterns that only need existence check (no date matching)
+var dateNotRequiredPatterns = [
   "TSAR Invoice"
 ]
 
@@ -179,9 +184,16 @@ fun checkDocumentsForDate(targetDate: String) = do {
     (parts[1] as Number as String) ++ "_" ++ (parts[2] as Number as String) ++ "_" ++ parts[0][-2 to -1]
   }
   
-  var missingDocs = requiredPatterns filter (pattern) ->
+  // Check date-required patterns (must match pattern + date)
+  var missingDateRequiredDocs = dateRequiredPatterns filter (pattern) ->
     not (documentNames some (docItem) -> 
       (docItem contains pattern) and ((docItem contains targetDate) or (docItem contains altDateFormat)))
+  
+  // Check date-not-required patterns (only pattern match, no date check)
+  var missingDateNotRequiredDocs = dateNotRequiredPatterns filter (pattern) ->
+    not (documentNames some (docItem) -> docItem contains pattern)
+  
+  var missingDocs = missingDateRequiredDocs ++ missingDateNotRequiredDocs
   ---
   {
     date: targetDate replace "_" with "-",
@@ -195,7 +207,7 @@ dates map (dt) -> checkDocumentsForDate(dt)]]></ee:set-variable>
 		</ee:transform>
 		<foreach doc:name="For Each" doc:id="9a31a45d-68d2-4274-85a1-39be89141972" collection="#[vars.checkDocNames]">
 			<choice doc:name="Choice" doc:id="add74412-44bf-40d0-b991-36eb347c208f">
-			<when expression="#[payload.status[0] == true]">
+			<when expression="#[payload.status == true]">
 					<logger level="INFO" doc:name="Logger" doc:id="df63c687-e1a8-4027-85ba-84f6ea30a157" message='"All the document names are present"'/>
 				</when>
 				<otherwise >

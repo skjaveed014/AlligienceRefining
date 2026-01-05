@@ -6,6 +6,35 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="get-differential-subflow" doc:id="6596bd98-f985-43aa-8f82-bb4bcaf9679c" >
+		<ee:transform doc:name="diff month calc" doc:id="55d92fef-4e41-4519-9390-b88620d7e01c">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="diffMonth"><![CDATA[%dw 2.0
+output application/json
+var d = vars.freepointIdpResponse."Inventory Date"
+---
+(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM-yyyy"}
+]]></ee:set-variable>
+				<ee:set-variable variableName="diffYear" ><![CDATA[%dw 2.0
+output application/json
+var d = vars.freepointIdpResponse."Inventory Date"
+---
+(d as Date {format: "d-MMM-yyyy"}) as String {format: "yyyy"}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="9fe59b58-de37-47bb-9499-8f60604b5518" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/"&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"Flow Reference"]<flow-ref doc:name="Flow Reference" doc:id="d64359cf-f3c8-4571-82dd-580f4dcae70e" /> [STUDIO] -->
+		<!-- [STUDIO:"Set Variable"]<set-variable value="" doc:name="Set Variable" doc:id="348b091a-1dd4-410a-8dd6-b637436a679f" /> [STUDIO] -->
 		<http:request method="GET" doc:name="get differential prod column" doc:id="89df9672-73b3-4473-9684-8a6a9f23b5b6" url="https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/Table2/columns/Products" target="input1" targetValue="#[payload.values]" >
 			<http:headers ><![CDATA[#[output application/java
 ---
@@ -13,17 +42,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<ee:transform doc:name="diff month calc" doc:id="55d92fef-4e41-4519-9390-b88620d7e01c" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="diffMonth" ><![CDATA[%dw 2.0
-output application/json
-var d = vars.freepointIdpResponse."Inventory Date"
----
-(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM-yyyy"}
-]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
 		<http:request method="GET" doc:name="get particular month diff values" doc:id="e9be4f3d-addc-4fbb-810e-e83cbd124d6c" url='#["https://graph.microsoft.com/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4O6TKDYTUPFBBFKP6KJSLE2JB7U/workbook/worksheets/Sheet1/tables/Table2/columns/" ++ vars.diffMonth]' target="input2" targetValue="#[payload.values]" >
 			<http:headers ><![CDATA[#[output application/java
 ---

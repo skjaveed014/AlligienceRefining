@@ -6345,11 +6345,11 @@ output application/json
 					<ee:set-variable variableName="inventoryDate" ><![CDATA[payload.Date]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-			<flow-ref doc:name="calling email-reading-to-inventory-subflow" doc:id="f620afb2-6629-4b42-b2e9-30f5c0909a64" name="email-reading-to-inventory-subflow" />
+			<flow-ref doc:name="calling email-reading-to-inventory-subflow" doc:id="f620afb2-6629-4b42-b2e9-30f5c0909a64" name="idp-to-inventory-sub-flow" />
 		</foreach>
 		<flow-ref doc:name="Flow Reference" doc:id="64da74af-4987-4506-8bde-3271b6f5eee7" name="3days-calculationsSub_Flow"/>
 	</sub-flow>
-	<sub-flow name="email-reading-to-inventory-subflow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >
+	<sub-flow name="idp-to-inventory-sub-flow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >
 		<set-variable value='#[vars.idpResponseData.Date as Date {format: "d-MMM-yyyy"}]' doc:name="inventoryDate" doc:id="0c499eca-42e9-4514-97ed-5962d5ea4484" variableName="inventoryDate" />
 		<!-- [STUDIO:"calling read-email-to-idp-extraction-Sub_Flow"]<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="9090b2cd-03a4-44e6-982c-9935e6cb714b" name="read-email-to-idp-extraction-subflow" /> [STUDIO] -->
 		<flow-ref doc:name="calling checks-inventory-and-sales-workbook-existense-subflow" doc:id="d4392118-8039-4e20-a1f3-b5a7f7cc4702" name="checks-inventory-and-sales-workbook-existense-subflow" />
