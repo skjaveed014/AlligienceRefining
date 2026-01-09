@@ -611,7 +611,7 @@ output application/json
 		</foreach>
 	</sub-flow>
 	<sub-flow name="checks-inventory-and-sales-workbook-existense-subflow" doc:id="099e393c-3260-4e0e-b64b-45f745c7a05a" >
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;"Inventory_&amp;_Sales_" ++ date.year]' doc:name="workbookName" doc:id="e16673f8-ee74-4245-8a47-93e545ed2682" variableName="workbookName"/>
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: &quot;d-MMM-yyyy&quot;}&#10;---&#10;p('inventory.workBookName') ++ date.year]" doc:name="workbookName" doc:id="e16673f8-ee74-4245-8a47-93e545ed2682" variableName="workbookName"/>
 		<ee:transform doc:name="gets existingInventoryWorkbooks" doc:id="ee721e7f-2e23-4d73-ae22-b8a74ad7bd4f" >
 			<ee:message >
 			</ee:message>

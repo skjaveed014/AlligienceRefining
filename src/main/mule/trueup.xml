@@ -128,30 +128,110 @@ var header = [
       )
 }
  ]]></ee:set-variable>
+				<ee:set-variable variableName="tableName" ><![CDATA["trueup_" ++ (vars.date replace "-" with "_")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;---&#10;if (vars.rows == 1)&#10;&#10;    {&#10;        range: "A1:" ++ "E" ++ (sizeOf(vars.prods) - 3)&#10;    }&#10;&#10;else&#10;&#10;    {&#10;        range: &#10;            "A" ++ (vars.rows + 2) &#10;            ++ ":" &#10;            ++ "E" ++ (vars.rows + 1 + (sizeOf(vars.prods) - 3))&#10;    }]' doc:name="Set Variable" doc:id="b537a0be-328b-40fd-ac4e-908eb75a2625" variableName="trueUpRange"/>
-		<http:request method="PATCH" doc:name="add rows to trueup" doc:id="f241f60c-ad12-4752-805a-168d3af502d5" url="#[&quot;https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/trueup/range(address='&quot; ++ vars.trueUpRange.range ++ &quot;')&quot;]">
-			<http:body ><![CDATA[#[vars.trueUpRowsPayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<try doc:name="Try" doc:id="6841d0a3-0e2f-46dd-9124-005f61b701ef" >
+			<http:request method="GET" doc:name="get " doc:id="ab0ba61b-85ea-488d-ac18-9a0fa0735a83" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/trueup/tables/&quot; ++ vars.tableName]">
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<set-variable value="update" doc:name="flag=update" doc:id="6a726aad-e33d-4f99-8d62-3b34ff9c20a0" variableName="flag" />
+			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="bb24a0e4-c06b-43c2-b2b5-4207b8fe8bde" variableName="columnId" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="96586f50-b027-453a-83dc-af705ad74ca7" type="HTTP:NOT_FOUND" >
+					<logger level="INFO" doc:name="Logger" doc:id="8e2d6fde-6994-4a6e-835c-4701d639b553" message="-----ItemNotFound--------" />
+					<set-variable value="insert" doc:name="flag=insert" doc:id="14ee4868-31f3-432e-918c-872adb195635" variableName="flag" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<choice doc:name="Choice" doc:id="bafc442b-91d1-4599-890f-5abf8cadf5cc" >
+			<when expression='#[vars.flag == "insert"]'>
+				<http:request method="PATCH" doc:name="add rows to trueup" doc:id="f241f60c-ad12-4752-805a-168d3af502d5" url="#[&quot;https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/trueup/range(address='&quot; ++ vars.trueUpRange.range ++ &quot;')&quot;]">
+			<http:body><![CDATA[#[vars.trueUpRowsPayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="POST" doc:name="Request" doc:id="9ad5982a-78d6-44f9-8200-25cc8c8de709" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/trueup/tables/add"]'>
-			<http:body ><![CDATA[#[%dw 2.0
+				<http:request method="POST" doc:name="adding tables" doc:id="9ad5982a-78d6-44f9-8200-25cc8c8de709" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/trueup/tables/add"]'>
+			<http:body><![CDATA[#[%dw 2.0
 output application/json
 ---
 {
   "address": vars.trueUpRange.range,
   "hasHeaders": true
 }]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer"++ vars.token
 }]]]></http:headers>
 		</http:request>
+				<http:request method="PATCH" doc:name="renaming table" doc:id="ebb1e69d-3207-42b3-89cd-aeee04df1583" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]' config-ref="HTTP_Graph_API_configuration">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+    "name":vars.tableName
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="273d96f7-55b6-41be-ba45-0c25722ea67c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var rows = vars.trueUpRowsPayload.values
+var header = rows[0]
+var data = rows[1 to -1]
+
+---
+{
+  values: header map ((h, idx) ->
+    [h] ++ (data map ($[idx]))
+  )
+}
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<ee:transform doc:name="Transform Message" doc:id="7f441707-29d2-4e0a-b341-4b9a931a0e23" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="trueupUpdatePayload" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.values - payload.values[4]]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<foreach doc:name="For Each" doc:id="633d0609-7bc5-41c3-bfdf-2e1efeddf34f" collection="#[vars.trueupUpdatePayload]">
+					<http:request method="PATCH" doc:name="Request" doc:id="f6027913-4f19-4c74-9f33-9c150d0b8a5d" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ vars.tableName ++ "/columns/" ++ payload[0]]'>
+						<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values":payload map [$]
+}]]]></http:body>
+						<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+					</http:request>
+				</foreach>
+			</otherwise>
+		</choice>
 	</flow>
 </mule>

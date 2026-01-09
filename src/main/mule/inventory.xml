@@ -350,7 +350,8 @@ output application/json
 						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/" ++ vars.existInvColIndex]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/" ++ (vars.existInvColIndex as Number+1)
+]]></ee:set-variable>
 						<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
 ---

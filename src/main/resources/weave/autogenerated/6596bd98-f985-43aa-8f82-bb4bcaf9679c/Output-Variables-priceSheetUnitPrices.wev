@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_6596bd98_f985_43aa_8f82_bb4bcaf9679c_Output_Variables_priceSheetUnitPrices = Any
+

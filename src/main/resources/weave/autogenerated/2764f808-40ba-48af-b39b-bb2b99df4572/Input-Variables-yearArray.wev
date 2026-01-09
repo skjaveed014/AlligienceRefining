@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_2764f808_40ba_48af_b39b_bb2b99df4572_Input_Variables_yearArray = Any
+

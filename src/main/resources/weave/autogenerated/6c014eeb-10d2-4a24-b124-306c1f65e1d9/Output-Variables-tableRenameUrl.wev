@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_6c014eeb_10d2_4a24_b124_306c1f65e1d9_Output_Variables_tableRenameUrl = Any
+

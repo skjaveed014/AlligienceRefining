@@ -50,6 +50,7 @@ stockholdersLookup.tableName: "Stockholders_LookUp_Table"
 priceForFunding.tableName: "PricesForFunding_Table"
 productNameLookup.tableName: "ProductName_Lookup_Table"
 assembly.tableName: "Assembly_Table"
+inventory.workBookName: "Inventory_&_Sales_"
 
 
 freepoint.folderName: "Freepoint_Workbooks"

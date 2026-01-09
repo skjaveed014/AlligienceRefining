@@ -6310,7 +6310,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<logger level="INFO" doc:name="Logger" doc:id="cc8fc0d5-6f0a-4e70-b24e-c14cd57e63bf" message="other data"/>
 			</otherwise>
 		</choice> [STUDIO] -->
-		<ee:transform doc:name="Transform Message" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
+		<ee:transform doc:name="" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
