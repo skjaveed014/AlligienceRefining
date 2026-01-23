@@ -33,13 +33,27 @@ output application/x-www-form-urlencoded
 	"grant_type":"client_credentials"
 }]]]></http:body>
 		</http:request>
-		<http:request method="GET" doc:name="get list of years" doc:id="c8f31829-7318-43c7-8dd7-94f64079f7d8" url="https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks:/children?$select=name" target="yearArray" targetValue="#[payload.value.name]">
-			<http:headers ><![CDATA[#[output application/java
+		<ee:transform doc:name="get list of years" doc:id="2ba5df1f-2d49-494c-93de-01f640650624" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('freepointWorkBooks.folderPath') ++ ":/children?\$select=name"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="4ef83942-3f33-4964-910d-0e0f411ea3b1" name="months-sheet-creation-common-requestor"/>
+		<set-variable value="#[payload.value.name]" doc:name="Set yearArray" doc:id="1ac3f0e4-99fb-43d6-8230-79fbaa68be17" variableName="yearArray"/>
+		<!-- [STUDIO:"get list of years"]<http:request method="GET" doc:name="get list of years" doc:id="c8f31829-7318-43c7-8dd7-94f64079f7d8" target="yearArray" targetValue="#[payload.value.name&#93;" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('freepointWorkBooks.folderPath') ++ &quot;:/children?\$select=name&quot;&#93;">
+			<http:headers ><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-		</http:request>
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="aca0cf3f-e564-45a6-b22e-9e32aeb26235" >
 			<ee:message >
 			</ee:message>
@@ -54,13 +68,27 @@ arr contains  vars.time.year
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="78138d39-a7b2-4d38-a9dd-00041e70b456" >
 			<when expression="#[vars.checkYear == true]">
-				<http:request method="GET" doc:name="get list of months in an year folder" doc:id="200439bf-d431-4328-9f45-fc422c06d65d" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks/"++ vars.time.year ++":/children?\$select=name"]' target="monthsArray" targetValue="#[payload.value.name]">
-					<http:headers ><![CDATA[#[output application/java
+				<ee:transform doc:name="get list of months in an year folder" doc:id="3966dfce-e72b-4d33-ba82-97d5481fd5c7">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('freepointWorkBooks.folderPath') ++ "/" ++ vars.time.year ++":/children?\$select=name"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="4d81026a-3b64-4ce3-af73-825a30f652ba" name="months-sheet-creation-common-requestor"/>
+				<set-variable value="#[payload.value.name]" doc:name="Set monthsArray" doc:id="91991d70-6092-47d7-a23a-6c0815d2b1f4" variableName="monthsArray"/>
+				<!-- [STUDIO:"get list of months in an year folder"]<http:request method="GET" doc:name="get list of months in an year folder" doc:id="200439bf-d431-4328-9f45-fc422c06d65d" target="monthsArray" targetValue="#[payload.value.name&#93;" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('freepointWorkBooks.folderPath') ++ &quot;/&quot; ++ vars.time.year ++&quot;:/children?\$select=name&quot;&#93;">
+					<http:headers ><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
 				<ee:transform doc:name="Transform Message" doc:id="9398ca37-0b5b-46e9-8e64-d78087b9708b">
 					<ee:message />
 					<ee:variables>
@@ -75,18 +103,38 @@ arr contains ("Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ "
 				<flow-ref doc:name="Flow Reference" doc:id="cdf8a146-f402-46d0-86b8-98266487789e" name="month-checking-sub-flow"/>
 			</when>
 			<otherwise >
-				<http:request method="POST" doc:name="year folder creation" doc:id="f9cd157a-b37f-4267-93fc-3c11151c940c" url="https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks:/children">
+				<ee:transform doc:name="year folder creation" doc:id="ec7d00de-0a38-4957-a1e3-b2f6cdfb0132">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('freepointWorkBooks.folderPath') ++ ":/children"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "name": vars.time.year,
+  "folder": {},
+  "@microsoft.graph.conflictBehavior": "rename"
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="51236de7-d0a8-4d97-bc2d-1dd4ebcb82c0" name="months-sheet-creation-common-requestor"/>
+				<!-- [STUDIO:"year folder creation"]<http:request method="POST" doc:name="year folder creation" doc:id="f9cd157a-b37f-4267-93fc-3c11151c940c" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('freepointWorkBooks.folderPath') ++ &quot;:/children&quot;&#93;">
 					<http:body ><![CDATA[#[{
   "name": vars.time.year,
   "folder": {},
   "@microsoft.graph.conflictBehavior": "rename"
-}]]]></http:body>
+}&#93;&#93;&#93;></http:body>
 					<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
 				<ee:transform doc:name="Transform Message" doc:id="4c98943b-d996-4395-a03a-38945758f0e6">
 					<ee:message>
 					</ee:message>
@@ -113,58 +161,125 @@ arr contains ("Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ "
 						<ee:set-variable variableName="workBookName" ><![CDATA["Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<http:request method="GET" doc:name="getting existing month sheet item id" doc:id="fb11d9f2-6f1c-470a-9da1-9f73534771fb" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks/" ++ vars.folderName ++ "/" ++ vars.workBookName]' target="itemId" targetValue="#[payload.id]">
-					<http:headers ><![CDATA[#[output application/java
+				<ee:transform doc:name="getting existing month sheet item id" doc:id="0a5450af-0a2e-47ab-adfb-4b7ab53d3e49">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('freepointWorkBooks.folderPath') ++ "/" ++ vars.folderName ++ "/" ++ vars.workBookName]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="95eca468-4c7e-4d71-846a-813474228c5f" name="months-sheet-creation-common-requestor"/>
+				<set-variable value="#[payload.id]" doc:name="Set itemId" doc:id="ff51b94b-fc7b-42ee-9771-361ee90d5c4c" variableName="itemId"/>
+				<!-- [STUDIO:"getting existing month sheet item id"]<http:request method="GET" doc:name="getting existing month sheet item id" doc:id="fb11d9f2-6f1c-470a-9da1-9f73534771fb" target="itemId" targetValue="#[payload.id&#93;" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('freepointWorkBooks.folderPath') ++ &quot;/&quot; ++ vars.folderName ++ &quot;/&quot; ++ vars.workBookName&#93;">
+					<http:headers ><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
 					</when>
 			<otherwise >
-				<http:request method="PUT" doc:name="workbook creation" doc:id="b348858d-f5f2-49a4-8171-db2594512792" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/root:/AR/Freepoint_Workbooks/" ++ vars.time.year ++ "/" ++ "Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx:/content"]' target="itemId" targetValue="#[payload.id]">
-					<http:body ><![CDATA[#[""]]]></http:body>
-					<http:headers ><![CDATA[#[output application/java
+				<ee:transform doc:name="workbook creation" doc:id="19d1d163-32f4-45fb-b48e-7be100497b71">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["PUT"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
 ---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('freepointWorkBooks.folderPath') ++ "/" ++ vars.time.year ++ "/" ++ p('freepoint.workBookName') ++ (vars.time.my replace "-" with "_") ++ ".xlsx:/content"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="257543e3-54dc-4158-b5f3-a7be2bd598a6" name="months-sheet-creation-common-requestor"/>
+				<set-variable value="#[payload.id]" doc:name="Set itemId" doc:id="f084972c-f2ae-4895-82d1-7e1f950f6956" variableName="itemId"/>
+				<!-- [STUDIO:"workbook creation"]<http:request method="PUT" doc:name="workbook creation" doc:id="b348858d-f5f2-49a4-8171-db2594512792" target="itemId" targetValue="#[payload.id&#93;" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('freepointWorkBooks.folderPath') ++ &quot;/&quot; ++ vars.time.year ++ &quot;/&quot; ++ p('freepoint.workBookName') ++ (vars.time.my replace &quot;-&quot; with &quot;_&quot;) ++ &quot;.xlsx:/content&quot;&#93;">
+					<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
+					<http:headers ><![CDATA[#[output application/java
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
-				<http:request method="PATCH" doc:name="renaming sheet1 name to daily" doc:id="eb8a435c-d770-4d60-a934-245b92e70e2e" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1"]'>
-					<http:body ><![CDATA[#[%dw 2.0
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
+				<ee:transform doc:name="renaming sheet1 name to daily" doc:id="61bf3458-dc37-4be7-ab96-18d3c6d018fe">
+					<ee:message>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Sheet1"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
   "name": "Daily"
-}]]]></http:body>
+}]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="787257a3-a698-4a1c-872f-5a6326e6614a" name="months-sheet-creation-common-requestor"/>
+				<!-- [STUDIO:"renaming sheet1 name to daily"]<http:request method="PATCH" doc:name="renaming sheet1 name to daily" doc:id="eb8a435c-d770-4d60-a934-245b92e70e2e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/Sheet1&quot;&#93;">
+					<http:body ><![CDATA[#[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+  "name": "Daily"
+}&#93;&#93;&#93;></http:body>
 					<http:headers ><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
 				<ee:transform doc:name="Transform Message" doc:id="3cea0592-932a-4a99-acdf-6167f8ed4515">
 							<ee:message>
 							</ee:message>
 							<ee:variables>
 								<ee:set-variable variableName="folderName"><![CDATA[vars.time.year]]></ee:set-variable>
-								<ee:set-variable variableName="workBookName"><![CDATA["Freepoint_Worksheet_" ++ (vars.time.my replace "-" with "_") ++ ".xlsx"]]></ee:set-variable>
+								<ee:set-variable variableName="workBookName"><![CDATA[%dw 2.0
+output application/json
+---
+p('freepoint.workBookName') ++ (vars.time.my replace "-" with "_") ++ ".xlsx"]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
 				<foreach doc:name="For Each" doc:id="5980da84-1fa1-42a5-ac53-f3aa58fd20e7" collection='["3days","trueup"]'>
-					<http:request method="POST" doc:name="adding sheets to new workbook" doc:id="fde38e64-d760-45a2-8f9f-2c643e12619e" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/add"]'>
-					<http:body><![CDATA[#[%dw 2.0
+					<ee:transform doc:name="adding sheets to new workbook" doc:id="cee3ed03-f742-4eb1-8132-fc3f73939eda" >
+						<ee:message >
+						</ee:message>
+						<ee:variables >
+							<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
+							<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/add"]]></ee:set-variable>
+							<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
 ---
 {
   "name": payload
-}]]]></http:body>
+}]]></ee:set-variable>
+						</ee:variables>
+					</ee:transform>
+					<flow-ref doc:name="months-sheet-creation-common-requestor" doc:id="6de99f42-75da-4c53-ad3e-06b1e1aaea7e" name="months-sheet-creation-common-requestor"/>
+					<!-- [STUDIO:"adding sheets to new workbook"]<http:request method="POST" doc:name="adding sheets to new workbook" doc:id="fde38e64-d760-45a2-8f9f-2c643e12619e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/add&quot;&#93;">
+					<http:body><![CDATA[#[%dw 2.0
+output application/json
+&#45;&#45;-
+{
+  "name": payload
+}&#93;&#93;&#93;></http:body>
 					<http:headers><![CDATA[#[output application/java
----
+&#45;&#45;-
 {
 	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-				</http:request>
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
 				</foreach>
 				<!-- [STUDIO:"setting trueup sheet headers"]<http:request method="PATCH" doc:name="setting trueup sheet headers" doc:id="4ec12dba-88ab-4f31-b451-d2a560f7c0bc" url="#[&quot;https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/&quot; ++ vars.itemId ++ &quot;/workbook/worksheets/trueup/range(address='A1:E1')&quot;&#93;">
 					<http:body ><![CDATA[#[%dw 2.0
@@ -207,5 +322,36 @@ output application/json
 				</http:request> [STUDIO] -->
 			</otherwise>
 				</choice>
+	</sub-flow>
+	<sub-flow name="months-sheet-creation-common-requestor" doc:id="8c32da19-474f-4f18-b08d-b642cfbf3afb" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="bd740ec1-af89-4978-839f-527627ed1002" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="9e647d72-d8e2-44c8-b057-16a9d52468fb">
+			<set-variable value='#[null]' doc:name="Set Variable" doc:id="7428dc79-dc69-42a4-93ff-9734cba8663e" variableName="httpError" />
+				<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="ef161b78-44e0-489e-8926-60f540d40244" path="#[vars.vpath]" config-ref="HTTP_Graph_API_configuration">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer"++ vars.token
+}]]]></http:headers>
+		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1f276489-64b6-4751-a290-45d8960a6585" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="1b239631-417d-4379-b67b-b51f35d45998" message="retrying timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c3b1e04f-ad7e-47d4-bb80-14b1dd6d44d1" type="ANY" >
+						<set-variable value="#[error.errorType.identifier]" doc:name="Set Variable" doc:id="b4fd0583-5e94-4832-921b-0f2699176e1f" variableName="httpError" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="c32f60fb-fe32-4649-93e9-13ded63eee37" >
+			<when expression="#[vars.httpError != null]" >
+				<raise-error doc:name="Raise error" doc:id="452d02e2-c6d8-4495-9ab4-71b39db5ac2c" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpError default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="450fb809-2c18-41fc-81ce-ad4c55a553ee" message="logging" />
+			</otherwise>
+		</choice>
 	</sub-flow>
 </mule>

@@ -1,0 +1,8 @@
+%dw 2.0
+
+type auto_c3cfe393_7b00_4e53_b819_9f3af0abf913_Input_Variables_time = {|
+  my: String {"format": "MMM-yyyy"}, 
+  month: String {"format": "MMM"}, 
+  year: String {"format": "yyyy"}
+|}
+

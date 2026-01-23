@@ -73,7 +73,7 @@ output application/json
 			<set-variable value="update" doc:name="flag=update" doc:id="cdb53adb-4ffc-4db7-90b5-3e19e1ebaa7e" variableName="flag" />
 			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="560e6090-7bca-449d-8401-ed45d7e44005" variableName="columnId" />
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8450e645-49f2-47ca-ba94-4790991c6d08" type="HTTP:NOT_FOUND" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8450e645-49f2-47ca-ba94-4790991c6d08" type="HTTP1:NOT_FOUND" >
 					<logger level="INFO" doc:name="Logger" doc:id="76197870-eb1f-4ebe-8c51-464dd0ad80aa" message="-----ItemNotFound--------" />
 					<set-variable value="insert" doc:name="flag=insert" doc:id="25333adf-0da9-4265-af01-9ecdb3a3a77b" variableName="flag" />
 				</on-error-continue>
@@ -207,7 +207,6 @@ var colCount= vars.tisColumnCount
 				</ee:transform>
 				<ee:transform doc:name="adds new tanks template to table" doc:id="6a6078d8-76b1-46d6-80f3-eb2d77b115a2">
 					<ee:message>
-						<ee:set-payload ><![CDATA[vars."newTanksTemplate"]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
@@ -215,6 +214,7 @@ var colCount= vars.tisColumnCount
 output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tablename') ++ "/rows/add"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[vars."newTanksTemplate"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="calling tis-common-requestor-subFlow" doc:id="d641146b-f977-4290-9465-5ae5e1147b69" name="tis-common-requestor-subFlow"/>
@@ -262,7 +262,6 @@ values: [[date]] ++ coldata.values ++ [[""],[""],[vars."replacedFormulas".values
 			<when expression='#[vars.flag == "update"]' >
 				<ee:transform doc:name="tis sheet updation" doc:id="a4f0fd11-06f7-474b-84f3-98ed7dc0beab">
 					<ee:message>
-						<ee:set-payload><![CDATA[vars."tisRequestData"]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
@@ -270,6 +269,7 @@ values: [[date]] ++ coldata.values ++ [[""],[""],[vars."replacedFormulas".values
 output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/" ++ vars."columnId"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[vars."tisRequestData"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="Flow Reference" doc:id="999c77df-7f19-4bfa-b1c2-542451349216" name="tis-common-requestor-subFlow"/>
@@ -285,7 +285,6 @@ output application/json
 			<otherwise >
 				<ee:transform doc:name="Transform Message" doc:id="3450f75f-8627-42e7-b3e2-3457ece9988f">
 					<ee:message>
-						<ee:set-payload><![CDATA[vars."tisRequestData"]]></ee:set-payload>
 					</ee:message>
 					<ee:variables >
 						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
@@ -293,6 +292,7 @@ output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/add"]]></ee:set-variable>
 						<ee:set-variable variableName="vmethod" ><![CDATA["POST"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[vars."tisRequestData"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="Flow Reference" doc:id="60e4c70c-21ba-4b80-ad0d-24959798bfde" name="tis-common-requestor-subFlow"/>
@@ -310,7 +310,6 @@ output application/json
 	<sub-flow name="get-tis-data-by-inventory-date-subflow" doc:id="797f0205-5fc4-474f-93f4-960309a7bc37" >
 		<ee:transform doc:name="get tis tank column" doc:id="d0b2580d-c7ee-4fe1-bff0-3bc8c2cc3d2f" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
@@ -318,6 +317,7 @@ output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/Tank"]]></ee:set-variable>
 				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="4b5321d7-ebe4-4990-a999-812e6724a51a" name="tis-common-requestor-subFlow"/>
@@ -332,7 +332,6 @@ output application/json
 		</http:request> [STUDIO] -->
 		<ee:transform doc:name="get tis product column" doc:id="1bb29394-6019-4a3a-b945-db70f8e30081" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
@@ -340,6 +339,7 @@ output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/Product"]]></ee:set-variable>
 				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="50a934a0-0448-411a-8728-4889b0d9d4f2" name="tis-common-requestor-subFlow"/>
@@ -354,7 +354,6 @@ output application/json
 		</http:request> [STUDIO] -->
 		<ee:transform doc:name="get tis values by date" doc:id="5e02b8a3-90d9-43cf-9330-a996cb3c4fda" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[""]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
@@ -362,6 +361,7 @@ output application/json
 output application/json
 ---
 "/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ p('tis.tableName') ++ "/columns/" ++ vars."inventoryDate" as String]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="569fe3db-b7f2-4b4d-bcb2-ae12e7b2d8e7" name="tis-common-requestor-subFlow"/>
@@ -411,16 +411,41 @@ mapObject ((arr, key) -> (key): ((arr map $.value) reduce ($$ + $) default 0))]]
 			
 </ee:variables>
 		</ee:transform>
-	</sub-flow>
-	<sub-flow name="tis-common-requestor-subFlow" doc:id="230017ab-08e4-4c87-b7f5-cc76248b63f4" >
-		<http:request method="#[vars.vmethod]" doc:name="tis common requestor" doc:id="bbb82675-e329-4d85-9046-c04a02a9e6a9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:headers ><![CDATA[#[output application/java
+	</sub-flow> <sub-flow name="tis-common-requestor-subFlow" doc:id="73a483f1-f32a-4831-9877-3132e8261600" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="dc05250a-2ea2-41a4-8515-47e5413760fd" millisBetweenRetries="5000" >
+			<try doc:name="Try" doc:id="4b02b3c7-32d4-4eef-a50e-26887e7bba82" >
+				<set-variable value='#[null]' doc:name="Set Variable" doc:id="28579166-7694-4bb3-a7ce-7f9e3972d2ea" variableName="httpError" />
+				<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="62ff0887-e577-45ad-ab68-d2c420ff5511" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]" >
+					<error-mapping sourceType="HTTP:TIMEOUT" targetType="APP:TIMEOUT" />
+					<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
+					<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
-		</http:request>
-	</sub-flow>
+				</http:request>
+				<error-handler >
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="154eb231-e451-415d-9a0a-cc1df06f0af5" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT" >
+						<logger level="INFO" doc:name="Logger" doc:id="da04a744-b25e-4d8f-88ca-999b40e89f71" message="retring timeout error" />
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="15c7024c-c61b-400b-b3c9-1c617be56215" type="ANY">
+						<set-variable value="#[error.errorType.identifier]" doc:name="Set Variable" doc:id="daddfb8a-46bf-40e5-8b3c-6f5984ba82db" variableName="httpError"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="c720075e-d1c3-44c5-a46a-b2f4f32a085a">
+				<when expression='#[vars.httpError == "NOT_FOUND"]'>
+					<raise-error doc:name="Raise error" doc:id="4f3b0d66-72eb-4f90-9612-0e6a6b766ff0" type="HTTP1:NOT_FOUND" description="not found" />
+				</when>
+				<when expression="#[vars.httpError != null]">
+					<raise-error doc:name="Raise error" doc:id="3dcb410b-e81b-4080-91a9-c6910581d081" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpError default 'UNKNOWN')]" />
+				</when>
+				<otherwise>
+					<logger level="INFO" doc:name="Logger" doc:id="6114b5f5-dabd-401c-ae52-1e8c72588c0b" message="logging" />
+				</otherwise>
+			</choice>
+ </sub-flow>
 	
 	
 </mule>

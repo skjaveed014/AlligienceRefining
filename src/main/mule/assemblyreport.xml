@@ -25,12 +25,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<!-- [STUDIO:"calling get-columnCountAndColumns-of-inventory-subflow"]<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="ede20afd-4848-4730-bedf-5c42b48c2ebe" name="get-columnCountAndColumns-of-inventory-subflow" /> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="5746cc89-e5a2-4ceb-a0cc-c10a4ee06488" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="dateToGetInvData" ><![CDATA[%dw 2.0
 output application/json
 ---
 (vars.inventoryDate as Date { format: "d-MMM-yyyy" }) as String { format: "dd-MMM-yyyy" }
-]]></ee:set-payload>
-			</ee:message>
+]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="calling get-volumes-from-inventory-by-inventory-date-subflow" doc:id="e319d35c-420b-4873-ab02-a27e76e8ac1c" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
 		<ee:transform doc:name="Transform Message" doc:id="53067e6e-23ef-4810-91fd-6b574e0c777b" >

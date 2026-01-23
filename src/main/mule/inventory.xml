@@ -193,7 +193,7 @@ output application/json
 		</http:request> [STUDIO] -->
 			<set-variable value="update" doc:name="flag=update" doc:id="389fd69a-312c-4646-969f-b6b4c4da0f96" variableName="flag" />
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50fcef09-ec79-43a4-a8b0-e093954a726d" type="HTTP:NOT_FOUND" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50fcef09-ec79-43a4-a8b0-e093954a726d" type="HTTP1:NOT_FOUND" >
 					<logger level="INFO" doc:name="Logger" doc:id="83473451-ddb4-4abe-a7e1-6a5df9a60938" message="-----ItemNotFound--------" />
 					<set-variable value="insert" doc:name="flag=insert" doc:id="ca923dae-14e9-44ce-94c0-94f6ab02e666" variableName="flag" />
 				</on-error-continue>
@@ -201,7 +201,7 @@ output application/json
 		</try>
 		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="5f155b2d-ae85-482a-a476-ae65a2981859" name="get-columnCountAndColumns-of-inventory-subflow" />
 		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="9dab4f3e-a7e2-497f-930f-7b331f929173" name="get-Inventory-template-columns-subflow" />
-		<flow-ref doc:name="Flow Reference" doc:id="e9f5e9f1-bd87-42f7-b1f2-fd43efed7916" name="get-crude-slate-su-flow"/>
+		<flow-ref doc:name="calling get-crude-slate-su-flow" doc:id="e9f5e9f1-bd87-42f7-b1f2-fd43efed7916" name="get-crude-slate-su-flow"/>
 		<ee:transform doc:name="inventoryProductsData" doc:id="9f572f8e-c9f8-4b1e-843f-5e512e8dd3a9" >
 			<ee:message />
 			<ee:variables >
@@ -398,13 +398,37 @@ output application/json
 		</choice>
 	</sub-flow>
 	<sub-flow name="inventory-common-requester-sub-flow" doc:id="1069c413-fd22-4a5a-9178-ee4a18d6456d" >
-		<http:request method="#[vars.vmethod]" doc:name="inventory commmon requestor" doc:id="c99523af-c38c-4278-96ca-0f15e4119ec9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="4c079204-2f82-410b-bf18-d3308366452f" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="de57d2ef-ceb8-418f-a69e-3356c6157492">
+			<set-variable value='#[null]' doc:name="Set Variable" doc:id="17bb519d-4628-4272-a224-a66cf9a0c40f" variableName="httpError" />
+				<http:request method="#[vars.vmethod]" doc:name="inventory commmon requestor" doc:id="c99523af-c38c-4278-96ca-0f15e4119ec9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="844bb8c0-3bc4-46f1-85e9-89b074a4999b" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="2a7438cb-ce06-4424-8aa3-f840a4fd67f1" message="retrying timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2f4fe6b5-a045-4eff-959a-77c431f7e548" type="ANY" >
+						<set-variable value="#[error.errorType.identifier]" doc:name="Set Variable" doc:id="a528352d-39ee-49de-a5e6-bc7a58bd40d4" variableName="httpError" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="27ddd2d9-aed9-4bfe-941c-ed3944005d74" >
+			<when expression='#[vars.httpError == "NOT_FOUND"]' >
+				<raise-error doc:name="Raise error" doc:id="9854bebf-c66e-448e-9cb1-36f05cdfa5cd" type="HTTP1:NOT_FOUND" description="not found" />
+			</when>
+			<when expression="#[vars.httpError != null]" >
+				<raise-error doc:name="Raise error" doc:id="359b407f-eb04-4023-b2af-ed17d38cd795" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpError default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="c03b33dc-96c9-4f56-9578-018322154b17" message="logging" />
+			</otherwise>
+		</choice>
 	</sub-flow>
 </mule>

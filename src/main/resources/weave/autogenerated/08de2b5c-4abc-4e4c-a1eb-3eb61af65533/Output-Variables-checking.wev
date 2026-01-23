@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_08de2b5c_4abc_4e4c_a1eb_3eb61af65533_Output_Variables_checking = {|
+  date*: String {"format": "M/d/yy"}, 
+  daysInMonth*: Number, 
+  isStartDateOfMonth*: Boolean, 
+  monthYear*: String {"format": "MMM"}, 
+  originalDate*: Date {"format": "dd-MMM-yyyy"}, 
+  previousMonthLastDate*: String {"format": "d-MMM-yy"}, 
+  StartDate*: String {"format": "d-MMM-yy"}, 
+  weekday*: String {"format": "EEEE"}
+|}
+

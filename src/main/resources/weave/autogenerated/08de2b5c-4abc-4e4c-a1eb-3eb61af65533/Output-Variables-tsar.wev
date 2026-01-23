@@ -1,0 +1,18 @@
+%dw 2.0
+
+type auto_08de2b5c_4abc_4e4c_a1eb_3eb61af65533_Output_Variables_tsar = {|
+  Products*: {|
+    Crude: {| "Quantity (bbls)": Any |}, 
+    "Gasoline - Domestic": {| "Quantity (bbls)": Any |}, 
+    "Gasoline - Export": {| "Quantity (bbls)": Number |}, 
+    "ULSD - Domestic": {| "Quantity (bbls)": Number |}, 
+    "ULSHO - Export": {| "Quantity (bbls)": Any |}, 
+    ATB: {| "Quantity (bbls)": Any |}, 
+    "JPTS (includes sales to TSAR)": {| "Quantity (bbls)": Any |}, 
+    "DHT Feed": {| "Quantity (bbls)": Any |}, 
+    Naphtha: {| "Quantity (bbls)": Any |}, 
+    Isomerate: {| "Quantity (bbls)": Any |}, 
+    Reformate: {| "Quantity (bbls)": Any |}
+  |}
+|}
+

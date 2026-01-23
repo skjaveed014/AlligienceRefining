@@ -11,13 +11,14 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	<http:request-config name="HTTP_Request_configuration22" doc:name="HTTP Request configuration" doc:id="46b824e3-503a-4f4d-b03e-6a4032b6d1ee" >
 		<http:request-connection protocol="HTTPS" host="sandbox-quickbooks.api.intuit.com" port="443" >
 			<http:authentication >
-				<oauth:authorization-code-grant-type localCallbackConfig="HTTP_Listener_config" externalCallbackUrl="http://localhost:8081/callback" localAuthorizationUrl="http://localhost:8081/authorize" authorizationUrl="https://appcenter.intuit.com/connect/oauth2" clientId="ABcxlAYETx3fF7shb2H5HD2zcdlRvNxt0Yzjv8jgiYmGBNQxHj" clientSecret="AJgMAfPe1GwT6ZhXFGGCmkL5QwCGL15q3iswKZqn" tokenUrl="https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer" localCallbackConfigPath="/callback" scopes="com.intuit.quickbooks.accounting" state="wsgdfsads">
+				<oauth:authorization-code-grant-type localCallbackConfig="HTTP_Listener_config" externalCallbackUrl="http://localhost:8081/qbcallback" localAuthorizationUrl="http://localhost:8081/authorize" authorizationUrl="https://appcenter.intuit.com/connect/oauth2" clientId="ABwuUjhpB64zK2GK54i8cEco81E5xlfizZiajqAXIRO0bzTl8u" clientSecret="0b4PsEf2PXQJP9u7Ijazss1muclnM4pfExtD20FX" tokenUrl="https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer" localCallbackConfigPath="/qbcallback" scopes="com.intuit.quickbooks.accounting" state="wsgdfsads">
 					<oauth:token-manager objectStore="Object_store22" />
 				</oauth:authorization-code-grant-type>
 			</http:authentication>
 		</http:request-connection>
 	</http:request-config>
-	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="5695b27b-c7c0-474c-ba66-2e16130f3386" />
+	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="5695b27b-c7c0-474c-ba66-2e16130f3386" >
+	</os:config>
 	<!-- [STUDIO:"qb-invoiceFlow"]<flow name="qb-invoiceFlow" doc:id="44529717-c2e7-408e-8ac6-2e51d7a13c10" >
 		<http:listener doc:name="Listener" doc:id="99775e91-5a33-4b2e-aed6-28742d9ed69a" config-ref="HTTP_Listener_config" path="/qb"/>
 		<os:store doc:name="Store" doc:id="707d38c6-4138-49f1-94b2-d0f378eb3424" key="qbobject" objectStore="Object_store" />
@@ -408,6 +409,114 @@ var items = vars."qty-amount-qb-set"  // your qty amount qb set input array
 			</ee:variables>
 		</ee:transform>
 		<http:request method="POST" doc:name="invoice generation" doc:id="2161bcd4-b0b8-45ff-9282-afd7bf89ad6b" config-ref="HTTP_Request_configuration22" path="/v3/company/9341454875771769/invoice?minorversion=75" >
+			<http:body ><![CDATA[#[vars.qbPayload]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"" : ""
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+	<sub-flow name="qb-invoice-in-ar-sandbox" doc:id="c3cfe393-7b00-4e53-b819-9f3af0abf913" >
+		<http:request method="GET" doc:name="get purchase amount from frp tables" doc:id="329ebe51-4f3a-465c-8e36-bc5c331497a0" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/Daily/tables/freepoint_" ++ (vars.date replace "-" with "_") ++ "/columns/Purchase"]' target="amountValues" targetValue="#[payload.values]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="GET" doc:name="get items from qb" doc:id="90ba1e2a-d8be-47d3-8a36-583ff88aa31e" config-ref="HTTP_Request_configuration22" path="/v3/company/9341456074238213/query?query=select * from Item&amp;minorversion=75" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="setting item ids" doc:id="5da960cb-3d9a-4350-bd28-fb9d1d409b88" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="itemIds" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.QueryResponse.Item 
+    reduce ((item, acc = {}) -> 
+        acc ++ { (item.Name): item.Id }
+    )]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="8086bab4-1a9f-4d83-ae96-c05cc2c27ae5" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="qty-amount-qb-set" ><![CDATA[%dw 2.0
+output application/json
+
+var products = vars.columns5Payload.Products[1 to -4]     
+var quantities = vars.columns5Payload.Quantity[1 to -4]
+
+var qbMap = {
+    "Crude":"Crude - Freepoint",
+    "Gasoline - Domestic":"CBOB - Domestic",
+    "Gasoline - Export":"CBOB - Exports",
+    "ULSD - Domestic":"ULSD",
+    "ULSHO - Export":"ULSHO",
+    "ATB":"ATB",
+    "JPTS (includes sales to TSAR)":"JPTS",
+    "DHT Feed":"DHT Feed",
+    "Naphtha":"Naphtha",
+    "Isomerate":"Isomerate",
+    "Reformate":"Reformate"
+}
+ var itemId=vars.itemIds
+
+var values= vars.amountValues
+---
+(products) map ((p, i) ->
+    {
+        product: (qbMap[p[0]] default p[0]),
+        quantity: if (quantities[i][0] == "" or quantities[i][0] == null)
+            0
+        else
+            (quantities[i][0] replace "," with "") as Number,
+        itemId: itemId[(qbMap[p[0]] default p[0])] default null,
+        amount : values[i+1][0]
+    }
+)]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message1" doc:id="f7dd98ef-cfe5-411e-a443-6d157e4298a8" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="qbPayload" ><![CDATA[%dw 2.0
+output application/json
+
+var items = vars."qty-amount-qb-set"  // your qty amount qb set input array
+
+---
+{
+    Line: items map (item) -> {
+        Amount: item.amount,
+        DetailType: "SalesItemLineDetail",
+        SalesItemLineDetail: {
+            ItemRef: {
+                value: item.itemId,
+                name: item.product
+            },
+            Qty: item.quantity,
+            TaxCodeRef: {
+                value: "NON"
+            }
+        }
+    },
+
+    // keep your customer same
+    CustomerRef: {
+        value: "58"
+    }
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="invoice generation" doc:id="7a622b30-deef-4d44-a89d-b73c9d5899ed" config-ref="HTTP_Request_configuration22" path="/v3/company/9341456074238213/invoice?minorversion=75" >
 			<http:body ><![CDATA[#[vars.qbPayload]]]></http:body>
 			<http:headers ><![CDATA[#[output application/java
 ---

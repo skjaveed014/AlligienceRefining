@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_c3cfe393_7b00_4e53_b819_9f3af0abf913_Output_Variables_monthsArray = Any
+

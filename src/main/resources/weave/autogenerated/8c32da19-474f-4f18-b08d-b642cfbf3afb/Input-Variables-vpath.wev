@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_8c32da19_474f_4f18_b08d_b642cfbf3afb_Input_Variables_vpath = String
+

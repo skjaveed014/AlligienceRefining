@@ -1,0 +1,104 @@
+%dw 2.0
+
+type auto_40171e6f_0614_48fc_a146_32fbe1935e30_Output_Variables_freepointData = {|
+  "Inventory Date"?: String, 
+  Name?: String, 
+  PaymentDueDate?: String, 
+  pricingdate?: String, 
+  PriorInventoryDate?: String, 
+  Products: {|
+    ATB: {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    Crude: {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "DHT Feed": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "Gasoline - Domestic": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "Gasoline - Export": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Number | String, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    Isomerate: {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "JPTS (includes sales to TSAR)": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    Naphtha: {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    Reformate: {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "ULSD - Domestic": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Number | String, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}, 
+    "ULSHO - Export": {|
+      Diff?: String, 
+      Payment?: String, 
+      "Quantity (bbls)": Any, 
+      "Settle Price"?: String, 
+      "Total Price (Dollar/Barrel)"?: String, 
+      "Total Price (Dollar/Gallon)"?: String
+    |}
+  |}, 
+  Total?: {|
+    "TotalQuantity (bbls)": String, 
+    TotalPayment: String
+  |}
+|}
+

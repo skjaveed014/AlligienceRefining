@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_40171e6f_0614_48fc_a146_32fbe1935e30_Output_Variables_inventoryDateInfo = {|
+  originalDate: Date {"format": "d-MMM-yyyy"}, 
+  isStartDateOfMonth: Boolean, 
+  daysInMonth: Number, 
+  previousMonthLastDate: String {"format": "d-MMM-yy"}, 
+  StartDate: String {"format": "d-MMM-yy"}, 
+  date: String {"format": "M/d/yy"}, 
+  monthYear: String {"format": "MMM"}, 
+  weekday: String {"format": "EEEE"}
+|}
+

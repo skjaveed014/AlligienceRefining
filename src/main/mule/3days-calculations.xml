@@ -15,6 +15,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<flow name="3days-calculationsFlow" doc:id="40171e6f-0614-48fc-a146-32fbe1935e30" >
 		<http:listener doc:name="Listener" doc:id="0e31df76-5c77-4f51-8d06-3c5d0ad772a5" config-ref="HTTP_Listener_config" path="/qb"/>
 		<flow-ref doc:name="Flow Reference" doc:id="455eae1b-aca7-4a98-aa24-788c42b9b329" name="3days-calculationsSub_Flow"/>
+		<error-handler ref="global-error-handlingError_Handler" />
 	</flow>
 	<sub-flow name="3days-calculationsSub_Flow" doc:id="4c8994ba-60ca-4c25-9bc9-5244fab411e9" >
 		<!-- [STUDIO:"Try"]<try doc:name="Try" doc:id="d696ba1b-afaa-4761-a2aa-165ac6416339" >
@@ -56,104 +57,106 @@ output application/json
 				</on-error-propagate>
 			</error-handler>
 		</try> [STUDIO] -->
-		<ee:transform doc:name="sample hardcode frp data" doc:id="b595bf53-baaf-48ca-a25a-44dffeee95b9" >
+		<!-- [STUDIO:"sample hardcode frp data"]<ee:transform doc:name="sample hardcode frp data" doc:id="b595bf53-baaf-48ca-a25a-44dffeee95b9" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[{
     "Name": "Freepoint Commodities Report",
-    "Inventory Date": "1-Oct-2025",
-    "PriorInventoryDate": "30-Sep-2025",
-    "pricingdate": "2-Oct-2025",
-    "PaymentDueDate": "6-Oct-2025",
+    "Inventory Date": "14-Dec-2025",
+    "PriorInventoryDate": "11-Dec-2025",
+    "inventoryDateRange": "12-Dec-2025 to 14-Dec-2025",
+    "noOfInventoryDays": 3,
+    "pricingdate": "15-Dec-2025",
+    "PaymentDueDate": "17-Dec-2025",
     "Products": {
         "Crude": {
-            "Quantity (bbls)": "(20,076)",
-            "Settle Price": "60.48",
-            "Diff": "3.58",
-            "Total Price (Dollar/Gallon)": "1.5252",
-            "Total Price (Dollar/Barrel)": "64.060",
-            "Payment": "(1,286,069)"
+            "Quantity (bbls)": "(67,744)",
+            "Settle Price": "56.82",
+            "Diff": "2.74",
+            "Total Price (Dollar/Gallon)": "1.4181",
+            "Total Price (Dollar/Barrel)": "59.560",
+            "Payment": "(4,034,833)"
         },
         "Gasoline - Domestic": {
-            "Quantity (bbls)": "5,780",
-            "Settle Price": "1.8873",
-            "Diff": "0.0183",
-            "Total Price (Dollar/Gallon)": "1.9056",
-            "Total Price (Dollar/Barrel)": "80.035",
-            "Payment": "462,587"
+            "Quantity (bbls)": "19,473",
+            "Settle Price": "1.6048",
+            "Diff": "0.0184",
+            "Total Price (Dollar/Gallon)": "1.6232",
+            "Total Price (Dollar/Barrel)": "68.174",
+            "Payment": "1,327,587"
         },
         "Gasoline - Export": {
-            "Quantity (bbls)": "(1)",
-            "Settle Price": "1.8873",
-            "Diff": "(0.0885)",
-            "Total Price (Dollar/Gallon)": "1.7988",
-            "Total Price (Dollar/Barrel)": "75.550",
-            "Payment": "(45)"
+            "Quantity (bbls)": "15",
+            "Settle Price": "1.6048",
+            "Diff": "(0.0954)",
+            "Total Price (Dollar/Gallon)": "1.5094",
+            "Total Price (Dollar/Barrel)": "63.395",
+            "Payment": "945"
         },
         "ULSD - Domestic": {
-            "Quantity (bbls)": "8,704",
-            "Settle Price": "2.1790",
-            "Diff": "0.0228",
-            "Total Price (Dollar/Gallon)": "2.2018",
-            "Total Price (Dollar/Barrel)": "92.476",
-            "Payment": "804,880"
+            "Quantity (bbls)": "25,964",
+            "Settle Price": "2.0269",
+            "Diff": "0.0244",
+            "Total Price (Dollar/Gallon)": "2.0513",
+            "Total Price (Dollar/Barrel)": "86.153",
+            "Payment": "2,236,898"
         },
         "ULSHO - Export": {
-            "Quantity (bbls)": "88",
-            "Settle Price": "2.1790",
-            "Diff": "(0.0745)",
-            "Total Price (Dollar/Gallon)": "2.1045",
-            "Total Price (Dollar/Barrel)": "88.389",
-            "Payment": "7,778"
+            "Quantity (bbls)": "0",
+            "Settle Price": "2.0269",
+            "Diff": "(0.0811)",
+            "Total Price (Dollar/Gallon)": "1.9458",
+            "Total Price (Dollar/Barrel)": "81.722",
+            "Payment": "0"
         },
         "ATB": {
-            "Quantity (bbls)": "4,622",
-            "Settle Price": "1.7229",
-            "Diff": "(0.1232)",
-            "Total Price (Dollar/Gallon)": "1.5997",
-            "Total Price (Dollar/Barrel)": "67.186",
-            "Payment": "310,526"
+            "Quantity (bbls)": "13,367",
+            "Settle Price": "1.6383",
+            "Diff": "(0.1233)",
+            "Total Price (Dollar/Gallon)": "1.5151",
+            "Total Price (Dollar/Barrel)": "63.633",
+            "Payment": "850,561"
         },
         "JPTS (includes sales to TSAR)": {
-            "Quantity (bbls)": "(0)",
-            "Settle Price": "2.0985",
+            "Quantity (bbls)": "12",
+            "Settle Price": "1.8956",
             "Diff": "0.0300",
-            "Total Price (Dollar/Gallon)": "2.1285",
-            "Total Price (Dollar/Barrel)": "89.397",
-            "Payment": "(9)"
+            "Total Price (Dollar/Gallon)": "1.9256",
+            "Total Price (Dollar/Barrel)": "80.875",
+            "Payment": "946"
         },
         "DHT Feed": {
-            "Quantity (bbls)": "(51)",
-            "Settle Price": "2.2435",
-            "Diff": "(0.1487)",
-            "Total Price (Dollar/Gallon)": "2.0948",
-            "Total Price (Dollar/Barrel)": "87.981",
-            "Payment": "(4,522)"
+            "Quantity (bbls)": "286",
+            "Settle Price": "2.1806",
+            "Diff": "(0.1495)",
+            "Total Price (Dollar/Gallon)": "2.0311",
+            "Total Price (Dollar/Barrel)": "85.308",
+            "Payment": "24,364"
         },
         "Naphtha": {
-            "Quantity (bbls)": "(147)",
-            "Settle Price": "1.851",
-            "Diff": "(0.7309)",
-            "Total Price (Dollar/Gallon)": "1.1201",
-            "Total Price (Dollar/Barrel)": "47.044",
-            "Payment": "(6,930)"
+            "Quantity (bbls)": "854",
+            "Settle Price": "1.7323",
+            "Diff": "(0.7322)",
+            "Total Price (Dollar/Gallon)": "1.0001",
+            "Total Price (Dollar/Barrel)": "42.004",
+            "Payment": "35,867"
         },
         "Isomerate": {
-            "Quantity (bbls)": "(72)",
-            "Settle Price": "1.851",
-            "Diff": "(0.6809)",
-            "Total Price (Dollar/Gallon)": "1.1701",
-            "Total Price (Dollar/Barrel)": "49.144",
-            "Payment": "(3,548)"
+            "Quantity (bbls)": "(119)",
+            "Settle Price": "1.7323",
+            "Diff": "(0.6822)",
+            "Total Price (Dollar/Gallon)": "1.0501",
+            "Total Price (Dollar/Barrel)": "44.104",
+            "Payment": "(5,244)"
         },
         "Reformate": {
-            "Quantity (bbls)": "(46)",
-            "Settle Price": "1.851",
-            "Diff": "(0.1766)",
-            "Total Price (Dollar/Gallon)": "1.6744",
-            "Total Price (Dollar/Barrel)": "70.326",
-            "Payment": "(3,256)"
+            "Quantity (bbls)": "246",
+            "Settle Price": "1.7323",
+            "Diff": "(0.3156)",
+            "Total Price (Dollar/Gallon)": "1.4167",
+            "Total Price (Dollar/Barrel)": "59.502",
+            "Payment": "14,638"
         },
         "LPG": {
             "Quantity (bbls)": "0",
@@ -165,66 +168,193 @@ output application/json
         }
     },
     "Total": {
-        "TotalQuantity (bbls)": "(1,200)",
-        "TotalPayment": "281,393"
+        "TotalQuantity (bbls)": "(7,646)",
+        "TotalPayment": "451,729"
     }
-}]]></ee:set-variable>
-				<ee:set-variable variableName="frpPdfName" ><![CDATA["TSAR Invoice 10_1_25.pdf"]]></ee:set-variable>
+}&#93;&#93;></ee:set-variable>
+				<ee:set-variable variableName="frpPdfName" ><![CDATA["TSAR Invoice 10_1_25.pdf"&#93;&#93;></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
+		</ee:transform> [STUDIO] -->
+		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="ce5c897a-59c2-4277-9d35-7d45591b8ee0" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[{
+    "Name": "Freepoint Commodities Report",
+    "Inventory Date": "11-Dec-2025",
+    "PriorInventoryDate": "10-Dec-2025",
+    "inventoryDateRange": "11-Dec-2025 to 11-Dec-2025",
+    "noOfInventoryDays": 1,
+    "pricingdate": "12-Dec-2025",
+    "PaymentDueDate": "16-Dec-2025",
+    "Products": {
+      "Crude": {
+        "Quantity (bbls)": "(21,576)",
+        "Settle Price": "57.44",
+        "Diff": "2.74",
+        "Total Price (Dollar/Gallon)": "1.4329",
+        "Total Price (Dollar/Barrel)": "60.180",
+        "Payment": "(1,298,444)"
+      },
+      "Gasoline - Domestic": {
+        "Quantity (bbls)": "6,570",
+        "Settle Price": "1.6234",
+        "Diff": "0.0184",
+        "Total Price (Dollar/Gallon)": "1.6418",
+        "Total Price (Dollar/Barrel)": "68.956",
+        "Payment": "453,059"
+      },
+      "Gasoline - Export": {
+        "Quantity (bbls)": "4",
+        "Settle Price": "1.6234",
+        "Diff": "(0.0974)",
+        "Total Price (Dollar/Gallon)": "1.5260",
+        "Total Price (Dollar/Barrel)": "64.092",
+        "Payment": "282"
+      },
+      "ULSD - Domestic": {
+        "Quantity (bbls)": "8,826",
+        "Settle Price": "2.0438",
+        "Diff": "0.0244",
+        "Total Price (Dollar/Gallon)": "2.0682",
+        "Total Price (Dollar/Barrel)": "86.862",
+        "Payment": "766,655"
+      },
+      "ULSHO - Export": {
+        "Quantity (bbls)": "0",
+        "Settle Price": "2.0438",
+        "Diff": "(0.0831)",
+        "Total Price (Dollar/Gallon)": "1.9607",
+        "Total Price (Dollar/Barrel)": "82.347",
+        "Payment": "0"
+      },
+      "ATB": {
+        "Quantity (bbls)": "4,488",
+        "Settle Price": "1.6517",
+        "Diff": "(0.1233)",
+        "Total Price (Dollar/Gallon)": "1.5284",
+        "Total Price (Dollar/Barrel)": "64.193",
+        "Payment": "288,087"
+      },
+      "JPTS (includes sales to TSAR)": {
+        "Quantity (bbls)": "1",
+        "Settle Price": "1.9255",
+        "Diff": "0.0300",
+        "Total Price (Dollar/Gallon)": "1.9555",
+        "Total Price (Dollar/Barrel)": "82.131",
+        "Payment": "57"
+      },
+      "DHT Feed": {
+        "Quantity (bbls)": "(161)",
+        "Settle Price": "2.198",
+        "Diff": "(0.1495)",
+        "Total Price (Dollar/Gallon)": "2.0485",
+        "Total Price (Dollar/Barrel)": "86.038",
+        "Payment": "(13,887)"
+      },
+      "Naphtha": {
+        "Quantity (bbls)": "157",
+        "Settle Price": "1.7521",
+        "Diff": "(0.7322)",
+        "Total Price (Dollar/Gallon)": "1.0199",
+        "Total Price (Dollar/Barrel)": "42.835",
+        "Payment": "6,734"
+      },
+      "Isomerate": {
+        "Quantity (bbls)": "(10)",
+        "Settle Price": "1.7521",
+        "Diff": "(0.6822)",
+        "Total Price (Dollar/Gallon)": "1.0699",
+        "Total Price (Dollar/Barrel)": "44.935",
+        "Payment": "(458)"
+      },
+      "Reformate": {
+        "Quantity (bbls)": "92",
+        "Settle Price": "1.7521",
+        "Diff": "(0.3156)",
+        "Total Price (Dollar/Gallon)": "1.4365",
+        "Total Price (Dollar/Barrel)": "60.334",
+        "Payment": "5,563"
+      },
+      "LPG": {
+        "Quantity (bbls)": "0",
+        "Settle Price": "",
+        "Diff": "",
+        "Total Price (Dollar/Gallon)": "",
+        "Total Price (Dollar/Barrel)": "",
+        "Payment": ""
+      }
+    },
+    "Total": {
+      "TotalQuantity (bbls)": "(1,609)",
+      "TotalPayment": "207,648"
+    }
+  }
+&#93;&#93;></ee:set-variable>
+			</ee:variables>
+		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="setting date for sheet creation" doc:id="8ba372a7-717a-4823-82fe-45af43da6224" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[vars.freepointIdpResponse."Inventory Date"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<flow-ref doc:name="calling month sheet creation flow" doc:id="e2fec088-ad7d-4da8-9a93-fb993bd97159" name="months-sheet-creationFlow"/>
-		<ee:transform doc:name="Transform Message" doc:id="a02e25cc-0360-45a5-9571-48b77b425f84">
+		<flow-ref doc:name="calling get-sample-frp-workbookid" doc:id="16a490aa-7e04-4c11-ae15-c8bffee76e86" name="get-sample-frp-workbookid"/>
+		<ee:transform doc:name="days3" doc:id="a02e25cc-0360-45a5-9571-48b77b425f84">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
 				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
 				<ee:set-variable variableName="pdfName"><![CDATA[vars.frpPdfName]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<choice doc:name="Choice" doc:id="3120fa90-34e8-4123-93c8-83b25d95ba9c">
-			<when expression='#[(vars.pdfName splitBy " ")[2] endsWith "_3"]'>
-				<ee:transform doc:name="sheet2" doc:id="c35cfc3a-6923-4e1a-9984-3f5ee11358ee">
-			<ee:message>
-			</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="sheetName"><![CDATA["3days"]]></ee:set-variable>
-						<ee:set-variable variableName="days3"><![CDATA[%dw 2.0
+				<ee:set-variable variableName="days3" ><![CDATA[%dw 2.0
 output application/json
 
 var input1 = vars.freepointIdpResponse
 
-// Function to parse string like "26-Aug-2025" into a date
 fun toDate(str) = (str as Date { format: "d-MMM-yyyy" })
 
-var startDate = toDate(input1.PriorInventoryDate) + |P1D|   // day after prior inventory date
-var endDate = toDate(input1."Inventory Date")
-
-// Generate all dates between startDate and endDate (inclusive)
 fun dateRange(from, to) =
     if (from > to) [] 
     else [from as String {format: "d-MMM-yyyy"}] ++ dateRange(from + |P1D|, to)
 
-var datesList = dateRange(startDate, endDate)
+// Check if single day scenario
+var isSingleDay = input1.noOfInventoryDays == "1"
 
-// Extract day parts and month-year for tableDate
-var dayParts = datesList map ((it) -> (it splitBy "-")[0])
-var monthYear = (datesList[-1] splitBy "-")[1 to 2] joinBy "-"
+var datesList = if (isSingleDay) 
+    [input1."Inventory Date"]
+  else do {
+    var range = input1.inventoryDateRange splitBy " to "
+    var startDate = toDate(range[0])   
+    var endDate = toDate(range[1])
+    ---
+    dateRange(startDate, endDate)
+  }
 
-var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
+var tableDate = if (isSingleDay) 
+    input1."Inventory Date"
+  else do {
+    var dayParts = datesList map ((it) -> (it splitBy "-")[0])
+    var monthYear = (datesList[-1] splitBy "-")[1 to 2] joinBy "-"
+    ---
+    (dayParts joinBy "-") ++ "-" ++ monthYear
+  }
 
 ---
 {
     dates: datesList,
     tableDate: tableDate
-}
-]]></ee:set-variable>
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="3120fa90-34e8-4123-93c8-83b25d95ba9c">
+			<when expression='#[vars.freepointIdpResponse.noOfInventoryDays&gt;1]'>
+				<ee:transform doc:name="sheet2" doc:id="c35cfc3a-6923-4e1a-9984-3f5ee11358ee">
+			<ee:message>
+			</ee:message>
+					<ee:variables>
 						<ee:set-variable variableName="freepointData"><![CDATA[vars.freepointIdpResponse]]></ee:set-variable>
 						<ee:set-variable variableName="pricingDate"><![CDATA[vars.freepointIdpResponse.pricingdate]]></ee:set-variable>
+						<ee:set-variable variableName="sheetName" ><![CDATA["3days"]]></ee:set-variable>
 					</ee:variables>
 		</ee:transform>
 				<ee:transform doc:name="Transform Message" doc:id="9ff3581d-aa5b-41ba-b35f-7b059aaae178">
@@ -246,6 +376,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 							<ee:set-variable variableName="sheetName"><![CDATA["Daily"
 ]]></ee:set-variable>
 							<ee:set-variable variableName="inventoryDate"><![CDATA[payload]]></ee:set-variable>
+							<ee:set-variable variableName="dateToGetInvData" ><![CDATA[payload]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
 					<flow-ref doc:name="calling month sheet creation sub flow" doc:id="a816d522-f9ec-4071-9d6b-29dd3fc999b9" name="months-sheet-creationFlow" />
@@ -254,7 +385,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 					<flow-ref doc:name="checking-frp-table-existence-in-frpsheet" doc:id="cf13aa43-5c15-49ce-9aab-fab8ca7932b2" name="checking-frp-table-existence-in-frpsheet"/>
 					<!-- [STUDIO:"calling table creation add date column"]<flow-ref doc:name="calling table creation add date column" doc:id="6c85f539-ceac-4b40-9446-eaa835b873a0" name="freepoint-table-creation-add-date-column" /> [STUDIO] -->
 					<flow-ref doc:name="calling trueup flow" doc:id="6a69e424-861a-47ce-b312-b7a1efba0c4c" name="trueupFlow" />
-					<!-- [STUDIO:"calling qb invoice"]<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoiceSub_Flow" /> [STUDIO] -->
+					<flow-ref doc:name="calling qb invoice" doc:id="d0eef88d-e009-4b27-afb8-e1582ec92cca" name="qb-invoice-in-ar-sandbox" />
 				</foreach>
 			</when>
 			<otherwise>
@@ -271,7 +402,7 @@ var tableDate = (dayParts joinBy "-") ++ "-" ++ monthYear
 				<flow-ref doc:name="checking-frp-table-existence-in-frpsheet" doc:id="38d89dc7-efd9-4946-97d3-3cfb61a03672" name="checking-frp-table-existence-in-frpsheet"/>
 				<!-- [STUDIO:"calling table creation add date column"]<flow-ref doc:name="calling table creation add date column" doc:id="c6e6bc49-e047-410e-9052-8e4e3b7cc5fa" name="freepoint-table-creation-add-date-column" /> [STUDIO] -->
 				<flow-ref doc:name="calling trueup flow" doc:id="ba1f7b64-431c-4d2e-8dd3-bc2088ffe26a" name="trueupFlow" />
-				<!-- [STUDIO:"calling qb invoice"]<flow-ref doc:name="calling qb invoice" doc:id="72c649e3-02ab-48d6-b4ce-dc12e1a88228" name="qb-invoiceSub_Flow" /> [STUDIO] -->
+				<flow-ref doc:name="calling qb invoice" doc:id="72c649e3-02ab-48d6-b4ce-dc12e1a88228" name="qb-invoice-in-ar-sandbox" />
 			</otherwise>
 		</choice>
 	</sub-flow>
@@ -319,7 +450,7 @@ output application/json
 	"Authorization" : "Bearer" ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 		</http:request> [STUDIO] -->
-		<http:request method="GET" doc:name="Request" doc:id="77e59010-f25e-40e8-b6c1-3465b1ef729d" config-ref="HTTP_Graph_API_configuration" path="/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/tables/Table1/columns/Products" target="sampleProducts" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="Request" doc:id="77e59010-f25e-40e8-b6c1-3465b1ef729d" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.sampleFrpItemId ++ &quot;/workbook/worksheets/Sheet1/tables/Table1/columns/Products&quot;]" target="sampleProducts" targetValue="#[payload.values]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {

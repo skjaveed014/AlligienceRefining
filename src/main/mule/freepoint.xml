@@ -25,7 +25,7 @@ output application/x-www-form-urlencoded
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/usedRange(valuesOnly=true)/rowCount"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/usedRange(valuesOnly=true)/rowCount"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -46,7 +46,7 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/tables/Table1/columns/Products"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.sampleFrpItemId ++ "/workbook/worksheets/Sheet1/tables/Table1/columns/Products"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -69,7 +69,7 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName++ "/tables/add"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName++ "/tables/add"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
 ---
@@ -102,7 +102,7 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.itemId ++ "/workbook/worksheets/" ++ vars.sheetName ++ "/tables/" ++ payload.name]]></ee:set-variable>
 				<ee:set-variable variableName="vmethod" ><![CDATA["PATCH"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[%dw 2.0
 output application/json
@@ -134,7 +134,7 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/usedRange(valuesOnly=true)"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.sampleFrpItemId ++ "/workbook/worksheets/Sheet1/usedRange(valuesOnly=true)"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -157,7 +157,8 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:L" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"]]></ee:set-variable>
+//"/v1.0/drives/2094b369-dbb6-4fd0-afd9-3e78830f8e98/items/01REH5I4OIVWTYFSG5BFBIN7I3N5AQVVDP/workbook/worksheets/Sheet1/range(address='F1:L" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.sampleFrpItemId ++ "/workbook/worksheets/Sheet1/range(address='F1:L" ++ sizeOf(vars.sampleProducts) ++ "')?%24select=formulas"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -312,24 +313,26 @@ output application/json
 	<sub-flow name="get-volumes-from-inventory-by-inventory-date-subflow" doc:id="61cbcd1b-96ba-44a0-847b-ea4b4420b7f3" >
 		<ee:transform doc:name="Transform Message" doc:id="bd065a2c-365b-4a96-a7f4-fd932bde90e0" >
 			<ee:message >
-				<ee:set-payload ><![CDATA[(payload as Date {format: "d-MMM-yyyy"}) as String {format: "d-MMM-yyyy"}]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="dateToGetInvData" ><![CDATA[(vars.dateToGetInvData as Date {format: "d-MMM-yyyy"}) as String {format: "d-MMM-yyyy"}]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
-		<http:request method="GET" doc:name="get sample formulae column from inv" doc:id="e45458ad-956c-400a-a106-445dc734670b" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/Date"]' target="sampleColumn" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="get sample formulae column from inv" doc:id="e45458ad-956c-400a-a106-445dc734670b" target="sampleColumn" targetValue="#[payload.values]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/Date&quot;]">
 			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="acb71fb0-eb50-4f93-a17f-37257c95aa0a" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/" ++ payload]' target="dateVolumes" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="acb71fb0-eb50-4f93-a17f-37257c95aa0a" target="dateVolumes" targetValue="#[payload.values]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName')  ++ &quot;/columns/&quot; ++ vars.dateToGetInvData]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="get Products-Date column data" doc:id="cf65380e-19f3-44b5-bea8-209f4d277cd6" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/Inventory/tables/InventoryTable/columns/Products-Date"]' target="sar" targetValue="#[payload.values]">
+		<http:request method="GET" doc:name="get Products-Date column data" doc:id="cf65380e-19f3-44b5-bea8-209f4d277cd6" target="sar" targetValue="#[payload.values]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++&quot;/columns/Products-Date&quot;]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -408,14 +411,14 @@ output application/json
 		</ee:transform>
 	</sub-flow>
 	<sub-flow name="get-assembly-report-values" doc:id="5325a560-dc79-40c0-8a72-bfed849236f9" >
-		<http:request method="GET" doc:name="get Products-Date column data" doc:id="eff48716-43eb-4ecd-a73d-ea11f2743cb3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/Products"]' target="assbProds" targetValue="#[payload.values]" >
+		<http:request method="GET" doc:name="get Products-Date column data" doc:id="eff48716-43eb-4ecd-a73d-ea11f2743cb3" target="assbProds" targetValue="#[payload.values]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot;++ p('assembly.tableName') ++ &quot;/columns/Products&quot;]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="1cb7b78e-38c7-4193-acdf-3d7a343a94b3" url='#["https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/Assembly_Table/columns/" ++ (vars.inventoryDate as Date {format: "d-MMM-yyyy"} as String {format: "d-MMM-yyyy"})]' target="assbDateVolumes" targetValue="#[payload.values]" >
+		<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="1cb7b78e-38c7-4193-acdf-3d7a343a94b3" target="assbDateVolumes" targetValue="#[payload.values]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('assembly.tableName') ++ &quot;/columns/&quot; ++ (vars.inventoryDate as Date {format: &quot;d-MMM-yyyy&quot;} as String {format: &quot;d-MMM-yyyy&quot;})]">
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
@@ -437,14 +440,43 @@ input1 map (item, index) -> {
 			</ee:variables>
 		</ee:transform>
 	</sub-flow>
+	<sub-flow name="get-sample-frp-workbookid" doc:id="08de2b5c-4abc-4e4c-a1eb-3eb61af65533" >
+		<try doc:name="Try" doc:id="fec2ee7c-458e-4894-af59-3544f1a45a82" >
+			<http:request method="GET" doc:name="get sample frp workbook id" doc:id="5eb718b7-5f26-4a95-bebe-bfeed36e8fc5" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot;++ p('sampleWorkBooks.folderPath') ++ &quot;/&quot; ++ p('sampleFrp.workBookName') ++ &quot;.xlsx&quot;]" targetValue="#[payload.id]" target="sampleFrpItemId">
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8ba9885b-ea07-49f3-bf0c-ba64b15cc087" type="HTTP:NOT_FOUND" >
+					<logger level="INFO" doc:name="Logger" doc:id="326c254a-1fa3-4350-99d2-d6acd1d088dc" message="Prices sheet is not present" />
+					<raise-error doc:name="Raise error" doc:id="418739a3-dff7-471b-9021-ea5dcf83ea73" type="CUSTOM:MISSING_PRICES_DOCUMENT" description='"Missing Pre req values i.e Prices document"' />
+				</on-error-propagate>
+			</error-handler>
+		</try>
+	</sub-flow>
 	<sub-flow name="freepoint-common-requestor-Sub_Flow" doc:id="e4a216ac-835e-4341-b81b-d04e5a094a22" >
-		<http:request method="#[vars.vmethod]" doc:name="freepoint common requestor" doc:id="a6199a5f-ca67-451a-a233-ebdb48d6d76d" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="7c863430-dcbe-495b-8ff2-5215fb74dc31" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="3d626060-ea7b-4145-b518-540a062fa2e1">
+			<http:request method="#[vars.vmethod]" doc:name="freepoint common requestor" doc:id="a6199a5f-ca67-451a-a233-ebdb48d6d76d" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+			<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c289ea8b-30e3-4034-a4f8-2a64b6ff229b" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="266fbc72-c249-465e-8854-bb10ef63025a" message="retrying timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f52c86da-a225-4097-bcb6-a288e8a95ebe" type="HTTP:BAD_GATEWAY, HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE, EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED" >
+						<logger level="INFO" doc:name="Logger" doc:id="962f2c9a-75a1-4b77-a151-60a83a0a2db5" message="other errors" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
 	</sub-flow>
 </mule>

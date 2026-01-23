@@ -81,12 +81,6 @@
 		</dependency>
 		<dependency>
 			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
-			<artifactId>mule-plugin-idp-action-85b98b9c-fd26-4637-85a2-f597b7fe512c</artifactId>
-			<version>1.1.0</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
 			<artifactId>mule-plugin-idp-action-79d49089-659c-4f2a-b4c2-41000e6f1844</artifactId>
 			<version>1.5.0</version>
 			<classifier>mule-plugin</classifier>
@@ -107,6 +101,12 @@
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
 			<version>10.22.9</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>001b9e0e-b33b-4b0b-a11d-1b175a5492f2</groupId>
+			<artifactId>mule-plugin-idp-action-85b98b9c-fd26-4637-85a2-f597b7fe512c</artifactId>
+			<version>1.2.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>

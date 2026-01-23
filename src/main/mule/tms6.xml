@@ -362,7 +362,7 @@ output application/json
 			<set-variable value="update" doc:name="flag=update" doc:id="bd25d897-e120-4a4d-b09a-3c3d8ad7f5ad" variableName="flag" />
 			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="883cdd31-8a8c-4fba-8d54-014228cde3dc" variableName="columnId" />
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fdb38e2b-e6eb-4cf2-897a-08eae0a200a2" type="HTTP:NOT_FOUND" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fdb38e2b-e6eb-4cf2-897a-08eae0a200a2" type="HTTP1:NOT_FOUND" >
 					<logger level="INFO" doc:name="Logger" doc:id="8755c0bb-483e-4df5-93ad-aca4ebf4ee65" message="-----ItemNotFound--------" />
 					<set-variable value="insert" doc:name="flag=insert" doc:id="578a421e-ae6a-44a3-a403-9660c2fef981" variableName="flag" />
 				</on-error-continue>
@@ -591,13 +591,37 @@ var values=vars."tms6SheetValues"
 		</foreach>
 	</sub-flow>
 	<sub-flow name="tms6-common-requestor-Sub_Flow" doc:id="b044054f-c354-4190-9843-26813927a851" >
-		<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="8cd71e70-6338-4798-b0bc-2f3c54946805" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="8cc44505-fd31-4000-8c9f-6f277d6a594e" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="d214fdcd-eb2b-40bf-9b30-313c469b9e80">
+			<set-variable value='#[null]' doc:name="Set Variable" doc:id="28114543-777d-42fa-8056-08a2a9aa7957" variableName="httpError" />
+				<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="8cd71e70-6338-4798-b0bc-2f3c54946805" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dbb8c3e1-0018-435d-9329-3a6824c3e89e" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="253751c7-a0d4-4222-a550-04269d7495fc" message="retring timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a6ed0b27-38b2-4233-96ff-c4983b0c1224" type="ANY">
+						<set-variable value="#[error.errorType.identifier]" doc:name="Set Variable" doc:id="459715dd-655b-48c5-88fe-f5aa55251eb1" variableName="httpError" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="daef8245-a703-4f71-8c0b-b71438bad9a0" >
+			<when expression='#[vars.httpError == "NOT_FOUND"]' >
+				<raise-error doc:name="Raise error" doc:id="f570f3fd-15ed-4cf6-8494-d6b6a225ed8a" type="HTTP1:NOT_FOUND" description="not found" />
+			</when>
+			<when expression="#[vars.httpError != null]" >
+				<raise-error doc:name="Raise error" doc:id="bc8e372b-27dd-4067-9309-b5dde6e72c90" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpError default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="e7cedd53-798b-4985-8cee-32d6eee2cc7a" message="logging" />
+			</otherwise>
+		</choice>
 	</sub-flow>
 </mule>

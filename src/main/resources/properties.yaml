@@ -50,8 +50,13 @@ stockholdersLookup.tableName: "Stockholders_LookUp_Table"
 priceForFunding.tableName: "PricesForFunding_Table"
 productNameLookup.tableName: "ProductName_Lookup_Table"
 assembly.tableName: "Assembly_Table"
-inventory.workBookName: "Inventory_&_Sales_"
+meterControl.argusValues.tableName: "CrudeSlate_Table"
 
+
+inventory.workBookName: "Inventory_&_Sales_"
+preReqValue.workBookName: "Prices-"
+freepoint.workBookName: "Freepoint_Worksheet_"
+sampleFrp.workBookName: "Freepoint"
 
 freepoint.folderName: "Freepoint_Workbooks"
 inventory_&_sales.foldername: "Inventory_&_Sales_Workbooks"
@@ -62,4 +67,8 @@ mail:
   to: "dharani.p@aa2it.com"
   from: "dpatteboyina@mdwhub.com"
   cc: "javeed.s@aa2it.com"
+  
+preReqValuesFile.folderPath: "AR/Pre-Req-Values"
+freepointWorkBooks.folderPath: "AR/Freepoint_Workbooks"
+sampleWorkBooks.folderPath: "AR/Sample_Workbooks"
 
