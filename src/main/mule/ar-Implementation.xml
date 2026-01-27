@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<ee:set-variable variableName="inventoryDate" ><![CDATA[[]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<!-- [STUDIO:"calling read-email-to-idp-extraction-Sub_Flow"]<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="4fc1e17b-b877-422e-91a4-fc3a59a1849c" name="read-email-to-idp-extraction-subflow" /> [STUDIO] -->
+		<flow-ref doc:name="calling read-email-to-idp-extraction-Sub_Flow" doc:id="4fc1e17b-b877-422e-91a4-fc3a59a1849c" name="read-email-to-idp-extraction-subflow" />
 		<!-- [STUDIO:"Choice"]<choice doc:name="Choice" doc:id="1913a0d7-75a2-4037-84b4-e3b0d8472a97" >
 			<when expression='#[payload.date == "1-Oct-2025"&#93;'>
 				<ee:transform doc:name="oct 1 data" doc:id="01d1b919-d120-4f2a-95fb-daf6fa66c04c">
@@ -6310,24 +6310,24 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 				<logger level="INFO" doc:name="Logger" doc:id="cc8fc0d5-6f0a-4e70-b24e-c14cd57e63bf" message="other data"/>
 			</otherwise>
 		</choice> [STUDIO] -->
-		<!-- [STUDIO:""]<ee:transform doc:name="" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
+		<ee:transform doc:name="" doc:id="97f56232-9ee8-4d6a-959b-3d80d8ecbb12" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="completeSet" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 vars.inventoryDate map (item, index) -> {
     Date: item,
-    Elmendorf: vars.elmendorfIdpResponse[item&#93;,
-    "TSAR": vars."tsarIdpResponse"[item&#93;,
-	"TMS6": vars."tms6Data"[item&#93;,
+    Elmendorf: vars.elmendorfIdpResponse[item],
+    "TSAR": vars."tsarIdpResponse"[item],
+	"TMS6": vars."tms6Data"[item],
     Freepoint: vars.freepointIdpResponse
 }
-&#93;&#93;></ee:set-variable>
+]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform> [STUDIO] -->
-		<ee:transform doc:name="hardcoded completeset" doc:id="aa19a22c-de3a-4fdf-b32a-9cada67c0ecc">
+		</ee:transform>
+		<!-- [STUDIO:"hardcoded completeset"]<ee:transform doc:name="hardcoded completeset" doc:id="aa19a22c-de3a-4fdf-b32a-9cada67c0ecc">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
@@ -6410,7 +6410,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "0.00",
               "TotalCapacity": "0.00"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "Crude": "101,468.2"
@@ -6426,7 +6426,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacityTotal": "130,053.0"
         }
       }
-    ],
+    &#93;,
     "TSAR": [
       {
         "RefineryName": "Antonio Refinery",
@@ -6452,7 +6452,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "124.56",
               "TotalCapacity": "124.56"
             }
-          ],
+          &#93;,
           "ATB": [
             {
               "Tank": "00096",
@@ -6522,7 +6522,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,365.69",
               "TotalCapacity": "2,512.18"
             }
-          ],
+          &#93;,
           "Crude": [
             {
               "Tank": "00401",
@@ -6541,7 +6541,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "658.70",
               "TotalCapacity": "7,006.64"
             }
-          ],
+          &#93;,
           "DHT FEED": [
             {
               "Tank": "00095",
@@ -6560,7 +6560,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "11,774.92",
               "TotalCapacity": "24,648.52"
             }
-          ],
+          &#93;,
           "Ethanol": [
             {
               "Tank": "00422",
@@ -6579,7 +6579,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "284.88",
               "TotalCapacity": "2,234.37"
             }
-          ],
+          &#93;,
           "Full Range Reformate": [
             {
               "Tank": "00220",
@@ -6598,7 +6598,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "1,626.87",
               "TotalCapacity": "4,535.77"
             }
-          ],
+          &#93;,
           "GASOLINE": [
             {
               "Tank": "00215",
@@ -6668,7 +6668,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "17,590.54",
               "TotalCapacity": "25,231.71"
             }
-          ],
+          &#93;,
           "ISOMERATE": [
             {
               "Tank": "00218",
@@ -6704,7 +6704,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,907.05",
               "TotalCapacity": "4,514.02"
             }
-          ],
+          &#93;,
           "JET": [
             {
               "Tank": "00411",
@@ -6723,7 +6723,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "4,445.23",
               "TotalCapacity": "4,807.57"
             }
-          ],
+          &#93;,
           "JET A": [
             {
               "Tank": "00427",
@@ -6742,7 +6742,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "1,857.76",
               "TotalCapacity": "2,338.02"
             }
-          ],
+          &#93;,
           "JPTS": [
             {
               "Tank": "00409",
@@ -6795,7 +6795,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,460.84",
               "TotalCapacity": "2,463.56"
             }
-          ],
+          &#93;,
           "LPG": [
             {
               "Tank": "09001",
@@ -6831,7 +6831,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "526.36",
               "TotalCapacity": "612.30"
             }
-          ],
+          &#93;,
           "NHT-FEED": [
             {
               "Tank": "00406",
@@ -6850,7 +6850,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "18,463.79",
               "TotalCapacity": "24,038.69"
             }
-          ],
+          &#93;,
           "SLOP": [
             {
               "Tank": "00404",
@@ -6869,7 +6869,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,990.75",
               "TotalCapacity": "8,230.35"
             }
-          ],
+          &#93;,
           "ULSD": [
             {
               "Tank": "00408",
@@ -6939,7 +6939,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "3,282.66",
               "TotalCapacity": "4,684.23"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "JP-8 ANTI-ICE": "0.0",
@@ -6969,7 +6969,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacity": "204,166.0"
         }
       }
-    ],
+    &#93;,
     "TMS6": [
       {
         "InventoryDate": "2-Jan-2026",
@@ -7076,7 +7076,7 @@ vars.inventoryDate map (item, index) -> {
             "volume": "0",
             "stockAdjust": "0"
           }
-        ],
+        &#93;,
         "StockHolders": {
           "Saratoga Rack Marketing": [
             {
@@ -7103,7 +7103,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Tartan Oil, LLC": [
             {
               "tank": "000020",
@@ -7153,7 +7153,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "The San Antonio Refinery": [
             {
               "tank": "000003",
@@ -7257,7 +7257,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Lazarus Nixon Refinery": [
             {
               "tank": "000531",
@@ -7265,7 +7265,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Poet Ethanol Products": [
             {
               "tank": "000ETH",
@@ -7273,7 +7273,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "178"
             }
-          ],
+          &#93;,
           "Vantage - ADM": [
             {
               "tank": "000ETH",
@@ -7281,7 +7281,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Kinder Morgan": [
             {
               "tank": "000ETH",
@@ -7289,7 +7289,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Biourja": [
             {
               "tank": "000ETH",
@@ -7297,7 +7297,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "-177"
             }
-          ],
+          &#93;,
           "Freepoint LLC": [
             {
               "tank": "000020",
@@ -7335,7 +7335,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "-60",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Brownsville GTR LLC": [
             {
               "tank": "000180",
@@ -7343,7 +7343,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Texas TransChem": [
             {
               "tank": "000021",
@@ -7363,7 +7363,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Serv Energy LLC": [
             {
               "tank": "000180",
@@ -7371,7 +7371,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "US Energy": [
             {
               "tank": "000180",
@@ -7379,10 +7379,10 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ]
+          &#93;
         }
       }
-    ],
+    &#93;,
     "Freepoint": {
       "Name": "Freepoint",
       "Inventory Date": "4-Jan-2026",
@@ -7573,7 +7573,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "0.00",
               "TotalCapacity": "0.00"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "Crude": "99,588.6"
@@ -7589,7 +7589,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacityTotal": "130,055.1"
         }
       }
-    ],
+    &#93;,
     "TSAR": [
       {
         "RefineryName": "The San Antonio Refinery",
@@ -7615,7 +7615,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "124.56",
               "TotalCapacity": "124.56"
             }
-          ],
+          &#93;,
           "ATB": [
             {
               "Tank": "00096",
@@ -7685,7 +7685,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,365.69",
               "TotalCapacity": "2,512.18"
             }
-          ],
+          &#93;,
           "Crude": [
             {
               "Tank": "00401",
@@ -7704,7 +7704,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "620.27",
               "TotalCapacity": "7,006.57"
             }
-          ],
+          &#93;,
           "DHT FEED": [
             {
               "Tank": "00095",
@@ -7723,7 +7723,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "12,966.96",
               "TotalCapacity": "24,649.75"
             }
-          ],
+          &#93;,
           "Ethanol": [
             {
               "Tank": "00422",
@@ -7742,7 +7742,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "660.94",
               "TotalCapacity": "2,234.38"
             }
-          ],
+          &#93;,
           "Full Range Reformate": [
             {
               "Tank": "00220",
@@ -7761,7 +7761,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "1,758.76",
               "TotalCapacity": "4,535.78"
             }
-          ],
+          &#93;,
           "GASOLINE": [
             {
               "Tank": "00215",
@@ -7831,7 +7831,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "12,749.71",
               "TotalCapacity": "25,231.41"
             }
-          ],
+          &#93;,
           "ISOMERATE": [
             {
               "Tank": "00218",
@@ -7867,7 +7867,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,745.19",
               "TotalCapacity": "4,513.92"
             }
-          ],
+          &#93;,
           "JET": [
             {
               "Tank": "00411",
@@ -7886,7 +7886,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "4,445.35",
               "TotalCapacity": "4,807.57"
             }
-          ],
+          &#93;,
           "JET A": [
             {
               "Tank": "00427",
@@ -7905,7 +7905,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,187.30",
               "TotalCapacity": "2,338.07"
             }
-          ],
+          &#93;,
           "JPTS": [
             {
               "Tank": "00409",
@@ -7958,7 +7958,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,460.86",
               "TotalCapacity": "2,463.58"
             }
-          ],
+          &#93;,
           "LPG": [
             {
               "Tank": "09001",
@@ -7994,7 +7994,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "375.90",
               "TotalCapacity": "612.30"
             }
-          ],
+          &#93;,
           "NHT-FEED": [
             {
               "Tank": "00406",
@@ -8013,7 +8013,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "18,415.66",
               "TotalCapacity": "24,037.97"
             }
-          ],
+          &#93;,
           "SLOP": [
             {
               "Tank": "00404",
@@ -8032,7 +8032,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,988.95",
               "TotalCapacity": "8,230.04"
             }
-          ],
+          &#93;,
           "ULSD": [
             {
               "Tank": "00408",
@@ -8102,7 +8102,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "4,683.90",
               "TotalCapacity": "4,683.90"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "JP-8 ANTI-ICE": "0.0",
@@ -8132,7 +8132,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacityTotal": "204,164.6"
         }
       }
-    ],
+    &#93;,
     "TMS6": [
       {
         "InventoryDate": "4-Jan-2026",
@@ -8239,7 +8239,7 @@ vars.inventoryDate map (item, index) -> {
             "volume": 0,
             "stockAdjust": 0
           }
-        ],
+        &#93;,
         "StockHolders": {
           "Saratoga Rack Marketing": [
             {
@@ -8266,7 +8266,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Tartan Oil, LLC": [
             {
               "tank": "000020",
@@ -8316,7 +8316,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "The San Antonio Refinery": [
             {
               "tank": "000003",
@@ -8420,7 +8420,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Lazarus Nixon Refinery": [
             {
               "tank": "000531",
@@ -8428,7 +8428,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Poet Ethanol Products": [
             {
               "tank": "000ETH",
@@ -8436,7 +8436,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Vantage - ADM": [
             {
               "tank": "000ETH",
@@ -8444,7 +8444,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Kinder Morgan": [
             {
               "tank": "000ETH",
@@ -8452,7 +8452,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Biourja": [
             {
               "tank": "000ETH",
@@ -8460,7 +8460,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 182
             }
-          ],
+          &#93;,
           "Freepoint LLC": [
             {
               "tank": "000020",
@@ -8498,7 +8498,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": -91,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Brownsville GTR LLC": [
             {
               "tank": "000180",
@@ -8506,7 +8506,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Texas TransChem": [
             {
               "tank": "000021",
@@ -8526,7 +8526,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "Serv Energy LLC": [
             {
               "tank": "000180",
@@ -8534,7 +8534,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ],
+          &#93;,
           "US Energy": [
             {
               "tank": "000180",
@@ -8542,10 +8542,10 @@ vars.inventoryDate map (item, index) -> {
               "volume": 0,
               "stockAdjust": 0
             }
-          ]
+          &#93;
         }
       }
-    ],
+    &#93;,
     "Freepoint": {
       "Name": "Freepoint",
       "Inventory Date": "4-Jan-2026",
@@ -8736,7 +8736,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "0.00",
               "TotalCapacity": "0.00"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "Crude": "100,022.5"
@@ -8752,7 +8752,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacityTotal": "130,054.7"
         }
       }
-    ],
+    &#93;,
     "TSAR": [
       {
         "RefineryName": "Antonio Refinery",
@@ -8778,7 +8778,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "124.56",
               "TotalCapacity": "124.56"
             }
-          ],
+          &#93;,
           "ATB": [
             {
               "Tank": "00096",
@@ -8848,7 +8848,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,365.69",
               "TotalCapacity": "2,512.18"
             }
-          ],
+          &#93;,
           "Crude": [
             {
               "Tank": "00401",
@@ -8867,7 +8867,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "508.04",
               "TotalCapacity": "7,006.64"
             }
-          ],
+          &#93;,
           "DHT FEED": [
             {
               "Tank": "00095",
@@ -8886,7 +8886,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "12,271.21",
               "TotalCapacity": "24,649.75"
             }
-          ],
+          &#93;,
           "Ethanol": [
             {
               "Tank": "00422",
@@ -8905,7 +8905,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "488.75",
               "TotalCapacity": "2,234.39"
             }
-          ],
+          &#93;,
           "Full Range Reformate": [
             {
               "Tank": "00220",
@@ -8924,7 +8924,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "1,549.13",
               "TotalCapacity": "4,535.80"
             }
-          ],
+          &#93;,
           "GASOLINE": [
             {
               "Tank": "00215",
@@ -8994,7 +8994,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "16,817.96",
               "TotalCapacity": "25,231.57"
             }
-          ],
+          &#93;,
           "ISOMERATE": [
             {
               "Tank": "00218",
@@ -9030,7 +9030,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,695.05",
               "TotalCapacity": "4,514.01"
             }
-          ],
+          &#93;,
           "JET": [
             {
               "Tank": "00411",
@@ -9049,7 +9049,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "4,445.40",
               "TotalCapacity": "4,807.62"
             }
-          ],
+          &#93;,
           "JET A": [
             {
               "Tank": "00427",
@@ -9068,7 +9068,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "1,843.05",
               "TotalCapacity": "2,338.07"
             }
-          ],
+          &#93;,
           "JPTS": [
             {
               "Tank": "00409",
@@ -9121,7 +9121,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,460.86",
               "TotalCapacity": "2,463.58"
             }
-          ],
+          &#93;,
           "LPG": [
             {
               "Tank": "09001",
@@ -9157,7 +9157,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "583.00",
               "TotalCapacity": "612.30"
             }
-          ],
+          &#93;,
           "NHT-FEED": [
             {
               "Tank": "00406",
@@ -9176,7 +9176,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "18,342.75",
               "TotalCapacity": "24,038.69"
             }
-          ],
+          &#93;,
           "SLOP": [
             {
               "Tank": "00404",
@@ -9195,7 +9195,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "2,989.01",
               "TotalCapacity": "8,230.20"
             }
-          ],
+          &#93;,
           "ULSD": [
             {
               "Tank": "00408",
@@ -9265,7 +9265,7 @@ vars.inventoryDate map (item, index) -> {
               "AvailableCapacity": "3,646.38",
               "TotalCapacity": "4,684.08"
             }
-          ]
+          &#93;
         },
         "Subtotal": {
           "JP-8 ANTI-ICE": "0.0",
@@ -9295,7 +9295,7 @@ vars.inventoryDate map (item, index) -> {
           "TotalCapacity": "204,168.0"
         }
       }
-    ],
+    &#93;,
     "TMS6": [
       {
         "InventoryDate": "3-Jan-2026",
@@ -9402,7 +9402,7 @@ vars.inventoryDate map (item, index) -> {
             "volume": "0",
             "stockAdjust": "0"
           }
-        ],
+        &#93;,
         "StockHolders": {
           "Saratoga Rack Marketing": [
             {
@@ -9429,7 +9429,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Tartan Oil, LLC": [
             {
               "tank": "000020",
@@ -9479,7 +9479,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "The San Antonio Refinery": [
             {
               "tank": "000003",
@@ -9583,7 +9583,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Lazarus Nixon Refinery": [
             {
               "tank": "000531",
@@ -9591,7 +9591,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Poet Ethanol Products": [
             {
               "tank": "000ETH",
@@ -9599,7 +9599,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Vantage - ADM": [
             {
               "tank": "000ETH",
@@ -9607,7 +9607,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Kinder": [
             {
               "tank": "000ETH",
@@ -9615,7 +9615,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Biourja": [
             {
               "tank": "000ETH",
@@ -9623,7 +9623,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "180"
             }
-          ],
+          &#93;,
           "Freepoint LLC": [
             {
               "tank": "000020",
@@ -9661,7 +9661,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "-92",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Brownsville GTR LLC": [
             {
               "tank": "000180",
@@ -9669,7 +9669,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Texas TransChem": [
             {
               "tank": "000021",
@@ -9689,7 +9689,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "Serv Energy LLC": [
             {
               "tank": "000180",
@@ -9697,7 +9697,7 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ],
+          &#93;,
           "US Energy": [
             {
               "tank": "000180",
@@ -9705,10 +9705,10 @@ vars.inventoryDate map (item, index) -> {
               "volume": "0",
               "stockAdjust": "0"
             }
-          ]
+          &#93;
         }
       }
-    ],
+    &#93;,
     "Freepoint": {
       "Name": "Freepoint",
       "Inventory Date": "4-Jan-2026",
@@ -9821,7 +9821,7 @@ vars.inventoryDate map (item, index) -> {
       }
     }
   }
-]]]></ee:set-variable>
+&#93;&#93;&#93;></ee:set-variable>
 				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[{
       "Name": "Freepoint",
       "Inventory Date": "4-Jan-2026",
@@ -9933,9 +9933,9 @@ vars.inventoryDate map (item, index) -> {
         "TotalPayment": "413,910"
       }
     }
-]]></ee:set-variable>
+&#93;&#93;></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
+		</ee:transform> [STUDIO] -->
 		<ee:transform doc:name="reordering completeset" doc:id="4e8410bc-e44c-45bf-9096-34e24f7f02d2">
 			<ee:message>
 			</ee:message>
@@ -9969,7 +9969,19 @@ output application/json
 		</ee:transform>
 			<flow-ref doc:name="calling idp-to-inventory-sub-flow" doc:id="f620afb2-6629-4b42-b2e9-30f5c0909a64" name="idp-to-inventory-sub-flow" />
 		</foreach>
-		<flow-ref doc:name="Flow Reference" doc:id="64da74af-4987-4506-8bde-3271b6f5eee7" name="3days-calculationsSub_Flow"/>
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="19e05f63-85b6-47e8-8bdf-ec14ccdd11fa" collection="#[vars.compltFreepointIdpResponse&#93;">
+			<ee:transform doc:name="Transform Message" doc:id="416dbc78-1f78-42e7-8fda-54ff4e196c7d" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload&#93;&#93;></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach> [STUDIO] -->
+		<flow-ref doc:name="Flow Reference" doc:id="64da74af-4987-4506-8bde-3271b6f5eee7" name="3days-calculationsFlow" />
 	</sub-flow>
 	<sub-flow name="idp-to-inventory-sub-flow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >
 		<set-variable value='#[vars.idpResponseData.Date as Date {format: "d-MMM-yyyy"}]' doc:name="inventoryDate" doc:id="0c499eca-42e9-4514-97ed-5962d5ea4484" variableName="inventoryDate" />

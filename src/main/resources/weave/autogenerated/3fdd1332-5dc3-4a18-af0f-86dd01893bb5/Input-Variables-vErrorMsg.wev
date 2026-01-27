@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_3fdd1332_5dc3_4a18_af0f_86dd01893bb5_Input_Variables_vErrorMsg = Any
+

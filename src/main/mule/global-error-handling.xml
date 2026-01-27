@@ -113,7 +113,7 @@ output application/json
 }&#93;&#93;></ee:set-variable>
 				</ee:variables>
 			</ee:transform> [STUDIO] -->
-			<flow-ref doc:name="Calling Email Flow" doc:id="4fe6b511-89f8-4287-ab65-4b35e3a47ca7" name="send_email_sub_flow" />
+			<flow-ref doc:name="high-alert-email-sending" doc:id="4fe6b511-89f8-4287-ab65-4b35e3a47ca7" name="high-alert-email-sending" />
 		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1b45ef15-f236-467e-a851-027bd335d880" type="ANY">
 			<ee:transform doc:name="error body" doc:id="7fabd46d-4ec2-4a2c-b863-2012915681e3">
@@ -149,6 +149,55 @@ output application/json
 			<flow-ref doc:name="Calling Email Flow" doc:id="e835820f-7f3d-45ec-b9fa-948ddf88970b" name="send_email_sub_flow" />
 		</on-error-propagate>
 	</error-handler>
+	<sub-flow name="high-alert-email-sending" doc:id="3fdd1332-5dc3-4a18-af0f-86dd01893bb5" >
+		<ee:transform doc:name="set body" doc:id="0124a9bd-610d-48d5-b5d0-5a66bf635fa1" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="vText" ><![CDATA["Hi Team, \nThis is to inform you that error occurred in the Mulesoft API "  ++ "\n" ++ write(vars."vErrorMsg","application/json") ++ "\n Thank you"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="3999230e-0cd6-47ca-a262-14b545d83ac1" millisBetweenRetries="10000" >
+			<outlook365:send-mail userId="${mail.from}" doc:name="Send mail" doc:id="49f918eb-fa77-4c98-97e3-484d4542b889" config-ref="Outlook365_Outlook365_Config" >
+				<outlook365:message ><![CDATA[#[%dw 2.0
+output application/json
+var error = vars.vErrorMsg default {}
+---
+{
+  message: {
+    subject: "High Alert Error in Mulesoft",
+    importance: "high",
+    body: {
+      contentType: "HTML",
+      content: 
+        "<p>Hi Team,</p>" ++
+        "<p>This is to inform you that an error occurred in the Mulesoft API for the PDF: <b>" ++ (vars.filename default "") ++ "</b></p>" ++
+        "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>"
+          ++ "<tr><th>Field</th><th>Value</th></tr>" ++
+          "<tr><td>Info</td><td>" ++ (error.Info default "-") ++ "</td></tr>" ++
+          "<tr><td>PO Name</td><td>" ++ (error.'Pdf Name' default "-") ++ "</td></tr>" ++
+          "<tr><td>Inventory Date</td><td>" ++ (error.'Date' default "-") ++ "</td></tr>" ++
+          "<tr><td>Error Type</td><td>" ++ (error.ErrorType default "-") ++ "</td></tr>" ++
+          "<tr><td>Error Message</td><td>" ++ (error.ErrorMessage default "-") ++ "</td></tr>" ++
+          "<tr><td>Flow Name</td><td>" ++ (error.'Flow Name' default "-") ++ "</td></tr>" ++
+          "<tr><td>Timestamp</td><td>" ++ (error.Timestamp default "-") ++ "</td></tr>" ++
+        "</table>" ++
+        "<p>Thank you</p>"
+    },
+    toRecipients: p('mail.to') splitBy "," map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    },
+    ccRecipients: p('mail.cc') splitBy "," map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    }},
+  saveToSentItems: "false"
+}]]]></outlook365:message>
+			</outlook365:send-mail>
+		</until-successful>
+	</sub-flow>
 	<sub-flow name="send_email_sub_flow" doc:id="d6081dac-a40c-4948-924a-1b1ea03e3225" >
 		<ee:transform doc:name="set body" doc:id="e2e28ff0-4329-4420-a1c2-13f15755f7e8" >
 			<ee:message >

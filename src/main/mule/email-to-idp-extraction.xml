@@ -146,76 +146,78 @@ output application/json
 			<ee:variables >
 				<ee:set-variable variableName="checkDocNames" ><![CDATA[%dw 2.0
 output application/json
-import * from dw::core::Arrays
 
 var documentNames = payload.value.name
 
-// Patterns that require date matching
-var dateRequiredPatterns = [
+var requiredDocs = [
   "Product Summary Report",
   "Elmendorf Ending Inventory",
   "San Antonio Ending Inventory"
 ]
 
-// Patterns that only need existence check (no date matching)
-var dateNotRequiredPatterns = [
-  "TSAR Invoice"
-]
+// Only get docs that start with date pattern (YYYY_MM_DD)
+var datedDocs = documentNames filter (d) -> d[4] == "_" and d[7] == "_"
 
-// Extract date from document name
-fun extractDate(docName: String): String = 
-  if (docName matches /^\d{4}_\d{2}_\d{2}.*/) 
-    docName[0 to 9]
-  else if (docName matches /.*\d{1,2}_\d{1,2}_\d{2}\.pdf$/)
-    do {
-      var parts = (docName scan /(\d{1,2})_(\d{1,2})_(\d{2})/)[0]
-      ---
-      "2025_" ++ (if (sizeOf(parts[1]) == 1) "0" ++ parts[1] else parts[1]) ++ "_" ++ (if (sizeOf(parts[2]) == 1) "0" ++ parts[2] else parts[2])
-    }
-  else "unknown"
+// Extract unique dates
+var uniqueDates = (datedDocs map (d) -> d[0 to 9]) distinctBy $
 
-var dates = ((documentNames map (dn) -> extractDate(dn)) filter (d) -> (d != "unknown")) distinctBy $
-
-// Check documents for a specific date
-fun checkDocumentsForDate(targetDate: String) = do {
-  var altDateFormat = do {
-    var parts = targetDate splitBy "_"
-    ---
-    (parts[1] as Number as String) ++ "_" ++ (parts[2] as Number as String) ++ "_" ++ parts[0][-2 to -1]
-  }
-  
-  // Check date-required patterns (must match pattern + date)
-  var missingDateRequiredDocs = dateRequiredPatterns filter (pattern) ->
-    not (documentNames some (docItem) -> 
-      (docItem contains pattern) and ((docItem contains targetDate) or (docItem contains altDateFormat)))
-  
-  // Check date-not-required patterns (only pattern match, no date check)
-  var missingDateNotRequiredDocs = dateNotRequiredPatterns filter (pattern) ->
-    not (documentNames some (docItem) -> docItem contains pattern)
-  
-  var missingDocs = missingDateRequiredDocs ++ missingDateNotRequiredDocs
+// For each date, find which docs exist and which are missing
+var result = uniqueDates map (dt) -> do {
+  var docsForDate = datedDocs filter (d) -> d[0 to 9] == dt
+  var docNames = docsForDate map (d) -> d[11 to -5]  // Remove date prefix and .pdf
+  var missing = requiredDocs -- docNames
   ---
   {
-    date: targetDate replace "_" with "-",
-    status: isEmpty(missingDocs),
-    missingDocuments: missingDocs
+    date: dt replace "_" with "-",
+    status: isEmpty(missing),
+    missingDocuments: missing
   }
 }
 ---
-dates map (dt) -> checkDocumentsForDate(dt)]]></ee:set-variable>
+result]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<foreach doc:name="For Each" doc:id="9a31a45d-68d2-4274-85a1-39be89141972" collection="#[vars.checkDocNames]">
+		<!-- [STUDIO:"For Each"]<foreach doc:name="For Each" doc:id="9a31a45d-68d2-4274-85a1-39be89141972" collection="#[vars.checkDocNames&#93;">
 			<choice doc:name="Choice" doc:id="add74412-44bf-40d0-b991-36eb347c208f">
-			<when expression="#[payload.status == true]">
+			<when expression="#[payload.status == true&#93;">
 					<logger level="INFO" doc:name="Logger" doc:id="df63c687-e1a8-4027-85ba-84f6ea30a157" message='"All the document names are present"'/>
 				</when>
 				<otherwise >
-					<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"missing documents are : " ++ (payload.missingDocuments joinBy ", ") ++ " for date - " ++ payload.date]' doc:name="Set Variable" doc:id="a1076790-d6f6-4fa9-9ec9-8f039d08cda9" variableName="missing"/>
-					<logger level="INFO" doc:name="Logger" doc:id="2ded2f0f-1bdb-4b7e-9e4a-608038c17252" message='#[vars.missing]'/>
-					<raise-error doc:name="Raise error" doc:id="d7a0cd68-9a78-4237-8c18-a07dee530404" type="CUSTOM:MISSING_DOCUMENTS" description="#[vars.missing]"/>
+					<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#45;&#45;-&#10;"missing documents are : " ++ (payload.missingDocuments joinBy ", ") ++ " for date - " ++ payload.date&#93;' doc:name="Set Variable" doc:id="a1076790-d6f6-4fa9-9ec9-8f039d08cda9" variableName="missing"/>
+					<logger level="INFO" doc:name="Logger" doc:id="2ded2f0f-1bdb-4b7e-9e4a-608038c17252" message='#[vars.missing&#93;'/>
+					<raise-error doc:name="Raise error" doc:id="d7a0cd68-9a78-4237-8c18-a07dee530404" type="CUSTOM:MISSING_DOCUMENTS" description="#[vars.missing&#93;"/>
 				</otherwise>
 		</choice>
-		</foreach>
+		</foreach> [STUDIO] -->
+		<ee:transform doc:name="Transform Message" doc:id="52be0229-90b3-4819-b6b8-4e008267e89d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="missingDocNames" ><![CDATA[%dw 2.0
+output application/json
+
+var failed = vars.checkDocNames filter ($.status == false)
+
+---
+failed flatMap (
+  (item) ->
+    item.missingDocuments map (
+      (doc) ->
+        item.date ++ " - " ++ doc
+    )
+)
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice1" doc:id="8b1c43e9-1634-4c35-940b-e2c359cc9e5b">
+				<when expression="#[isEmpty(vars.missingDocNames) == true]">
+					<logger level="INFO" doc:name="Logger" doc:id="04482139-a6cd-40cd-90c6-358975d7f490" message='"All the document names are present"' />
+				</when>
+				<otherwise>
+					<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"missing documents are : " ++ (vars.missingDocNames joinBy ", ")]' doc:name="Set Variable" doc:id="878a842c-8442-4412-8031-3ff67cf2ffb5" variableName="missing" />
+					<logger level="INFO" doc:name="Logger" doc:id="42205377-3754-40cf-b4a0-b1abf5da09af" message="#[vars.missing]" />
+					<raise-error doc:name="Raise error" doc:id="9eac43aa-f5d0-48e9-8751-6666c241b80a" type="CUSTOM:MISSING_DOCUMENTS" description="#[vars.missing]" />
+				</otherwise>
+			</choice>
 	</sub-flow>
 </mule>

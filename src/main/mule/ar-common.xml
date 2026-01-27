@@ -52,11 +52,10 @@ var data = payload.fields.FreepointData.value
 read(data, "application/json")]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-						<ee:transform doc:name="Transform Message" doc:id="dbc71f2b-b726-4881-afc3-280fc68e0793" >
+						<ee:transform doc:name="consolidated frpdata" doc:id="dbc71f2b-b726-4881-afc3-280fc68e0793" >
 							<ee:message >
 							</ee:message>
 							<ee:variables >
-								<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.tempFreepointIdpResponse]]></ee:set-variable>
 								<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
 output application/json
 var d1=vars.inventoryDate
@@ -67,8 +66,28 @@ if (d1 contains d)
 else
     d1 ++ [d]]]></ee:set-variable>
 								<ee:set-variable variableName="frpPdfName" ><![CDATA[vars.pdfName]]></ee:set-variable>
+								<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[vars.tempFreepointIdpResponse]]></ee:set-variable>
 							</ee:variables>
 						</ee:transform>
+						<!-- [STUDIO:"consolidated frpdata1"]<ee:transform doc:name="consolidated frpdata1" doc:id="17e6458b-c1b3-42a0-8c0b-efeaffe8b982" >
+							<ee:message />
+							<ee:variables >
+								<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempFreepointIdpResponse."Inventory Date"
+&#45;&#45;-
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d&#93;&#93;&#93;></ee:set-variable>
+								<ee:set-variable variableName="frpPdfName" ><![CDATA[vars.pdfName&#93;&#93;></ee:set-variable>
+								<ee:set-variable variableName="compltFreepointIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+vars.compltFreepointIdpResponse ++ [(vars.tempFreepointIdpResponse."Inventory Date") : vars.tempFreepointIdpResponse&#93;&#93;&#93;></ee:set-variable>
+							</ee:variables>
+						</ee:transform> [STUDIO] -->
 					</when>
 					<otherwise >
 						<ee:transform doc:name="Transform Message" doc:id="211dd45d-ea8f-43af-9cb3-fc194e87591f" >
