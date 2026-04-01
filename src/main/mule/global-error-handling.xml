@@ -1,89 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:idp-hf-idp-custpo-po-v100-140="http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140" xmlns:os="http://www.mulesoft.org/schema/mule/os"
-	xmlns:outlook365="http://www.mulesoft.org/schema/mule/outlook365"
-	xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:idp-hf-idp-custpo-po-v100-140="http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:outlook365="http://www.mulesoft.org/schema/mule/outlook365" xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
 http://www.mulesoft.org/schema/mule/outlook365 http://www.mulesoft.org/schema/mule/outlook365/current/mule-outlook365.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
-http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140 http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140/current/mule-idp-hf-idp-custpo-po-v100-140.xsd">
-	<os:object-store name="Object_store1" doc:name="Object store" doc:id="dab38f91-9619-4061-8462-737886ea65ab" />
-	<outlook365:outlook365-config name="Outlook365_Outlook365_Config" doc:name="Outlook365 Outlook365 Config" doc:id="e4b3e27a-eddb-4c7d-9df8-0a589c7fbaef" >
-		<outlook365:oauth-client-credentials-connection >
-			<outlook365:oauth-client-credentials clientId="37f36d2d-0a89-483f-aef6-cf7610581a74" clientSecret="Yoz8Q~qYZ7o.2c2zur3EWhLTu.aSWjHZSlsNxa6-" scopes="https://graph.microsoft.com/.default" tokenUrl="https://login.microsoftonline.com/82bd2b79-844a-4f08-bd21-0949a05fcedb/oauth2/v2.0/token"/>
-			<outlook365:oauth-store-config objectStore="Object_store1" />
-		</outlook365:oauth-client-credentials-connection>
-	</outlook365:outlook365-config>
+http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140 http://www.mulesoft.org/schema/mule/idp-hf-idp-custpo-po-v100-140/current/mule-idp-hf-idp-custpo-po-v100-140.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<error-handler name="global-error-handlingError_Handler" doc:id="33ebf513-0093-4659-b05e-3be1082c4871" >
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dc183dbc-8c69-4fd5-8507-e0167d9b5a8c" type="IDP-AR-TIS-IDP-150:BAD_REQUEST, IDP-AR-TIS-IDP-150:PARSING, IDP-AR-TIS-IDP-150:NOT_FOUND,">
-			<ee:transform doc:name="error body" doc:id="babc886d-616d-49f4-8899-cd49cfb81051" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vErrorMsg" ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"Info":"Error in IDP",
-	"Pdf Name":vars.pdfName default "",
-	"Date":(vars.pdfName splitBy(" "))[0],
-	"ErrorType": (error.errorType.namespace) ++ ":" ++ (error.errorType.identifier),
-	"ErrorMessage": error.description,
-	"Flow Name": (error.failingComponent splitBy"/")[0],
-	"Timestamp": now()
-	
-}]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="b9eb8403-84d8-49ee-a73e-0742779f403e" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vLog" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-{
-	"Correlation Id":vars.vCorrelationId,
-	"Pdf Name":vars.vPdfName,
-	"payload": vars.vErrorMsg default "Error"
-}&#93;&#93;></ee:set-variable>
-				</ee:variables>
-			</ee:transform> [STUDIO] -->
-			<flow-ref doc:name="Calling Email Flow" doc:id="094bf439-2b52-4d72-beda-f9accf9649ed" name="send_email_sub_flow" />
-		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="16de035c-e482-4150-9b71-71ed5bbd4e37" type="IDP-AR-TIS-IDP-150:CONNECTIVITY, IDP-AR-TIS-IDP-150:TIMEOUT, IDP-AR-TIS-IDP-150:SERVICE_UNAVAILABLE, IDP-AR-TIS-IDP-150:INTERNAL_SERVER_ERROR, IDP-AR-TIS-IDP-150:RETRY_EXHAUSTED, IDP-AR-TIS-IDP-150:TOO_MANY_REQUESTS, IDP-AR-TIS-IDP-150:UNAUTHORIZED, IDP-AR-TIS-IDP-150:FORBIDDEN, IDP-AR-TIS-IDP-150:SECURITY, IDP-AR-TIS-IDP-150:METHOD_NOT_ALLOWED, IDP-AR-TIS-IDP-150:UNSUPPORTED_MEDIA_TYPE, IDP-AR-TIS-IDP-150:NOT_ACCEPTABLE,">
-			<ee:transform doc:name="error body" doc:id="cfbdaa63-6b01-4014-8f6a-d5bfc1fcafa6" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vErrorMsg" ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"Info":"Technical error in Mulesoft",
-	"Pdf Name":vars.pdfName default "",
-	"Date":(vars.pdfName splitBy(" "))[0],
-	"ErrorType": (error.errorType.namespace) ++ ":" ++ (error.errorType.identifier),
-	"ErrorMessage": error.description,
-	"Flow Name": (error.failingComponent splitBy"/")[0],
-	"Timestamp": now()
-}]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="08058f9a-44aa-45f4-bd31-db2733833ed5" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vLog" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-{
-	"Correlation Id":vars.vCorrelationId,
-	"Pdf Name":vars.vPdfName,
-	"payload": vars.vErrorMsg default "Error"
-}&#93;&#93;></ee:set-variable>
-				</ee:variables>
-			</ee:transform> [STUDIO] -->
-			<flow-ref doc:name="Calling Email Flow" doc:id="f10c67e5-aa74-47df-9487-b4420f6989f1" name="send_email_sub_flow" />
-		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="bf987879-bd36-4527-a804-8efcff039392" type="CUSTOM:MISSING_DOCUMENTS">
+			<logger level="INFO" doc:name="AUTOMATION PROCESS FAILED" doc:id="e5840c42-74c6-4392-82cc-89b2120965bb" message="--------AUTOMATION PROCESS FAILED--------" />
+			<os:store doc:name="Store" doc:id="301dd6e2-69cf-4a94-ada2-2a56a024c6ff" key="lastRunDateTime" objectStore="Object_store">
+			<os:value><![CDATA[#[vars.vReceivedDatetime + |PT1S|]]]></os:value>
+		</os:store>
 			<ee:transform doc:name="error body" doc:id="51ca8e89-48d5-474b-8bf2-1df352bd61dc" >
 				<ee:message />
 				<ee:variables >
@@ -91,31 +22,104 @@ output application/json
 output application/json
 ---
 {
-	"Info":"Missing Documnets Error",
-	"Po Name":"missing docs",
+	"Info":"Missing Documents",
+	"PDFName": vars.missingDocMessage,
 	"ErrorType": (error.errorType.namespace) ++ ":" ++ (error.errorType.identifier),
 	"ErrorMessage": error.description,
-	"Flow Name": (error.failingComponent splitBy"/")[0],
-	"Timestamp": now()
+	"FailingComponent": (error.failingComponent),
+	"Timestamp": (now() >> "UTC")
 }]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="011187b7-8657-45a8-bae8-95d84b2a62cc" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vLog" ><![CDATA[%dw 2.0
+			<logger level="INFO" doc:name="Logger" doc:id="ae219347-0b94-47f6-9795-dcfcf07c6ed7" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"Correlation Id": vars.vCorrelationId,&#10;	"Document Name": vars.snapshotFileName,&#10;	"Payload": write(vars.vErrorMsg, "application/json") default "Error"&#10;}]' />
+			<ee:transform doc:name="Email Body" doc:id="d5953a7d-0600-4f9c-84d2-945f54c3810d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+var error = vars.vErrorMsg default {}
+---
 {
-	"Correlation Id":vars.vCorrelationId,
-	"Pdf Name":vars.vPdfName,
-	"payload": vars.vErrorMsg default "Error"
-}&#93;&#93;></ee:set-variable>
-				</ee:variables>
-			</ee:transform> [STUDIO] -->
-			<flow-ref doc:name="Calling Email Flow" doc:id="4fe6b511-89f8-4287-ab65-4b35e3a47ca7" name="send_email_sub_flow" />
+  message: {
+    subject: "Missing Documents For The Automation",
+    importance: "high",
+    body: {
+      contentType: "HTML",
+      content:
+        "<p>Hi Team,</p>" ++
+        "<p>This is to inform you that the <b> Inventory and Rack Reports </b> processing has failed during the automation.</p>" ++
+        "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" ++
+          "<tr><th>Field</th><th>Value</th></tr>" ++
+          "<tr><td>Info</td><td>" ++ "Automation Failed Due to Missing Documents" ++ "</td></tr>" ++
+          "<tr><td>Document Name</td><td>" ++ (vars.missingDocMessage) ++ "</td></tr>" ++
+          "<tr><td>Email Received Date Time</td><td>" ++ (vars.vReceivedDatetime) ++ "</td></tr>" ++
+          "<tr><td>Error Type</td><td>" ++ "CUSTOM:MISSING_DOCUMENTS" ++ "</td></tr>" ++
+          "<tr><td>Error Message</td><td>" ++ "There were missing Attachments in Email received" ++ "</td></tr>" ++
+          "<tr><td>Failing Component</td><td>" ++ "Attachments Validation" ++ "</td></tr>" ++
+          "<tr><td>Timestamp (UTC)</td><td>" ++ ((error.Timestamp)) ++ "</td></tr>" ++
+        "</table>" ++
+        "<p>Thank you</p>"
+    },
+    toRecipients: (p('mail.to') splitBy ",") map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    },
+    ccRecipients: (p('mail.cc') splitBy ",") map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    }
+  },
+  saveToSentItems: false
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+			<flow-ref doc:name="send-email-alert-error" doc:id="4d7e95ff-aa58-4520-9490-3da86e21be57" name="send-email-alert-error" />
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c586172f-8375-4fe4-af4e-56e5c848ca90" type="CUSTOM:METER_CONTROL_VALUE_NOT_FOUND">
+			<logger level="INFO" doc:name="AUTOMATION PROCESS FAILED" doc:id="6fa461a1-5f6f-498e-8e0c-94873c9bed61" message="--------AUTOMATION PROCESS FAILED--------" />
+			<ee:transform doc:name="Email Body" doc:id="cc9ef4a2-afc0-448d-ac02-a0dc2f0c79cd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: {
+    subject: "Inventory and Rack Reports Processing Failed",
+    body: {
+      contentType: "HTML",
+      content: 
+        "<p>Hi Team,</p>" ++
+
+        "<p>This is to inform you that the <b>Inventory and Rack Reports</b> processing has failed during the automation.</p>" ++
+
+        "<p><b>Cause:</b> The Crude Received from pipeline value is not available for the Inventory Date: <b>" ++ (vars.inventoryDate as String) ++ "</b>.</p>" ++
+
+        "<p>Kindly update the required Crude Received from pipeline value for the mentioned Inventory Date and reprocess the job.</p>" ++
+
+        "<p>Thank you</p>"
+    },
+    toRecipients: (p('mail.to') splitBy ",") map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    },
+    ccRecipients: (p('mail.cc') splitBy ",") map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    }
+  },
+  saveToSentItems: false
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="b6e99d57-b7a2-4c0e-a48a-7d1d84892fc2" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"Correlation Id": vars.vCorrelationId,&#10;	"Document Name": vars.snapshotFileName,&#10;	"Payload": write(vars.vErrorMsg, "application/json") default "Error"&#10;}]' />
+			<flow-ref doc:name="send-email-alert-error" doc:id="3cbaf80d-05cd-4d6f-8d0f-9ac3f4f8c314" name="send-email-alert-error" />
 		</on-error-propagate>
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1b45ef15-f236-467e-a851-027bd335d880" type="ANY">
+			<logger level="INFO" doc:name="AUTOMATION PROCESS FAILED" doc:id="869065f3-b612-4d82-8123-2847d2850753" message="--------AUTOMATION PROCESS FAILED--------" />
 			<ee:transform doc:name="error body" doc:id="7fabd46d-4ec2-4a2c-b863-2012915681e3">
 				<ee:message />
 				<ee:variables>
@@ -123,63 +127,41 @@ output application/json
 output application/json
 ---
 {
-	"Info":"Error in Mulesoft",
-	"Pdf Name":vars.pdfName default "",
-	"Date":(vars.pdfName splitBy(" "))[0],
+	"Info":"Automation Failed",
+	"PDFName": vars.pdfName default "",
+	"Date": vars.inventoryDate,
 	"ErrorType": (error.errorType.namespace) ++ ":" ++ (error.errorType.identifier),
 	"ErrorMessage": error.description,
-	"Flow Name": (error.failingComponent splitBy"/")[0],
-	"Timestamp": now()
+	"FailingComponent": (error.failingComponent),
+	"Timestamp": (now() >> "UTC")
 }]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="57b23513-01d8-49d3-ad7d-2be69d06c8f3" >
-				<ee:message />
-				<ee:variables >
-					<ee:set-variable variableName="vLog" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-{
-	"Correlation Id":vars.vCorrelationId,
-	"Pdf Name":vars.vPdfName,
-	"payload": vars.vErrorMsg default "Error"
-}&#93;&#93;></ee:set-variable>
-				</ee:variables>
-			</ee:transform> [STUDIO] -->
-			<flow-ref doc:name="Calling Email Flow" doc:id="e835820f-7f3d-45ec-b9fa-948ddf88970b" name="send_email_sub_flow" />
-		</on-error-propagate>
-	</error-handler>
-	<sub-flow name="send_email_sub_flow" doc:id="d6081dac-a40c-4948-924a-1b1ea03e3225" >
-		<ee:transform doc:name="set body" doc:id="e2e28ff0-4329-4420-a1c2-13f15755f7e8" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="vText" ><![CDATA["Hi Team, \nThis is to inform you that error occurred in the Mulesoft API "  ++ "\n" ++ write(vars."vErrorMsg","application/json") ++ "\n Thank you"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="e6101f41-32ba-432a-a650-91cee1b9eeb8" millisBetweenRetries="10000">
-			<outlook365:send-mail doc:name="Send mail" doc:id="31f4002e-3eb7-4943-8510-259f6b32afd8" config-ref="Outlook365_Outlook365_Config" userId="${mail.from}">
-			<outlook365:message><![CDATA[#[%dw 2.0
+			<logger level="INFO" doc:name="Logger" doc:id="27af301a-3d43-49fa-8263-e64f09213477" message='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"Correlation Id": vars.vCorrelationId,&#10;	"Document Name": vars.snapshotFileName,&#10;	"Payload": write(vars.vErrorMsg, "application/json") default "Error"&#10;}]' />
+			<ee:transform doc:name="Email Body" doc:id="d9eb073e-0717-4f50-8338-2460cc17bdc5">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 var error = vars.vErrorMsg default {}
 ---
 {
   message: {
-    subject: "Error in Mulesoft",
+    subject: "Inventory and Rack Reports Processing Failed",
     body: {
       contentType: "HTML",
       content: 
         "<p>Hi Team,</p>" ++
-        "<p>This is to inform you that an error occurred in the Mulesoft API for the PDF: <b>" ++ (vars.filename default "") ++ "</b></p>" ++
+        "<p>This is to inform you that the <b>Inventory and Rack Reports</b> processing has failed during the automation.<b>" ++ "</b></p>" ++
         "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>"
           ++ "<tr><th>Field</th><th>Value</th></tr>" ++
           "<tr><td>Info</td><td>" ++ (error.Info default "-") ++ "</td></tr>" ++
-          "<tr><td>PO Name</td><td>" ++ (error.'Pdf Name' default "-") ++ "</td></tr>" ++
+          "<tr><td>Document Name</td><td>" ++ ((vars.allPDFs default []) map ($ as String) joinBy "<br>") ++ "</td></tr>" ++
           "<tr><td>Inventory Date</td><td>" ++ (error.'Date' default "-") ++ "</td></tr>" ++
+          "<tr><td>Email Received DateTime</td><td>" ++ (vars.vReceivedDatetime default "-") ++ "</td></tr>" ++
           "<tr><td>Error Type</td><td>" ++ (error.ErrorType default "-") ++ "</td></tr>" ++
           "<tr><td>Error Message</td><td>" ++ (error.ErrorMessage default "-") ++ "</td></tr>" ++
-          "<tr><td>Flow Name</td><td>" ++ (error.'Flow Name' default "-") ++ "</td></tr>" ++
-          "<tr><td>Timestamp</td><td>" ++ (error.Timestamp default "-") ++ "</td></tr>" ++
+          "<tr><td>Failing Component</td><td>" ++ (error.'FailingComponent' default "-") ++ "</td></tr>" ++
+          "<tr><td>Timestamp (UTC)</td><td>" ++ (error.Timestamp default "-") ++ "</td></tr>" ++
         "</table>" ++
         "<p>Thank you</p>"
     },
@@ -194,9 +176,23 @@ var error = vars.vErrorMsg default {}
       }
     }},
   saveToSentItems: "false"
-}]]]></outlook365:message>
-		</outlook365:send-mail>
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<flow-ref doc:name="send-email-alert-error" doc:id="e835820f-7f3d-45ec-b9fa-948ddf88970b" name="send-email-alert-error" />
+		</on-error-propagate>
+	</error-handler>
+	<sub-flow name="send-email-alert-error" doc:id="d6081dac-a40c-4948-924a-1b1ea03e3225" >
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="e6101f41-32ba-432a-a650-91cee1b9eeb8" millisBetweenRetries="10000">
+			<http:request method="POST" doc:name="Send Email" doc:id="15865338-1b81-4fb0-8a77-d03c68302929" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/sendMail&quot;]" >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
 		</until-successful>
-		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6467b145-82f7-4350-b6ee-479d9ac1262f" message="#[payload&#93;"/> [STUDIO] -->
+		<logger level="INFO" doc:name="EMAIL ALERT" doc:id="75543f59-b63c-4b82-959e-34e2db7990d7" message='#["--------[EMAIL ALERT] :: ERROR ALERT EMAIL SENT SUCCESSFULLY--------"]' />
 	</sub-flow>
 </mule>

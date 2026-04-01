@@ -1,80 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="read-email-to-idp-extraction-subflow" doc:id="a5058022-215c-491e-b60b-47217d266306" >
-		<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var dateStr = (now() as String {format: "yyyy-MM-dd"})&#10;---&#10;"https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages?\$filter=receivedDateTime%20ge%20" &#10;  ++ dateStr ++ "T00:00:00Z&amp;\$orderby=receivedDateTime%20desc&amp;\$top=1"]' doc:name="Set Variable" doc:id="5ce6b8e1-7c9a-4d4a-b45e-b94e41e4f8d3" variableName="fetchMailUrl"/>
-		<!-- [STUDIO:"reads Email"]<http:request method="GET" doc:name="reads Email" doc:id="b169c572-8af9-4890-8ad7-67f84aa8eef4" config-ref="HTTP_Graph_API_configuration" path="/v1.0/users/jshaik@mdwhub.com/mailFolders/inbox/messages?$top=1">
-			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
-		<http:request method="GET" doc:name="fetching mails of today" doc:id="2ad4fdbc-2fa3-4ae5-b755-edd6eec7eefb" url="#[vars.fetchMailUrl]">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<sub-flow name="read-attachments" doc:id="f54f4c76-d303-4c06-ab76-574b8e9f238e" >
+		<set-variable value="#[payload.id]" doc:name="mailId" doc:id="4ee3a903-972b-445d-8112-bf36ea2bc608" variableName="mailId" />
+		<http:request method="GET" doc:name="read attachments in each mail" doc:id="76ceb06a-4ec7-4ad1-a213-ecb9df80bcca" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/mailFolders/&quot; ++ p('mail.inventory.folderId') ++ &quot;/messages/&quot; ++ vars.mailId ++ &quot;/attachments&quot;]" >
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
-		<!-- [STUDIO:"mailId"]<set-variable value="#[payload.value.id[0&#93;&#93;" doc:name="mailId" doc:id="c8ce2009-3c04-4109-a273-d5bc667ab167" variableName="mailId" /> [STUDIO] -->
-		<!-- [STUDIO:"reads the mail-attachments"]<logger level="INFO" doc:name="reads the mail-attachments" doc:id="71839b73-6ed3-4bb5-9de3-db1c4eb83a3e" /> [STUDIO] -->
-		<choice doc:name="Choice" doc:id="4d15d8fd-2ed0-4bf6-bc27-f7e416171666" >
-			<when expression="#[!isEmpty(payload.value)]">
-				<foreach doc:name="For Each email" doc:id="c7460f50-48d7-4bd3-9ad6-d356761c2678" collection="#[payload.value]">
-			<choice doc:name="checks for the attachments in the Mail" doc:id="99595607-4874-460e-bb51-4132e71ce4a9">
-			<when expression="#[payload.hasAttachments == true]">
-				<!-- [STUDIO:"Read Attachments"]<http:request method="GET" doc:name="Read Attachments" doc:id="df12aaaf-c9e5-43b1-8d22-10c47f763667" config-ref="HTTP_Graph_API_configuration" path='#["/v1.0/users/jshaik@mdwhub.com/messages/" ++ vars.mailId as String ++ "/attachments"&#93;' target="attachments" targetValue="#[payload.value&#93;">
-					<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
-				<!-- [STUDIO:"calling pdf-idf-routing-subflow"]<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="9d4f7592-d29a-4fc1-9b0b-257830bd8b87" name="pdf-idf-routing-subflow" /> [STUDIO] -->
-					<ee:transform doc:name="Transform Message" doc:id="177b9f01-98e5-4bfa-8ad1-2ab4a7cb2eff">
-						<ee:message>
-							<ee:set-payload><![CDATA[%dw 2.0
-output application/java
-var base = "https://graph.microsoft.com/v1.0/users/jshaik@mdwhub.com/messages/"
-var endpath = "/attachments"
-var mailid = payload.id
----
-{
-    url: base ++ mailid ++ endpath
-}
-]]></ee:set-payload>
-						</ee:message>
-					</ee:transform>
-					<http:request method="GET" doc:name="read attachments in each mail" doc:id="9306055c-4e09-4be7-8fa1-30dc4367365c" url="#[payload.url]">
-						<http:headers><![CDATA[#[output application/java
----
-{
-	"Authorization" : "Bearer" ++ vars.token
-}]]]></http:headers>
-					</http:request>
-							<flow-ref doc:name="check-documents-existence-in-email" doc:id="098a5096-9120-4f07-a8f8-edf6cc3b2e46" name="check-documents-existence-in-email"/>
-							<foreach doc:name="For Each attachment" doc:id="c01c3174-9b0c-4277-889e-0a58f05fe6ef" collection="#[payload.value]">
-						<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="36d660df-a568-4614-ba1b-e8943722e63e" variableName="pdfName" />
-						<ee:transform doc:name="pdf-binary" doc:id="922647d5-c3d7-4204-ae91-543474e061b1">
-							<ee:message>
-								<ee:set-payload><![CDATA[%dw 2.0
+		<set-variable value='#[(payload.value filter ((e) -&gt; e.name contains(".pdf")))&#10;map ((doc) -&gt; doc.name)]' doc:name="allPDFs" doc:id="9675230f-4d1e-45fa-9d40-461cb51a92c7" variableName="allPDFs"/>
+		<logger level="INFO" doc:name="LIST OF PDFs IN EMAIL" doc:id="770401c4-6428-4516-a3c6-272135ec27e4" message='#["[INVENTORY] :: LIST OF PDFs IN EMAIL :: " ++ write(vars.allPDFs, "application/json")]'/>
+		<flow-ref doc:name="check-required-pdf-attachment-in-email" doc:id="76b9b56b-4dea-427a-a985-4e36742760f0" name="check-required-pdf-attachment-in-email" />
+		<foreach doc:name="For Each attachment" doc:id="8bf3e9e2-05b8-4345-a365-24c72fc698ad" collection="#[payload.value]" >
+			<set-variable value="#[payload.name]" doc:name="pdfName" doc:id="75354728-83a7-4905-9a05-c781a00a9844" variableName="pdfName" />
+			<ee:transform doc:name="pdf-binary" doc:id="c7c74d75-3a40-43c6-8ba0-03199924fb2f" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
 import dw::core::Binaries
 ---
 Binaries::fromBase64(payload.contentBytes)]]></ee:set-payload>
-							</ee:message>
-							<ee:variables>
-								<ee:set-variable variableName="pdfName"><![CDATA[payload.name]]></ee:set-variable>
-							</ee:variables>
-						</ee:transform>
-						<ee:transform doc:name="idp request data" doc:id="f71ef000-ba06-44c3-a595-f033b9241016">
-							<ee:message>
-								<ee:set-payload><![CDATA[%dw 2.0
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="pdfName" ><![CDATA[payload.name]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="idp request data" doc:id="148a563a-9095-460c-97b4-ff7ae78005e3" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
 output multipart/form-data
 ---
 {
@@ -91,128 +51,177 @@ output multipart/form-data
             }
         }
 }]]></ee:set-payload>
-							</ee:message>
-						</ee:transform>
-						<flow-ref doc:name="calling pdf-idf-routing-subflow" doc:id="1cfd09ae-251a-466d-8208-46602f33b039" name="pdf-idf-routing-subflow" />
-					</foreach>
-			</when>
-						<otherwise>
-				<logger level="INFO" doc:name="NO ATTACHMENTS" doc:id="1bc9bb5c-7b6a-4730-a886-727233b68f22" message="-----NO ATTACHMENTS-----" />
-			</otherwise>
-		</choice>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="idp-routing-subflow" doc:id="8882df2c-8af3-48a6-b7ba-a66af7b80fe7" name="idp-routing-subflow" />
 		</foreach>
-				<!-- [STUDIO:"idpResponseData"]<ee:transform doc:name="idpResponseData" doc:id="07d2547b-d1df-47ee-9609-3b66c7faada1" >
-					<ee:message />
-					<ee:variables >
-						<ee:set-variable variableName="InventoryDate" ><![CDATA[vars."tsar-idp-response".InventoryDate &#93;&#93;></ee:set-variable>
-						<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
+		<ee:transform doc:name="var completeSet" doc:id="d64a0c33-457d-45c3-a17f-66c76381e85f" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="completeSet" ><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
-{	"Date": vars."idpResponseData".InventoryDate  ,
-	"Elmendorf": vars."elmendorfIdpResponse",
-	"TSAR": vars."tsarIdpResponse",
-	"TMS6": vars."tms6Data",
-	"Freepoint": vars."freepointIdpResponse"
-}&#93;&#93;></ee:set-variable>
-					</ee:variables>
-				</ee:transform> [STUDIO] -->
-			</when>
-			<otherwise >
-				<logger level="INFO" doc:name="no mails" doc:id="6c5313b8-a49d-4e1f-8a9a-3afb83ee57e2" message="NO MAILS YET"/>
-			</otherwise>
-		</choice>
+---
+vars.inventoryDate map (item, index) -> {
+    Date: item,
+    Elmendorf: vars.elmendorfIdpResponse[item],
+    "TSAR": vars."tsarIdpResponse"[item],
+	"TMS6": vars."tms6Data"[item],
+    Freepoint: vars.freepointIdpResponse
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="reordering the completeSet" doc:id="6b192562-3f01-4c3e-adaa-c1bcb556aca3" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="completeSet" ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Dates
+---
+vars.completeSet
+  orderBy (item) ->
+    (item.Date as Date { format: "d-MMM-yyyy" })
+]]></ee:set-variable>
+				<ee:set-variable variableName="compltFreepointIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Dates
+---
+vars.compltFreepointIdpResponse
+  orderBy (item) ->
+    (item."Inventory Date" as Date { format: "d-MMM-yyyy" })
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="72ed7e7d-5db3-410b-9390-96a7aa487a9a" message="#[vars.completeSet]" />
+		<foreach doc:name="For Each completeSet (for each day)" doc:id="4a492d11-f9c3-40d3-8409-b8c70ac0db96" collection="#[vars.completeSet]" >
+			<ee:transform doc:name="idpResponseData or eachDayData" doc:id="5c0ac444-0a06-4ee4-9965-0045138aad91" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="inventoryDate" ><![CDATA[payload.Date]]></ee:set-variable>
+					<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
+output application/json
+---
+{	"Date": payload.Date,
+	"Elmendorf": payload.Elmendorf,
+	"TSAR": payload.TSAR,
+	"TMS6": payload.TMS6,
+	"Freepoint": payload.Freepoint
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="idp-to-inventory-sub-flow" doc:id="8ed5ee19-94ca-4fbd-8a13-13c69a9a8203" name="idp-to-inventory-sub-flow" />
+		</foreach>
 	</sub-flow>
-	<sub-flow name="pdf-idf-routing-subflow" doc:id="52e0406b-4c91-496d-8ec2-5a4a9a396997" >
+	<sub-flow name="idp-routing-subflow" doc:id="52e0406b-4c91-496d-8ec2-5a4a9a396997" >
 		<choice doc:name="routing pdfs to respective idp" doc:id="4edb50b9-6e4c-4b53-abbf-6332905f16cd" >
-			<when expression='#[vars."pdfName" contains("Invoice")]' >
-				<!-- [STUDIO:"setting frpPdfName"]<set-variable value="#[vars.pdfName&#93;" doc:name="setting frpPdfName" doc:id="f53b5409-ffd1-4a13-8ce7-da7a2fd66c44" variableName="frpPdfName"/> [STUDIO] -->
-				<flow-ref doc:name="calling freepoint-idp-extraction-sublow" doc:id="c2a18a27-e773-48bc-9faf-e1b80cbec151" name="freepoint-idp-extraction-sublow" />
-			</when>
-			<when expression='#[lower(vars."pdfName") contains("summary report")]' >
-				<flow-ref doc:name="calling tms6-idp-extraction-sublow" doc:id="10220f3f-a91f-4045-8331-c1e0f204cf9f" name="tms6-idp-extraction-subflow" />
+			<when expression='#[lower(vars."pdfName") contains("product summary")]' >
+				<flow-ref doc:name="tms6-idp-extraction-subflow" doc:id="10220f3f-a91f-4045-8331-c1e0f204cf9f" name="tms6-idp-extraction-subflow" />
 			</when>
 			<when expression='#[(lower(vars."pdfName") contains "elmendorf") or (lower(vars."pdfName") contains "san antonio")]' >
-				<flow-ref doc:name="calling tis-idp-extraction-sublow" doc:id="0d808090-1cdf-4776-bf0a-b874e1d3353e" name="tis-idp-extraction-subflow" />
+				<flow-ref doc:name="tis-idp-extraction-subflow" doc:id="0d808090-1cdf-4776-bf0a-b874e1d3353e" name="tis-idp-extraction-subflow" />
 			</when>
 			<otherwise >
 				<logger level="INFO" doc:name="Logger" doc:id="5441c0ec-c032-4291-abf1-026653e92021" />
 			</otherwise>
 		</choice>
 	</sub-flow>
-	<sub-flow name="check-documents-existence-in-email" doc:id="34cc8f49-d10a-45d9-b843-3439d4e1fe5f" >
+	<sub-flow name="check-required-pdf-attachment-in-email" doc:id="34cc8f49-d10a-45d9-b843-3439d4e1fe5f" >
 		<ee:transform doc:name="check doc names" doc:id="f77d6e7d-4f09-46f3-a7b5-3268a54aed62" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
 				<ee:set-variable variableName="checkDocNames" ><![CDATA[%dw 2.0
 output application/json
-import * from dw::core::Arrays
 
-var documentNames = payload.value.name
+var documentNames =  payload.value.name
 
-// Patterns that require date matching
-var dateRequiredPatterns = [
+var requiredDocs = [
   "Product Summary Report",
   "Elmendorf Ending Inventory",
   "San Antonio Ending Inventory"
 ]
 
-// Patterns that only need existence check (no date matching)
-var dateNotRequiredPatterns = [
-  "TSAR Invoice"
-]
+// Filter only files starting with YYYY_MM_DD or YYYY.MM.DD
+var datedDocs =
+  documentNames filter (d) ->
+    sizeOf(d) > 10 and
+    (d[4] == "_" or d[4] == ".") and
+    (d[7] == "_" or d[7] == ".")
 
-// Extract date from document name
-fun extractDate(docName: String): String = 
-  if (docName matches /^\d{4}_\d{2}_\d{2}.*/) 
-    docName[0 to 9]
-  else if (docName matches /.*\d{1,2}_\d{1,2}_\d{2}\.pdf$/)
-    do {
-      var parts = (docName scan /(\d{1,2})_(\d{1,2})_(\d{2})/)[0]
-      ---
-      "2025_" ++ (if (sizeOf(parts[1]) == 1) "0" ++ parts[1] else parts[1]) ++ "_" ++ (if (sizeOf(parts[2]) == 1) "0" ++ parts[2] else parts[2])
-    }
-  else "unknown"
+// Normalize date to YYYY-MM-DD
+var normalizeDate = (dt) ->
+  (dt replace "_" with "-") replace "." with "-"
 
-var dates = ((documentNames map (dn) -> extractDate(dn)) filter (d) -> (d != "unknown")) distinctBy $
+// Get unique normalized dates
+var uniqueDates =
+  (datedDocs map (d) -> normalizeDate(d[0 to 9])) distinctBy $
 
-// Check documents for a specific date
-fun checkDocumentsForDate(targetDate: String) = do {
-  var altDateFormat = do {
-    var parts = targetDate splitBy "_"
+// Build final result
+var result =
+  uniqueDates map (dt) -> do {
+
+    var docsForDate =
+      datedDocs filter (d) ->
+        normalizeDate(d[0 to 9]) == dt
+
+    var docNames =
+      docsForDate map (d) -> d[11 to -5]
+
+    // Bidirectional contains logic (safe version)
+    var missing =
+      requiredDocs filter (req) ->
+        isEmpty(
+          docNames filter (doc) ->
+            (
+              upper(doc) contains upper(req)
+            )
+            or
+            (
+              upper(req) contains upper(doc)
+            )
+        )
+
     ---
-    (parts[1] as Number as String) ++ "_" ++ (parts[2] as Number as String) ++ "_" ++ parts[0][-2 to -1]
+    {
+      date: dt,
+      status: isEmpty(missing),
+      missingDocuments: missing
+    }
   }
-  
-  // Check date-required patterns (must match pattern + date)
-  var missingDateRequiredDocs = dateRequiredPatterns filter (pattern) ->
-    not (documentNames some (docItem) -> 
-      (docItem contains pattern) and ((docItem contains targetDate) or (docItem contains altDateFormat)))
-  
-  // Check date-not-required patterns (only pattern match, no date check)
-  var missingDateNotRequiredDocs = dateNotRequiredPatterns filter (pattern) ->
-    not (documentNames some (docItem) -> docItem contains pattern)
-  
-  var missingDocs = missingDateRequiredDocs ++ missingDateNotRequiredDocs
-  ---
-  {
-    date: targetDate replace "_" with "-",
-    status: isEmpty(missingDocs),
-    missingDocuments: missingDocs
-  }
-}
+
 ---
-dates map (dt) -> checkDocumentsForDate(dt)]]></ee:set-variable>
+result
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="missingDocNames" doc:id="d7263b83-eb48-4d85-aeff-be151790067a" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="missingDocNames" ><![CDATA[%dw 2.0
+output application/json
+
+var failed = vars.checkDocNames filter ($.status == false)
+
+---
+failed flatMap (
+  (item) ->
+    item.missingDocuments map (
+      (doc) ->
+        item.date ++ " - " ++ doc
+    )
+)
+]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<foreach doc:name="For Each" doc:id="9a31a45d-68d2-4274-85a1-39be89141972" collection="#[vars.checkDocNames]">
 			<choice doc:name="Choice" doc:id="add74412-44bf-40d0-b991-36eb347c208f">
-			<when expression="#[payload.status == true]">
+			<when expression="#[isEmpty(vars.missingDocNames) == true]">
 					<logger level="INFO" doc:name="Logger" doc:id="df63c687-e1a8-4027-85ba-84f6ea30a157" message='"All the document names are present"'/>
 				</when>
 				<otherwise >
-					<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"missing documents are : " ++ (payload.missingDocuments joinBy ", ") ++ " for date - " ++ payload.date]' doc:name="Set Variable" doc:id="a1076790-d6f6-4fa9-9ec9-8f039d08cda9" variableName="missing"/>
-					<logger level="INFO" doc:name="Logger" doc:id="2ded2f0f-1bdb-4b7e-9e4a-608038c17252" message='#[vars.missing]'/>
+					<set-variable value='#[%dw 2.0&#10;output application/json&#10;---&#10;"Missing Documents are : " ++ (vars.missingDocNames joinBy ", ")]' doc:name="missingDocMessage" doc:id="a1076790-d6f6-4fa9-9ec9-8f039d08cda9" variableName="missingDocMessage"/>
+					<logger level="INFO" doc:name="Logger" doc:id="2ded2f0f-1bdb-4b7e-9e4a-608038c17252" message='#[vars.missingDocMessage]'/>
 					<raise-error doc:name="Raise error" doc:id="d7a0cd68-9a78-4237-8c18-a07dee530404" type="CUSTOM:MISSING_DOCUMENTS" description="#[vars.missing]"/>
 				</otherwise>
 		</choice>

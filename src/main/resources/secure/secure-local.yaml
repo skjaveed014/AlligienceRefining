@@ -1,0 +1,6 @@
+#secured properties:
+graphApi.auth.clientId: "![QMlk/dU8RfVhX/AltNY6Gcv9fYWd0N1VpMa8sKEVQC0nD3gOysnmIYejAsH88QW2]"
+graphApi.auth.clientSecret: "![YgF4ILRPOZiQLshteLjgD6FIvid2eIX5f+H/WmoP5rR1mpUqpF885q7FGhFfGJT1]"
+
+idp.clientId: "![VziWbgK13dyTXeUO53270jzaykbNMLGV33OYCgmsKo9zeTi8qsRGQesZVyugH+1l]"
+idp.clientSecret: "![tYB4D4ieYg1f13aYOWe/pWNqEh/KBeCID9yYTJA03239LO0yKkbX4yP4KEPebRO8]"

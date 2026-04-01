@@ -1,0 +1,86 @@
+#Workbook Id's:
+freepoint.template.workbookId: "017AHS5H5XAY2B25QYBBH3BJ2WA4PCACJY"
+stockholdersLookup.workbookId: "017AHS5H7LDRJ4SGVCHJBLEQB32VQKXB7X"
+
+#Folder StructurePath:
+sourceDataFiles.folderPath: "PRODUCTION/MuleSoft_Automation_AR/Source_Data_Files"
+freepointWorkBooks.folderPath: "PRODUCTION/MuleSoft_Automation_AR/Freepoint_Workbooks"
+templateWorkBooks.folderPath: "PRODUCTION/MuleSoft_Automation_AR/Template_Workbooks"
+inventory_&_sales.folderPath: "PRODUCTION/MuleSoft_Automation_AR/Inventory_&_Sales_Workbooks"
+
+#File Folder Names:
+freepoint.folderName: "Freepoint_Workbooks"
+inventory_&_sales.folderName: "Inventory_&_Sales_Workbooks"
+
+#Workbook Names:
+inventory.workbookName: "Inventory_&_Sales_"
+sourceDataFile.workbookName: "Source_Data_File_"
+freepoint.workbookName: "Freepoint_Invoice_Daily_Worksheet_"
+stockholdersLookup.workbookName: "Stockholders_Lookup.xlsx"
+inventory.template.workbookName: "Inventory_&_Sales_Template.xlsx"
+freepoint.template.workbookName: "Freepoint_Template.xlsx"
+
+#Sheet Names:
+inventory.sheetName: "Inventory"
+mtd.sheetName: "MTD"
+tis.sheetName: "TIS"
+tms6.sheetName: "TMS6"
+stockholdersLookup.sheetName: "Stockholders_Data"
+freepointBreakout.sheetName: "FreepointBreakout"
+freepoint.daily.sheetName: "Daily"
+freepoint.3days.sheetName: "Three-Day-Calculations"
+freepoint.trueup.sheetName: "Inventory-TrueUp"
+inventory.template.sheetName: "Inventory"
+FreepointBreakout.template.sheetName: "FreepointBreakout"
+freepoint.template.sheetName: "Freepoint_Template"
+
+#Table Names:
+inventory.tableName: "Inventory_Table"
+mtd.tableName: "MTD_Table"
+tis.tableName: "TIS_Table"
+tms6.tableName: "TMS6_Table"
+tms6.exports.tableName: "TMS6_Exports_Table"
+tms6.receipts.tableName: "TMS6_Receipts_Table"
+freepoint.daily.tableName: "Daily_Table_"
+freepoint.trueUp.tableName: "TrueUp_Table_"
+freepoint.3days.tableName: "3Days_Table_"
+freepoint.template.tableName: "Freepoint_Template_Table"
+freepointBreakout.tableName: "Freepoint_Breakout_Table"
+pricesForFunding.tableName: "PricesForFunding_Table"
+differentialValues.tableName: "DifferentialValues_Table"
+productNameLookup.tableName: "ProductName_Lookup_Table"
+meterControl.tableName: "MeterControl_Table"
+stockholdersLookup.tableName: "Stockholders_LookUp_Table"
+
+defaultDatetime:  ""
+
+mail.inventory.folderId: "AAMkAGE3NTc2NGIzLWU3NjYtNGQ1OS1iMDU5LWI5MzlmNDAzOTdiMQAuAAAAAACKYUBHXlpiTbUwdWURu8IeAQBvCyQti6S4T5y24jrHKUnnAABMiZoBAAA="
+
+mail:
+    to: "dharani.p@aa2it.com"
+    from: "dpatteboyina@mdwhub.com"
+    cc: "javeed.s@aa2it.com"
+    # utc time
+    fetch.startTime: "11:00:00"
+    fetch.endTime: "15:00:00"
+mule.key: "Mulesoft@@@@2026"
+
+#graphApi Auth Configs
+graphApi.tenantId: "487484bf-e894-4b0a-8f56-a661b6aa737d"
+graphApi.emailId: mule.automation@tsar-llc.com
+graphApi.auth.protocol: "HTTPS"
+graphApi.auth.host: "login.microsoftonline.com"
+graphApi.auth.port: "443"
+graphApi.auth.scope: "https://graph.microsoft.com/.default"
+graphApi.auth.grantType: "client_credentials"
+
+#https requester configs
+https.graphApi.protocol: "HTTPS"
+https.graphApi.host: graph.microsoft.com
+https.graphApi.port: "443"
+
+#idp configuration details
+idp.host: "idp-rt.us-east-1.anypoint.mulesoft.com"
+idp.port: "443"
+idp.protocol: "HTTPS"
+idp.responseTimeout: "120000"

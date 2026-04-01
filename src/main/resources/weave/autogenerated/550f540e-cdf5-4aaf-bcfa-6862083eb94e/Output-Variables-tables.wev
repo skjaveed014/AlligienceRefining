@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_550f540e_cdf5_4aaf_bcfa_6862083eb94e_Output_Variables_tables = Array<"TMS6_Table" | "TMS6_Receipts_Table" | "TMS6_Exports_Table">
-

@@ -1,9 +1,0 @@
-%dw 2.0
-
-type auto_797f0205_5fc4_474f_93f4_960309a7bc37_Input_Variables_numberToColumn = {|
-  Number: Any, 
-  CurrentColumn: String, 
-  NextColumn: String, 
-  PreviousColumn: String
-|}
-
