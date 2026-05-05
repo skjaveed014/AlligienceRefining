@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:idp-ar-tms6-idp-150="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150"
+	xmlns:idp-ar-tis-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110"
+	xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:idp-ar-tms6-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100" xmlns:idp-ar-tis-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100" xmlns:idp-ar-freepoint-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100" xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:excel="http://www.mulesoft.org/schema/mule/excel" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/microsoftOneDrive http://www.mulesoft.org/schema/mule/microsoftOneDrive/current/mule-microsoftOneDrive.xsd
+http://www.mulesoft.org/schema/mule/excel http://www.mulesoft.org/schema/mule/excel/current/mule-excel.xsd
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110/current/mule-idp-freepoint-invoice-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100 http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100/current/mule-idp-tis-inventory-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100/current/mule-idp-ar-freepoint-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100/current/mule-idp-ar-tis-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100/current/mule-idp-ar-tms6-idp-100.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/oauth http://www.mulesoft.org/schema/mule/oauth/current/mule-oauth.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110/current/mule-idp-ar-tis-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150/current/mule-idp-ar-tms6-idp-150.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<http:request-config name="HTTP_Graph_API_Auth_configuration" doc:name="HTTP Request configuration" doc:id="dd7f0c83-a90f-495f-b2e3-08174fa05cef" >
+		<http:request-connection protocol="HTTPS" host="${graphApi.auth.host}" port="${graphApi.auth.port}"/>
+	</http:request-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ccde9577-2785-45dc-8f55-f50d338458b2" >
+		<http:listener-connection host="0.0.0.0" port="8081" readTimeout="300000"/>
+	</http:listener-config>
+	<http:request-config name="HTTP_Graph_API_configuration" doc:name="HTTP Request configuration" doc:id="74cb9d11-41af-4b1b-b3cb-69f2fb3d4971" >
+		<http:request-connection host="${https.graphApi.host}" protocol="HTTPS" port="${https.graphApi.port}"/>
+	</http:request-config>
+	<configuration doc:name="Configuration" doc:id="c9c1f8e1-bf78-4316-a83f-40a87115b198" defaultErrorHandler-ref="global-error-handlingError_Handler" />
+	<configuration-properties doc:name="Configuration properties" doc:id="d392ccea-8514-428a-8c66-d7313b025afb" file="config\config-${mule.env}.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="ea50fd5a-55c8-472f-ae14-e171814bc2b8" file="secure\secure-${mule.env}.yaml" key="${mule.key}" />
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="27155972-e52b-482e-ab29-fb4498a93ce4" config-ref="ObjectStore_Config" expirationIntervalUnit="HOURS"/>
+	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="c7df4c6f-c879-4eb4-a465-b98cafe33832" >
+		<os:connection />
+	</os:config>
+	<validation:config name="Validation_Config" doc:name="Validation Config" doc:id="e8ce9155-ab96-4c3f-8e04-cf890e40e5aa" />
+
+	
+</mule>

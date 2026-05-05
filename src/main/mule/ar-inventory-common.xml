@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:idp-ar-tis-idp-160="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-160" xmlns:idp-ar-tms6-idp-160="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-160"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:idp-ar-tms6-idp-1160="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1160" xmlns:idp-ar-tms6-idp-1150="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1150" xmlns:idp-ar-tms6-idp-1140="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1140" xmlns:idp-ar-tms6-idp-1130="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1130" xmlns:idp-ar-tms6-idp-1120="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1120" xmlns:idp-ar-freepoint-idp-150="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-150" xmlns:idp-ar-tms6-idp-1100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1100" xmlns:idp-ar-freepoint-idp-140="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-140" xmlns:idp-ar-freepoint-idp-130="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-130" xmlns:idp-ar-freepoint-idp-120="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-120" xmlns:idp-ar-tms6-idp-190="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-190" xmlns:idp-ar-tis-idp-150="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-150" xmlns:idp-ar-tms6-idp-180="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180" xmlns:idp-ar-tms6-idp-170="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170" xmlns:idp-ar-tis-idp-140="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140" xmlns:idp-ar-tis-idp-130="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130" xmlns:idp-ar-tms6-idp-150="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150" xmlns:idp-ar-freepoint-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110" xmlns:idp-ar-tms6-idp-140="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140" xmlns:idp-ar-tms6-idp-130="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130" xmlns:idp-ar-tis-idp-120="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120" xmlns:idp-ar-tms6-idp-120="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120" xmlns:idp-ar-tms6-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110" xmlns:idp-ar-tis-idp-110="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110" xmlns:idp-ar-tis-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100" xmlns:idp-ar-freepoint-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100" xmlns:idp-ar-tms6-idp-100="http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100" xmlns:idp-freepoint-invoice-idp-180="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180" xmlns:idp-tms6-100="http://www.mulesoft.org/schema/mule/idp-tms6-100" xmlns:idp-alligience-tms6-dp-110="http://www.mulesoft.org/schema/mule/idp-alligience-tms6-dp-110" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:idp-tis-inventory-idp-100="http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100" xmlns:idp-freepoint-invoice-idp-110="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110" xmlns:idp-freepoint-invoice-idp-100="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100" xmlns:idp-elmendrof-inventory-pdf-100="http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100/current/mule-idp-elmendrof-inventory-pdf-100.xsd
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100/current/mule-idp-freepoint-invoice-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-110/current/mule-idp-freepoint-invoice-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100 http://www.mulesoft.org/schema/mule/idp-tis-inventory-idp-100/current/mule-idp-tis-inventory-idp-100.xsd
+http://www.mulesoft.org/schema/mule/microsoftOneDrive http://www.mulesoft.org/schema/mule/microsoftOneDrive/current/mule-microsoftOneDrive.xsd
+http://www.mulesoft.org/schema/mule/idp-alligience-tms6-dp-110 http://www.mulesoft.org/schema/mule/idp-alligience-tms6-dp-110/current/mule-idp-alligience-tms6-dp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-tms6-100 http://www.mulesoft.org/schema/mule/idp-tms6-100/current/mule-idp-tms6-100.xsd
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-180/current/mule-idp-freepoint-invoice-idp-180.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-100/current/mule-idp-ar-tms6-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-100/current/mule-idp-ar-freepoint-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-100/current/mule-idp-ar-tis-idp-100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-110/current/mule-idp-ar-tis-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-110/current/mule-idp-ar-tms6-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-120/current/mule-idp-ar-tms6-idp-120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-120/current/mule-idp-ar-tis-idp-120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-130/current/mule-idp-ar-tms6-idp-130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-140/current/mule-idp-ar-tms6-idp-140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-110/current/mule-idp-ar-freepoint-idp-110.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-150/current/mule-idp-ar-tms6-idp-150.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-130/current/mule-idp-ar-tis-idp-130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-140/current/mule-idp-ar-tis-idp-140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-170/current/mule-idp-ar-tms6-idp-170.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-180/current/mule-idp-ar-tms6-idp-180.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-150 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-150/current/mule-idp-ar-tis-idp-150.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-190 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-190/current/mule-idp-ar-tms6-idp-190.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-120 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-120/current/mule-idp-ar-freepoint-idp-120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-130 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-130/current/mule-idp-ar-freepoint-idp-130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-140 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-140/current/mule-idp-ar-freepoint-idp-140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1100 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1100/current/mule-idp-ar-tms6-idp-1100.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-150 http://www.mulesoft.org/schema/mule/idp-ar-freepoint-idp-150/current/mule-idp-ar-freepoint-idp-150.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1120 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1120/current/mule-idp-ar-tms6-idp-1120.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1130 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1130/current/mule-idp-ar-tms6-idp-1130.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1140 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1140/current/mule-idp-ar-tms6-idp-1140.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1150 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1150/current/mule-idp-ar-tms6-idp-1150.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1160 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-1160/current/mule-idp-ar-tms6-idp-1160.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-160 http://www.mulesoft.org/schema/mule/idp-ar-tms6-idp-160/current/mule-idp-ar-tms6-idp-160.xsd
+http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-160 http://www.mulesoft.org/schema/mule/idp-ar-tis-idp-160/current/mule-idp-ar-tis-idp-160.xsd">
+	<idp-ar-tms6-idp-1130:config name="IDP___AR_TMS6_IDP___1_13_0_Config" doc:name="IDP - AR-TMS6-IDP - 1.13.0 Config" doc:id="28bcf282-b697-4f42-8f83-606522ba6878" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="3600" property_client-id="${secure::idp.clientId}" property_client-secret="${secure::idp.clientSecret}" />
+	<idp-ar-tis-idp-160:config name="IDP___AR_TIS_IDP___1_6_0_Config" doc:name="IDP - AR-TIS-IDP - 1.6.0 Config" doc:id="0c5e70e4-1543-4bf4-9ecc-ecd643990ebf" property_host="${idp.host}" property_port="${idp.port}" property_protocol="${idp.protocol}" property_responseTimeout="3600" property_client-id="${secure::idp.clientId}" property_client-secret="${secure::idp.clientSecret}" />
+	<sub-flow name="tms6-idp-extraction-subflow" doc:id="aceb36ca-bbd9-4fd0-9aba-6b177089a10c" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="4582203f-d154-4308-a0a6-e7d8b0e05f51" millisBetweenRetries="5000">
+			<idp-ar-tms6-idp-1130:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="bac3f361-6bd8-4cfb-9e8b-b48bf3e00b68" config-ref="IDP___AR_TMS6_IDP___1_13_0_Config"/>
+		</until-successful>
+		<try doc:name="Try" doc:id="1c7b5e8f-8218-4681-9556-56cc1d1940ca" >
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="434077f1-7463-4fc4-8490-6176d81be0c0" millisBetweenRetries="30000">
+				<idp-ar-tms6-idp-1130:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="1bf0b0d4-501d-484b-91ff-ea96107eb976" config-ref="IDP___AR_TMS6_IDP___1_13_0_Config" execution-id="#[payload.id]"/>
+				<choice doc:name="checks for status = SUCCEEDED" doc:id="4f237160-5815-48e2-be23-2ae3a515ea58" >
+					<when expression='#[payload.status == "SUCCEEDED"]'>
+						<logger level="INFO" doc:name="IDP EXTRACTION COMPLETED" doc:id="d769ede6-9395-4c0d-9d60-feec87e62058" message='#["IDP EXTRACTION COMPLETED SUCCESSFULLY FOR THE DOCUMENT :: " ++ vars.pdfName]' />
+						<ee:transform doc:name="var tempTms6Data" doc:id="36f15003-4b53-4160-a3d5-86baeabecae1">
+			<ee:message />
+			<ee:variables>
+								<ee:set-variable variableName="tempTms6Data" ><![CDATA[%dw 2.0
+output application/json
+
+var data = payload.fields.TMS6Data.value
+
+---
+read(data, "application/json")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+						<ee:transform doc:name="divide tempTms6Data by 42" doc:id="3614cc21-2193-45f0-a684-f18516c6c374">
+							<ee:message>
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="tempTms6Data" ><![CDATA[%dw 2.0
+output application/json
+
+// Helper function to handle the math and rounding
+fun convert(val: Number) = 
+    round(val / 42 * 10) / 10
+
+---
+{
+    InventoryDate: vars.tempTms6Data.InventoryDate,
+    products: vars.tempTms6Data.products map (item) -> {
+        tank: item.tank,
+        productName: item.productName,
+        // We take the FIRST volume/stockAdjust found and convert it
+        volume: convert(item.volume),
+        stockAdjust: convert(item.stockAdjust)
+    },
+    StockHolders: vars.tempTms6Data.StockHolders mapObject (products, holder) -> {
+        (holder): products map (item) -> {
+            tank: item.tank,
+            productName: item.productName,
+            volume: convert(item.volume),
+            stockAdjust: convert(item.stockAdjust)
+        }
+    }
+}]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+						<ee:transform doc:name="var tms6Data and var inventoryDate" doc:id="7d78406e-b4e9-4114-b7a5-7bcbfd476cd9" >
+							<ee:message >
+							</ee:message>
+							<ee:variables >
+								<ee:set-variable variableName="tms6Data" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.tms6Data ++ [(vars.tempTms6Data.InventoryDate) : vars.tempTms6Data]]]></ee:set-variable>
+								<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempTms6Data.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+							</ee:variables>
+						</ee:transform>
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="IDP EXTRACTION FAILED" doc:id="7862de3d-d135-4485-83cc-735973640929" message='#["IDP EXTRACTION FAILED FOR THE DOCUMENT :: " ++ vars.pdfName]' />
+						<raise-error doc:name="Raise error" doc:id="b6b96dd0-21de-43c6-8c1b-bfdedff136e0" type="CUSTOM:IDP_NOT_SUCCESSFUL" description='["IDP RESPONSE:" ++ payload.status]' />
+					</otherwise>
+				</choice>
+			</until-successful>
+		</try>
+	</sub-flow>
+	<sub-flow name="tis-idp-extraction-subflow" doc:id="01012676-2bf1-4d80-81e6-45acfe78e470" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="53c055c3-3cb6-40bd-87e5-05c19bac33cd" millisBetweenRetries="5000">
+			<idp-ar-tis-idp-160:postdocumentactionexecution doc:name="postDocumentActionExecution" doc:id="e6a2e65b-08e7-411e-b268-376e34192ba4" config-ref="IDP___AR_TIS_IDP___1_6_0_Config"/>
+		</until-successful>
+		<try doc:name="Try" doc:id="96a51d56-d9c4-4872-8f27-c3b79dc40e17" >
+			<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e9fad768-bf0e-4f2c-9ff7-956e79656854" millisBetweenRetries="30000">
+				<idp-ar-tis-idp-160:getdocumentactionexecution doc:name="getDocumentActionExecution" doc:id="b8da28e4-9331-427a-9a99-9d9233bb9c86" config-ref="IDP___AR_TIS_IDP___1_6_0_Config" execution-id="#[payload.id]"/>
+				<choice doc:name="checks for status = SUCCEEDED" doc:id="4e707442-c4eb-47a9-9fcb-0e0ce9d386f1" >
+					<when expression='#[payload.status == "SUCCEEDED"]'>
+						<ee:transform doc:name="Payload(IDP response)" doc:id="0f9fe6f9-3cce-4afb-89b6-217c23cf0875" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[payload]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<logger level="INFO" doc:name="IDP EXTRACTION COMPLETED" doc:id="bab9556d-ca50-4505-8ee1-47456c0011b7" message='#["IDP EXTRACTION COMPLETED SUCCESSFULLY FOR THE DOCUMENT :: " ++ vars.pdfName]'/>
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="IDP EXTRACTION FAILED" doc:id="3ffbbe63-94a0-4c28-8033-4a20c58a3505" message='#["IDP EXTRACTION FAILED FOR THE DOCUMENT :: " ++ vars.pdfName]' />
+						<raise-error doc:name="Raise error" doc:id="a34bbe15-0dc6-4569-a32f-d0fa3f8162f4" type="CUSTOM:IDP_NOT_SUCCESSFUL" description='["IDP RESPONSE:" ++ payload.status]'/>
+					</otherwise>
+				</choice>
+			</until-successful>
+		</try>
+		<choice doc:name="routes the elmendorf and tsar data" doc:id="c33bff93-1e3d-4f55-ace9-387a9cd590c3" >
+			<when expression='#[(lower(vars."pdfName") contains "elmendorf")]'>
+				<ee:transform doc:name="var tempElmendorfIdpResponse" doc:id="ce5463b4-264f-41cc-bdf4-112b78c5fd0b">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+						<ee:set-variable variableName="tempElmendorfIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+
+var data = payload.fields.TisData.value
+
+---
+read(data, "application/json")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+				<ee:transform doc:name="var elmendorfIdpResponse and var inventoryDate" doc:id="8d749789-49a9-4fbe-8f2c-170c91fce380" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempElmendorfIdpResponse.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+						<ee:set-variable variableName="elmendorfIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.elmendorfIdpResponse ++ [(vars.tempElmendorfIdpResponse.InventoryDate) : vars.tempElmendorfIdpResponse]]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<when expression='#[(lower(vars."pdfName") contains "san antonio")]'>
+				<ee:transform doc:name="var tempTsarIdpResponse" doc:id="56052154-515f-4a71-8b3d-2eda54baf526" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="tempTsarIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+
+var data = payload.fields.TisData.value
+
+---
+read(data, "application/json")]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<ee:transform doc:name="var tsarIdpResponse and var inventoryDate" doc:id="e065740e-3329-4465-804c-b4df77c849a1" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="inventoryDate" ><![CDATA[%dw 2.0
+output application/json
+var d1=vars.inventoryDate
+var d=vars.tempTsarIdpResponse.InventoryDate
+---
+if (d1 contains d)
+    d1
+else
+    d1 ++ [d]]]></ee:set-variable>
+						<ee:set-variable variableName="tsarIdpResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.tsarIdpResponse ++ [(vars.tempTsarIdpResponse.InventoryDate) : vars.tempTsarIdpResponse]]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="816b7da9-ff25-4448-98d8-99929d4412f4" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="get-columnCountAndColumns-of-inventory-subflow" doc:id="63fbb482-aa57-4e4a-a86f-52f918e5230e" >
+		<ee:transform doc:name="vMethod and vPath to get inventoryOrBreakoutColumnCount" doc:id="f8e07eb4-ad2e-4602-b4bd-3f41f795d755" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++"/columns/count"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ar-common-requester" doc:id="bc123a69-20b4-4bc3-bf1c-0f0a3b7c554f" name="ar-common-requester"/>
+		<set-variable value="#[payload.value]" doc:name="inventoryOrBreakoutColumnCount" doc:id="2055aa99-7375-45c0-8a85-b82d3790db33" variableName="inventoryOrBreakoutColumnCount"/>
+		<ee:transform doc:name="columnCountAndExcelColumn" doc:id="4950c158-7252-4b8b-860e-032b30a5c21b" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="numberToColumn" ><![CDATA[%dw 2.0
+output application/json
+
+var columnCount = if (vars.flag == "update") vars.existInvColIndex else vars.inventoryOrBreakoutColumnCount
+var nextColumnCount = columnCount + 1
+var preColumnCount = columnCount - 1
+var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+fun toExcelColumn(n) =
+    if (n <= 0) "" 
+    else do {
+        var rem = (n - 1) mod 26
+        var quotient = floor((n - 1) / 26)
+        ---
+        toExcelColumn(quotient) ++ (letters[rem to rem])
+    }
+
+---
+{ 
+  Number: columnCount,
+  CurrentColumn: toExcelColumn(columnCount),
+  NextColumn: toExcelColumn(nextColumnCount),
+  PreviousColumn: toExcelColumn(preColumnCount)
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="get-Inventory-template-columns-subflow" doc:id="6609f9f3-e772-4103-a2ca-71e3e0b8a940" >
+		<ee:transform doc:name="vMethod and vPath to get Inventory products column" doc:id="0d4a2a7e-f8ae-41d1-a277-80b71e606932" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.invOrBreakoutTableName ++ "/columns/1"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ar-common-requester" doc:id="2def94e4-f357-4586-95d3-850cab252afe" name="ar-common-requester"/>
+		<set-variable value="#[sizeOf(payload.values)]" doc:name="inventoryRowCount" doc:id="b1b70ae2-35bc-44a1-935e-41c3fe710ae9" variableName="inventoryRowCount" />
+		<ee:transform doc:name="var InventorySheetTemplate" doc:id="2b48d9ec-4ff7-4bfb-8873-5578d6e16c48" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="InventorySheetTemplate" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.values]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="vMethod and vPath to get the formulasColumns from Inventory sheet" doc:id="50d26dc1-ae9e-4121-b8cf-4a5537e4cc9d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/worksheets/" ++ vars.sheet ++ "/range(address='B1:B" ++ (vars.inventoryRowCount)  as String ++"')"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ar-common-requester" doc:id="cd348162-6800-42bb-898a-6f07bdc33bfb" name="ar-common-requester"/>
+		<set-variable value="#[payload.formulas]" doc:name="InventorySampleColumnFormulas" doc:id="253a09ff-51ac-4b69-a087-0967b951dfb0" variableName="InventorySampleColumnFormulas" />
+		<set-variable value="#[payload.numberFormat]" doc:name="inventorySampleColumnNumberFormat" doc:id="8b87920e-0918-4b51-bd49-86609001996c" variableName="inventorySampleColumnNumberFormat" />
+		<ee:transform doc:name="inventoryReplacedFormulas, invSampleColumn" doc:id="59dc8e83-115d-497d-8bf7-36288b6524d4" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="invSampleColumn" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.values]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryReplacedFormulas" ><![CDATA[%dw 2.0
+output application/json
+ 
+var from1= "B"
+var to1= vars.numberToColumn.NextColumn
+var from2= "A"
+var to2= vars.numberToColumn.CurrentColumn
+---
+
+vars."InventorySampleColumnFormulas" map ((row) ->
+    row map ((cell) ->
+      if (cell is String and sizeOf(cell) > 0 and cell[0] == "=")
+        (cell
+          replace (("\\b" ++ from1 ++ "(?=\\d|\\\$)") as Regex) with to1
+        )
+        replace (("\\b" ++ from2 ++ "(?=\\d|\\\$)") as Regex) with to2
+      else
+        cell
+    )
+  )]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="tis-variables-subflow" doc:id="4f44774b-3664-4200-b3a6-884b5d2cb7fe">
+		<set-variable value="#[Tanks:  vars.tisProductsColumn [1 to (sizeOf(vars.tisProductsColumn) - 5)]]" doc:name="tisTemplate" doc:id="71b7d600-807b-4853-b030-d17864c0eafe" variableName="tisTemplate" />
+		<set-variable value="#[flatten(vars.tisProductsColumn [1 to (sizeOf(vars.tisProductsColumn) - 5)])]" doc:name="existingTanksInTisSheet" doc:id="dc6c775a-191e-4dc0-970a-2a3e33f6660e" variableName="existingTanksInTisSheet" />
+		<set-variable value='#[sizeOf(vars."existingTanksInTisSheet")]' doc:name="tanksCountInSheet" doc:id="c17bde7e-d385-4327-a958-bc98c5cc2113" variableName="tanksCountInSheet" />
+		<set-variable value='#[[sizeOf(vars."tisTemplate"."Tanks" )][0] as Number]' doc:name="NewProductRowIndex" doc:id="c0a37876-126e-4358-b8c8-cffac4e8d10b" variableName="NewProductRowIndex" />
+		<ee:transform doc:name="var newTanks" doc:id="1a809f14-1434-4e31-8988-377ec6cc7c5d">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="newTanks" ><![CDATA[%dw 2.0
+output application/json
+---
+vars."tanksInPDF" -- vars."existingTanksInTisSheet"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="get-token-subflow" doc:id="12752e04-33e2-4f83-a0e7-0a330e613179" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="6c53b5d5-821f-4d3c-9ff7-5f863ce40c7d" millisBetweenRetries="5000">
+			<http:request method="POST" doc:name="token" doc:id="7546f2d1-d2e1-4482-83a4-c09fc1ae8053" config-ref="HTTP_Graph_API_Auth_configuration" path="#[&quot;/&quot; ++ p('graphApi.tenantId') ++ &quot;/oauth2/v2.0/token&quot;]" target="token" targetValue="#[payload.access_token]">
+			<http:body><![CDATA[#[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	"client_id": Mule::p('secure::graphApi.auth.clientId'),
+	"client_secret": Mule::p('secure::graphApi.auth.clientSecret'),
+	"scope": Mule::p('graphApi.auth.scope'),
+	"grant_type": Mule::p('graphApi.auth.grantType')
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Content-Type" : "application/x-www-form-urlencoded"
+}]]]></http:headers>
+		</http:request>
+		</until-successful>
+	</sub-flow>
+	<sub-flow name="all-sheets-and-tables-creation-subflow" doc:id="1ca9ea8a-b980-4b8d-a11f-75b91ad4e8e9" >
+		<http:request method="PUT" doc:name="creates new Inventory&amp;Sales workbook" doc:id="7dd115e0-4357-48c0-9009-673e42e623d4" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.folderPath') ++ &quot;/&quot; ++ vars.inventoryWorkbookName ++ &quot;.xlsx:/content&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration">
+			<http:body ><![CDATA[#[""]]]></http:body>
+			<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="var inventoryWorkbookTemplateValues, inventorySheetNames, tableNames" doc:id="5b95a8a9-f262-4045-aeff-30955f1a9c63" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="tableNames" ><![CDATA[[p('inventory.tableName'), p('mtd.tableName'), p('tis.tableName'), p('freepointBreakout.tableName'), p('tms6.tableName')]]]></ee:set-variable>
+				<ee:set-variable variableName="inventorySheetNames" ><![CDATA[[p('inventory.sheetName'), p('mtd.sheetName'), p('tis.sheetName'), p('freepointBreakout.sheetName'), p('tms6.sheetName')]]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryWorkbookTemplateValues" ><![CDATA[%dw 2.0
+output application/json
+---
+[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<foreach doc:name="For Each inventorySheetNames" doc:id="b11e64d5-6045-4332-8e48-88dd8aadf83f" collection='#[vars."inventorySheetNames"]'>
+			<set-variable value='#[%dw 2.0&#10;output application/json&#10;var year = (vars.idpResponseData.Date as Date {format: "d-MMM-yyyy"}).year&#10;---&#10;year - 1]' doc:name="prevYear" doc:id="f1e8397e-6c85-406b-ad7c-42aff3fde40f" variableName="prevYear"/>
+			<http:request method="GET" doc:name="get previous inventory and sales workbook id " doc:id="2f723da8-68de-41c0-a711-bda2afafe107" target="previousInventoryWorkbookId" targetValue="#[payload.id]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.folderPath') ++ &quot;/&quot; ++ p('inventory.workbookName') ++ vars.prevYear ++ &quot;.xlsx&quot;]">
+				<http:body ><![CDATA[#[""]]]></http:body>
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<!-- [STUDIO:"previousInventoryWorkbookId"]<set-variable value="01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV" doc:name="previousInventoryWorkbookId" doc:id="bd2e1e6b-7878-4f6d-8e09-39e5ed075a4c" variableName="previousInventoryWorkbookId" /> [STUDIO] -->
+			<http:request method="GET" doc:name="inventory&amp;sales previous year  31 dec values" doc:id="b22c8b1d-a4d0-42b6-b5aa-fd892db756d8" config-ref="HTTP_Graph_API_configuration" target="inventoryDec31" targetValue="#[payload.values]" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/31-Dec-&quot; ++ vars.prevYear]">
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<http:request method="GET" doc:name="freepointBreakout previous year 31 dec values" doc:id="a960e742-b70f-4d48-aa1a-069896dfb73d" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/tables/&quot; ++ p('freepointBreakout.tableName') ++ &quot;/columns/31-Dec-&quot; ++ vars.prevYear]" target="freepointBreakoutDec31" targetValue="#[payload.values]">
+				<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+			<http:request method="GET" doc:name="previousInventoryRowCount" doc:id="de81542e-b16a-4b50-96a9-5e8185710f75" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/tables/&quot; ++ vars.tableNames[vars.counter - 1] ++ &quot;/rows/count&quot;]" target="previousInventoryRowCount" targetValue="#[payload.value]">
+				<http:body><![CDATA[#[""]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<ee:transform doc:name="previousInventoryRange" doc:id="28b3ecd3-239e-4794-8b88-3b06a35fd498" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="previousInventoryRange" ><![CDATA[%dw 2.0
+output application/json
+---
+if(payload== p('inventory.sheetName')) ("A1:B" ++ (vars."previousInventoryRowCount" + 1))
+else if(payload == p('mtd.sheetName')) ("A1:I" ++ (vars."previousInventoryRowCount" + 1))
+else if(payload == p('tis.sheetName')) ("A1:B" ++ (vars."previousInventoryRowCount" + 1))
+else if (payload == p('tms6.sheetName')) ("A1:B" ++ (vars."previousInventoryRowCount" + 1))
+else if(payload == p('freepointBreakout.sheetName')) ("A1:B" ++ (vars."previousInventoryRowCount" + 1))
+else "no sheet found"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<http:request method="GET" doc:name="get Inventory template values" doc:id="6bad692b-b3d0-4369-be94-234150ced055" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/worksheets/&quot; ++ vars.&quot;inventorySheetNames&quot;[vars.counter - 1] ++ &quot;/range(address='&quot; ++ vars.&quot;previousInventoryRange&quot; ++ &quot;')&quot;]">
+				<http:body><![CDATA[#[""]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-variable value='#[vars."inventoryWorkbookTemplateValues" + { &#10;"numberFormat": payload."numberFormat",&#10;"values": payload.formulas &#10;}]' doc:name="inventoryWorkbookTemplateValues" doc:id="a9f6376c-78e9-4197-8062-0e49a0f5f6f5" variableName="inventoryWorkbookTemplateValues" />
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "name": vars."inventorySheetNames"[vars.counter - 1]&#10;}]' doc:name="add inventorySheetNames - payload" doc:id="5976a8b4-4c03-4850-b80a-898ab7ba7965" />
+			<http:request method="POST" doc:name="adding worksheets to newly created Inventory workbook" doc:id="4c93d713-0ab8-402a-a68d-99c51d91b164" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/add&quot;]" target="addWorksheetResponse">
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;vars."inventoryWorkbookTemplateValues"[vars.counter - 1]]' doc:name="templatePayload" doc:id="cf5ba398-67f2-4742-ae7f-eff93af7920d" />
+			<http:request method="PATCH" doc:name="add template-data" doc:id="213a1d3f-a598-4b4c-80c9-d82d4b52e2f2" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;inventoryAndSalesWorkbookId&quot; ++ &quot;/workbook/worksheets/&quot;++ vars.&quot;inventorySheetNames&quot;[vars.counter - 1]  ++ &quot;/range(address='&quot; ++ vars.&quot;previousInventoryRange&quot; ++ &quot;')&quot;]">
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+				</http:request>
+			<http:request method="POST" doc:name="table creation" doc:id="68fe561a-9a21-4746-a907-3da0c3f2b481" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/add&quot;]" target="autoGeneratedTableName" targetValue="#[payload.name]">
+				<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"address": vars."inventorySheetNames"[vars.counter - 1] ++ "!" ++ vars."previousInventoryRange",
+	"hasHeaders": true
+}]]]></http:body>
+				<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<http:request method="PATCH" doc:name="update table name" doc:id="4ed272e4-5457-4e44-a877-4639af87c23a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.&quot;autoGeneratedTableName&quot;]">
+				<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"name": vars.tableNames[vars.counter - 1]
+}]]]></http:body>
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+		</foreach>
+		<http:request method="POST" doc:name="31Dec column add into new inventory" doc:id="e64a8075-fbbe-4255-b4ed-bf6fc01f430b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/add&quot;]">
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values":[["31-Dec-" ++ vars.prevYear]] ++ vars.inventoryDec31 - vars.inventoryDec31[0]
+}]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="POST" doc:name="31Dec column data add into new freepointBreakout" doc:id="5a446466-a6d9-4888-b546-f44c506317f3" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('freepointBreakout.tableName') ++ &quot;/columns/add&quot;]">
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"values":[["31-Dec-" ++ vars.prevYear]] ++ vars.freepointBreakoutDec31 - vars.freepointBreakoutDec31[0]
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<http:request method="POST" doc:name="mtd new month creation and post data" doc:id="630b5121-1bc2-49c7-b2ff-03f257cd34f2" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/add&quot;]">
+			<ee:repeatable-file-store-stream bufferUnit="MB" />
+			<http:body><![CDATA[#[%dw 2.0
+output application/json
+var emptyRow = [""]   // change count as needed
+---
+{
+   "values":[["DEC-" ++ vars.prevYear ++ "-END"]] ++ ((1 to 199) map (() -> emptyRow))
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<flow-ref doc:name="get-token-subflow" doc:id="22ac9202-6078-4a66-9125-01083af83c92" name="get-token-subflow" />
+		<set-variable value="#[[p('tms6.exports.tableName'), p('tms6.receipts.tableName')]]" doc:name="exportsReceiptsTableNames" doc:id="65d9a305-af9a-4538-a788-6a3d9828a657" variableName="exportsReceiptsTableNames"/>
+		<foreach doc:name="For Each exports and reciepts table" doc:id="96ac38d4-9ee9-42e0-889a-51b1b720c477" collection="#[vars.exportsReceiptsTableNames]">
+			<http:request method="GET" doc:name="gets exports and receipts range" doc:id="c34024e3-cc7d-416c-89fc-dd200a4bd914" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.previousInventoryWorkbookId ++ &quot;/workbook/tables/&quot; ++ payload ++ &quot;/columns/1/range&quot;]" target="address" targetValue="#[payload.address]">
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;var address = vars.address&#10;var match = address scan /A(\d+)/&#10;var tms6TemplateRange= (address splitBy  "!")[1] splitBy  ":"&#10;---&#10;{&#10;    "rangeStart": tms6TemplateRange[0],&#10;    "rangeEnd": (tms6TemplateRange[1]) replace "A" with "B"&#10;}]' doc:name="previousTms6Range" doc:id="c4e7dc26-5f5d-4243-af0b-ff66a5efd3cf" variableName="previousTms6Range"/>
+			<http:request method="GET" doc:name="get previous tms6 template data" doc:id="0cbb39cd-77ff-49f9-8a6c-a9dbe44ccd7b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;previousInventoryWorkbookId&quot; ++ &quot;/workbook/worksheets/&quot;++ p('tms6.sheetName')  ++ &quot;/range(address='&quot; ++ vars.&quot;previousTms6Range&quot;.rangeStart ++&quot;:&quot; ++ vars.&quot;previousTms6Range&quot;.rangeEnd ++ &quot;')&quot;]">
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-payload value='#[{ &#10;"numberFormat": payload."numberFormat",&#10;"values": payload.formulas &#10;}]' doc:name="templatePayload" doc:id="25904418-b2fa-4512-926d-ac1d53cc0a69" />
+			<http:request method="PATCH" doc:name="add template data" doc:id="a161744e-cf7f-4580-9acf-de1e41d9ae5c" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.&quot;inventoryAndSalesWorkbookId&quot; ++ &quot;/workbook/worksheets/&quot;++ p('tms6.sheetName')  ++ &quot;/range(address='&quot; ++ vars.&quot;previousTms6Range&quot;.rangeStart ++&quot;:&quot; ++ vars.&quot;previousTms6Range&quot;.rangeEnd ++ &quot;')&quot;]">
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<http:request method="POST" doc:name="table creation" doc:id="e65e0573-899e-43ff-92c8-95afca25b80d" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/add&quot;]" target="autoGeneratedTableName" targetValue="#[payload.name]" >
+				<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	"address": vars."inventorySheetNames"[4] ++ "!" ++ vars.previousTms6Range.rangeStart ++ ":" ++ vars.previousTms6Range.rangeEnd,
+	"hasHeaders": true
+}]]]></http:body>
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+			<set-payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	"name": vars."exportsReceiptsTableNames"[vars.counter - 1]&#10;}]' doc:name="new table name" doc:id="b8b48ca5-8608-46d9-b8c7-63e90bad988b" />
+			<http:request method="PATCH" doc:name="update table name" doc:id="98ce4a35-037a-4a2c-80d7-3407a428e80e" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.&quot;autoGeneratedTableName&quot;]" >
+				<http:headers ><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+			</http:request>
+		</foreach>
+	</sub-flow>
+	<sub-flow name="check-inventory-and-sales-workbook-existense-subflow" doc:id="099e393c-3260-4e0e-b64b-45f745c7a05a" >
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: &quot;d-MMM-yyyy&quot;}&#10;---&#10;p('inventory.workbookName') ++ date.year]" doc:name="inventoryWorkbookName" doc:id="e16673f8-ee74-4245-8a47-93e545ed2682" variableName="inventoryWorkbookName"/>
+		<ee:transform doc:name="vMethod and and vPath to get existingInventoryWorkbooks" doc:id="ee721e7f-2e23-4d73-ae22-b8a74ad7bd4f">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="vmethod"><![CDATA["GET"]]></ee:set-variable>
+				<ee:set-variable variableName="vpath"><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('inventory_&_sales.folderPath') ++ ":/children?\$select=name"]]></ee:set-variable>
+				<ee:set-variable variableName="vpayload"><![CDATA[""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="ar-common-requester" doc:id="88f1b086-8b0a-4eff-9636-f249eecbf358" name="ar-common-requester"/>
+		<set-variable value="#[payload.value.name]" doc:name="existingInventoryWorkbooks" doc:id="e27d5158-ef68-4797-9486-d98e0228bbb7" variableName="existingInventoryWorkbooks"/>
+		<!-- [STUDIO:"gets existingInventoryWorkbooks"]<http:request method="GET" doc:name="gets existingInventoryWorkbooks" doc:id="c35ecbb1-f2f4-400e-a402-38087b5bed3f" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++ &quot;:/children?\$select=name&quot;&#93;" target="existingInventoryWorkbooks" targetValue="#[payload.value.name&#93;">
+			<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+		</http:request> [STUDIO] -->
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var arr = vars."existingInventoryWorkbooks"&#10;---&#10;arr contains (vars.inventoryWorkbookName ++ ".xlsx") as String]' doc:name="isInventory&amp;SalesWorkbookExists" doc:id="015573c8-0ac4-4a16-a843-ce56c5cf70d7" variableName="isInventory&amp;SalesWorkbookExists"/>
+		<choice doc:name="checks if the inventory&amp;Sales workbook exists or not" doc:id="abcf08b4-8fac-435e-a114-f699a97082d7" >
+			<when expression='#[vars."isInventory&amp;SalesWorkbookExists"== true]'>
+				<!-- [STUDIO:"get Existing Inventory&Sales workbookId"]<http:request method="GET" doc:name="get Existing Inventory&amp;Sales workbookId" doc:id="0c449362-19eb-47d1-ae8a-1a3735ad3aba" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++&quot;/&quot; ++ vars.&quot;workbookName&quot; ++ &quot;.xlsx&quot;&#93;" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id&#93;">
+					<http:headers ><![CDATA[#[output application/json
+&#45;&#45;-
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}&#93;&#93;&#93;></http:headers>
+				</http:request> [STUDIO] -->
+				<ee:transform doc:name="get Existing Inventory&amp;Sales workbookId" doc:id="645a9e40-a8bb-4fae-9734-a5df0f712594" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="vmethod" ><![CDATA["GET"]]></ee:set-variable>
+						<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
+output application/json
+---
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/root:/" ++ p('inventory_&_sales.folderPath') ++"/" ++ vars."inventoryWorkbookName" ++ ".xlsx"]]></ee:set-variable>
+						<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+				<flow-ref doc:name="ar-common-requester" doc:id="b3a132e1-5da7-4546-9c91-cf3720f0b3b9" name="ar-common-requester"/>
+				<set-variable value="#[payload.id]" doc:name="inventoryAndSalesWorkbookId" doc:id="e18c447a-4fa9-4e14-bafe-a7f0690724dd" variableName="inventoryAndSalesWorkbookId"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="all-sheets-and-tables-creation-subflow" doc:id="99a32b51-dac5-433c-a166-7b74221a6370" name="all-sheets-and-tables-creation-subflow"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="ar-common-requester" doc:id="c9b21c87-dd41-469f-becc-b4361e076c61" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="7aa59ec5-c9b1-4cb0-889f-7fef096f0e6d" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="13bdfd71-df79-4f5b-9e10-faeb27ea7ccc">
+			<set-variable value='#[null]' doc:name="httpErrorType" doc:id="b31e4c35-fe1f-470d-b088-e46693f3ca29" variableName="httpErrorType" />
+				<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="62c8145b-76e3-454d-a90b-c98df1adc1d0" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1a894c06-f0e3-449a-9bdb-0c2698e7e5d1" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="b33dbb69-2230-41ec-b9b1-5f0ad84ff22b" message="retrying timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="29350122-3058-47ed-a8fd-43c1662b64e1" type="HTTP:BAD_GATEWAY, HTTP:BAD_REQUEST, HTTP:CLIENT_SECURITY, HTTP:FORBIDDEN, HTTP:INTERNAL_SERVER_ERROR, HTTP:METHOD_NOT_ALLOWED, HTTP:NOT_ACCEPTABLE, HTTP:PARSING, HTTP:RETRY_EXHAUSTED, HTTP:SECURITY, HTTP:SERVICE_UNAVAILABLE, HTTP:TIMEOUT, HTTP:TOO_MANY_REQUESTS, HTTP:UNAUTHORIZED, HTTP:UNSUPPORTED_MEDIA_TYPE, EXPRESSION, STREAM_MAXIMUM_SIZE_EXCEEDED" >
+						<set-variable doc:name="httpErrorType" doc:id="d0e66220-f949-409f-8cf5-92c7787842c7" variableName="httpErrorType" value="#[error.errorType.identifier]"/>
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="abc59366-be3b-4653-be88-cab84c334313" >
+			<when expression="#[vars.httpError != null]" >
+				<raise-error doc:name="Raise error" doc:id="e35762b3-b3c8-461f-b769-56059414e74e" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpErrorType default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="46cec7bc-fc3a-4678-aac9-344b37261b93" message="logging" />
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="send-email-alert-success" doc:id="97a768fe-c073-4b41-b15e-d0ad9fb78473" >
+		<ee:transform doc:name="Success Email Body" doc:id="46a3d9ec-dab8-4680-a728-e462012d05d4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+fun safe(val) =
+    if (val is Array)
+        (val map (item) -> 
+            if (item is String) item 
+            else write(item, "application/json")
+        ) joinBy ", "
+    else
+        (val default "-") as String
+
+fun formatDateTime(dt) =
+    if (dt != null)
+        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})
+    else "-"
+
+
+fun formatList(arr) =
+    if (arr is String)
+        arr
+    else if (!isEmpty(arr default []))
+        ((arr default []) map (item) -> 
+            if (item is String) item 
+            else write(item, "application/json")
+        ) joinBy "<br/>"
+    else "-"
+
+---
+{
+  message: {
+    subject: "Inventory and Rack Reports Processed Successfully",
+    body: {
+      contentType: "HTML",
+      content: 
+        "<html><body style='font-family: Arial, sans-serif; font-size:13px;'>" ++
+
+        "<p>Hi Team,</p>" ++
+        
+        "<p>This is to inform you that the <b>Inventory and Rack Reports</b> has been processed <b>SUCCESSFULLY</b> by MuleSoft Automation.</p>" ++
+        
+  		"<table border='1' cellpadding='8' cellspacing='0' style='border-collapse: collapse;'>" ++
+          "<tr style='background-color:#f2f2f2;'>" ++
+            "<th align='left'>Field</th><th align='left'>Value</th>" ++
+          "</tr>" ++
+          
+          "<tr><td><b>Automation Status</b></td><td><b>SUCCESS</b></td></tr>" ++
+          "<tr><td><b>Environment</b></td><td>" ++ safe(p('mule.env') default "PROD") ++ "</td></tr>" ++
+          "<tr><td><b>Correlation ID</b></td><td>" ++ safe(vars.vCorrelationId) ++ "</td></tr>" ++
+          "<tr><td><b>Document Name</b></td><td>" ++ formatList(vars.allDOCs) ++ "</td></tr>" ++
+          "<tr><td><b>Inventory Date</b></td><td>" ++ formatList(vars.inventoryDatesArray) ++ "</td></tr>" ++
+          "<tr><td><b>Email Received Date Time (UTC)</b></td><td>" ++ formatDateTime(vars.vReceivedDatetime) ++ "</td></tr>" ++
+          "<tr><td><b>Execution Timestamp (UTC)</b></td><td>" ++ formatDateTime(vars.currentExecutionDateTime) ++ "</td></tr>" ++
+
+        "</table><br/>" ++
+
+        "<p>The automation process completed successfully without any errors.</p>" ++
+
+        "<br/>" ++
+        "<p>Thank you,<br/>Automation Team</p>" ++
+
+        "<p style='font-size:12px;color:gray;'>This is an automated email generated by the Mulesoft Automation. Please do not reply.</p>" ++
+
+        "</body></html>"
+    },
+
+    toRecipients: p('mail.to') splitBy "," map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    },
+
+    ccRecipients: p('mail.cc') splitBy "," map (email) -> {
+      emailAddress: {
+        address: trim(email)
+      }
+    }
+  },
+
+  saveToSentItems: false
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="70255a45-7b7d-4008-8859-29bd5b2371bf" millisBetweenRetries="10000" >
+			<http:request method="POST" doc:name="Send Email" doc:id="8981eeb3-d07c-4df1-b35e-5c4512f98905" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/sendMail&quot;]" >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+			</http:request>
+		</until-successful>
+		<logger level="INFO" doc:name="Logger" doc:id="2c6836b9-e707-458f-a863-01bb0c06dbb4" message='#["--------[EMAIL ALERT] :: SUCCESS EMAIL SENT SUCCESSFULLY--------"]' />
+	</sub-flow>
+</mule>

@@ -5,36 +5,7 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
-	<!-- [STUDIO:"IDP-Inventory-Sub_Flow"]<sub-flow name="IDP-Inventory-Sub_Flow" doc:id="a9e23e65-f894-4b56-8775-0dce7b0e9b77" >
-		<ee:transform doc:name="idp-response-data" doc:id="07ef57ff-6c22-4a50-85c2-4a105c1c7eef" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="idpResponseData" ><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-vars.idpResponseData&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<ee:transform doc:name="aggregated-tis-data(idp)" doc:id="d1cb0eb7-69b8-4e76-b7a5-bdcfbb7e7d79" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="aggregated-tis-data" ><![CDATA[%dw 2.0
-output application/json
-var Elmendorf_subtotals=  vars."idpResponseData"."Elmendorf"."Subtotal" mapObject ((value, key, index) ->"Crude-SAR":value.GrossProduct )
-var TSAR_subtotals= vars."idpResponseData"."TSAR"."Subtotal" mapObject ((value, key, index) -> (key):value.GrossProduct)
-var Elmendorf_GrandTotal= vars."idpResponseData"."Elmendorf"."GrandTotal"."GrossProductTotal"
-var SAR_GrandTotal= vars."idpResponseData"."TSAR"."GrandTotal"."GrossProductTotal"
-&#45;&#45;-
-TSAR_subtotals ++ Elmendorf_subtotals ++ 
-{
-    "SAR_GrandTotal": SAR_GrandTotal,
-    "Elmendorf_GrandTotal": Elmendorf_GrandTotal
-}&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="calling Inventory-common-Sub_Flow" doc:id="1140b973-adf9-4741-8baa-c2ff1facb276" name="Inventory-subflow" />
-	</sub-flow> [STUDIO] -->
-	<sub-flow name="Inventory-subflow" doc:id="96e31bd9-23a2-429f-a721-8dc714f86cd1" >
+	<sub-flow name="Inventory-main-subflow" doc:id="96e31bd9-23a2-429f-a721-8dc714f86cd1" >
 		<ee:transform doc:name="var aggregatedTisData, aggregatedTMS6Data" doc:id="d1f5f87a-208d-4474-ab88-4dd9fcdf41a2">
 			<ee:message>
 			</ee:message>
@@ -50,24 +21,7 @@ vars."aggregatedTMS6Data"]]></ee:set-variable>
 				<ee:set-variable variableName="existInvColIndex"><![CDATA[0 as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<!-- [STUDIO:"Try"]<try doc:name="Try" doc:id="c2057403-a818-4645-b504-d4caab7a8fb4">
-			<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="4c2d7ded-edc5-4f6f-96ab-0cae0a3f598a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;" targetValue="#[payload.index&#93;" target="existInvColIndex">
-				<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-			</http:request>
-			<set-variable value="update" doc:name="flag=update" doc:id="079de1df-7c5b-471f-b69b-46ac92dac6cf" variableName="flag" />
-			<set-variable value="#[payload.id&#93;" doc:name="inventoryColumnId to update" doc:id="815a5de9-d4f2-4544-8ad3-4862f9988ff9" variableName="inventoryColumnId" />
-			<error-handler>
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9be448c8-8dc7-4cc4-90b4-cbfb72659702" type="HTTP:NOT_FOUND">
-					<logger level="INFO" doc:name="Logger" doc:id="a68132dc-ccb4-4366-8df4-747fbc0190be" message="&#45;&#45;&#45;&#45;-ItemNotFound&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;" />
-					<set-variable value="insert" doc:name="flag=insert" doc:id="3ae43b84-04e6-45bd-88b7-b02e8fbd308e" variableName="flag" />
-				</on-error-continue>
-			</error-handler>
-		</try> [STUDIO] -->
-		<ee:transform doc:name="Transform Message" doc:id="c9ab6070-5874-44ce-83ef-207bad9e537d" >
+		<ee:transform doc:name="var sheet and var invOrBreakoutTableName" doc:id="c9ab6070-5874-44ce-83ef-207bad9e537d" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
@@ -75,102 +29,21 @@ vars."aggregatedTMS6Data"]]></ee:set-variable>
 				<ee:set-variable variableName="invOrBreakoutTableName" ><![CDATA[p('inventory.tableName')]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="calling inventoryAndAssembly_Sub_Flow" doc:id="4b5cd10f-788b-48ef-a34a-eb373ab37e20" name="inventoryAndAssembly_Sub_Flow"/>
-		<!-- [STUDIO:"calling get-columnCountAndColumns-of-inventory-subflow"]<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="6f044ad9-6d64-401e-b201-d5f4465f9da4" name="get-columnCountAndColumns-of-inventory-subflow" /> [STUDIO] -->
-		<!-- [STUDIO:"calling get-Inventory-template-columns-Sub_Flow"]<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="35e90aaa-3fbd-459a-a204-bafe32d6a133" name="get-Inventory-template-columns-subflow" /> [STUDIO] -->
-		<!-- [STUDIO:"inventoryProductsData"]<ee:transform doc:name="inventoryProductsData" doc:id="8f487cdc-f621-45c3-9dd4-ecc419acb632" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="inventoryProductsData" ><![CDATA[%dw 2.0
-output application/json
-var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"}) 
-				as String {format: "EEEE"}
-
-&#45;&#45;-
-{
-  "Date": vars."inventoryDate",
-  "weekday": weekday,
-  "C1001": vars."aggregatedTisData"."Elmendorf" default "0",
-  "C1002": vars."aggregatedTisData"."Crude-SAR" default "0",
-  "C1004": vars."aggregatedTisData"."JET" default "0",
-  "C1005": vars."aggregatedTisData"."JET A" default "0",
-  "C1006": vars."aggregatedTisData"."KEROSENE" default "0",
-  "C1007": vars."aggregatedTisData"."JPTS" default "0",
-  "C1008": vars."aggregatedTisData"."ULSD/Conosol" default "0",
-  "C1009": vars."aggregatedTisData"."NHT-FEED" default "0",
-  "C1010": vars."aggregatedTisData"."ASU feed" default "0",
-  "C1011": vars."aggregatedTisData"."ULSD" default "0",
-  "C1012": vars."aggregatedTisData"."DHT FEED" default "0",
-  "C1013": vars."aggregatedTisData"."GASOLINE" default "0",
-  "C1014": vars."aggregatedTisData"."Ethanol" default "0",
-  "C1015": vars."aggregatedTisData"."FULL RANGE REF" default "0",
-  "C1016": vars."aggregatedTisData"."Premium PBOB" default "0",
-  "C1017": vars."aggregatedTisData"."Light Reformate" default "0",
-  "C1018": vars."aggregatedTisData"."ISOMERATE" default "0",
-  "C1019": vars."aggregatedTisData"."ATB" default "0",
-  "C1020": vars."aggregatedTisData"."LPG" default "0",
-  "C1023": "0", // 1 BTMS
-  "C1024": "0", // 1 TOPS
-  "C1025": vars."aggregatedTisData"."SLOP" default "0",
-  "C1029": "0", // Includes DHT Feed/ LSD from Nixon
-  "C1030": "0", // Includes Naphtha purchases
-  "C1031": vars."aggregatedTMS6Data"."TMS6_Receipts_Table"."ETHANOL BASE" default "0",  // Include Ethanol purchases
-  "C1032": "0", //  Include Clear91 from 07/2020, and Toluene before 12/2019  
-  "C1033": "0", //  Include CBOB receipts      
-  "C1035": "0", // Biodiesel blended to ULSD
-  "C1036": "0", // Toluene blended to Premium/87 Clear/87 Reg
-  "C1037": -(vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE") default "0",
-  "C1038": vars."aggregatedTMS6Data".TMS6_Table."Premium" default "0",
-  "C1039": vars."aggregatedTMS6Data".TMS6_Table."REFORMATE" default "0",
-  "C1040": vars."aggregatedTMS6Data".TMS6_Table."CBOB" default "0",
-  "C1041": vars."aggregatedTMS6Data".TMS6_Table."Gasoline Blendstock" default "0",
-  "C1042": -((vars."aggregatedTMS6Data".TMS6_Table."REGULAR BASE" default "0") + (vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE" default "0")),
-  "C1043": vars."aggregatedTMS6Data".TMS6_Table."JET-A BASE" default "0",
-  "C1044": vars."aggregatedTMS6Data".TMS6_Table."KEROSENE BASE" default "0",
-  "C1045": vars."aggregatedTMS6Data".TMS6_Table."JPTS BASE" default "0",
-  "C1046": -((vars."aggregatedTMS6Data".TMS6_Table."#2 ULSD BASE") default "0") - (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0&#93;.volume default "0",
-  "C1047": -(vars."aggregatedTMS6Data".TMS6_Table."LPG MIX BASE") default "0",
-  "C1048": vars."aggregatedTMS6Data".TMS6_Table."HSR/NAPHTHA BASE" default "0",
-  "C1049": vars."aggregatedTMS6Data".TMS6_Table."LSR/NAPHTHA BASE" default "0",
-  "C1050": -(vars."aggregatedTMS6Data".TMS6_Table."#4 OIL BASE") default "0",
-  "C1051": (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0&#93;.volume default "0",
-  "C1052": vars."aggregatedTMS6Data".TMS6_Table."DHT FEEDSTOCK" default "0",
-  "C1058": "0",//Product to Elmendorf
-  "C1060": "0", 
-  "C1061": vars.meterControl // METER CONTROL
-}
-&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform> [STUDIO] -->
-		<!-- [STUDIO:"inventoryRequestData"]<ee:transform doc:name="inventoryRequestData" doc:id="76d9fce7-ce5e-4b51-8d2a-7cca406231aa" >
-			<ee:message />
-			<ee:variables >
-				<ee:set-variable variableName="inventoryRequestData" ><![CDATA[%dw 2.0
-output application/json
-var formulas = vars."inventoryReplacedFormulas"
-var data = vars."inventoryProductsData"
-&#45;&#45;-
-formulas map (row) ->
-  row map (cell) ->
-    if (cell startsWith "=") cell
-    // else if (cell == "Date") (data.Date as Date {format: "yyyy-MM-dd"}) as String {format: "dd-MMM-yyyy"}
-    else if (data[cell&#93;? != null) data[cell&#93;
-    else cell&#93;&#93;></ee:set-variable>
-			</ee:variables>
-		</ee:transform> [STUDIO] -->
+		<flow-ref doc:name="inventory-and-freepoint-breakout-post-subflow" doc:id="4b5cd10f-788b-48ef-a34a-eb373ab37e20" name="inventory-and-freepoint-breakout-post-subflow"/>
 		<choice doc:name="checks for whether to update or insert the inventory sheet" doc:id="f207da4b-a787-49ab-bf53-fc462620d1a2" >
 			<when expression='#[vars.flag == "update"]' >
 				<logger level="INFO" doc:name="Logger" doc:id="20874328-1640-47ef-8779-504a5de78813" message='"updating inventory"'/>
 			</when>
 			<otherwise >
-				<flow-ref doc:name="calling MTD-Sub_Flow" doc:id="71ab369d-4805-4bad-a2eb-74c439f5639e" name="MTD-Sub_Flow" />
+				<flow-ref doc:name="main-MTD-Sub-Flow" doc:id="71ab369d-4805-4bad-a2eb-74c439f5639e" name="main-MTD-Sub-Flow" />
+				<logger level="INFO" doc:name="Logger" doc:id="6e01f3b6-bb03-424c-8f70-313230ebdd64" message='#["[INVENTORY] :: MTD INSERTION COMPLETED SUCCESSFULLY"]'/>
 			</otherwise>
 		</choice>
-		<flow-ref doc:name="Flow Reference" doc:id="eb51a8f7-7265-4321-a85a-bfaafcd24b2d" name="assemblyreportSub_Flow"/>
+		<flow-ref doc:name="get-freepoint-breakout-values-from-Inventory" doc:id="eb51a8f7-7265-4321-a85a-bfaafcd24b2d" name="get-freepoint-breakout-values-from-Inventory"/>
 	</sub-flow>
-	<sub-flow name="inventoryAndAssembly_Sub_Flow" doc:id="a5a9dae6-5c09-4236-bb9b-7aac3146b5d4" >
+	<sub-flow name="inventory-and-freepoint-breakout-post-subflow" doc:id="a5a9dae6-5c09-4236-bb9b-7aac3146b5d4" >
 		<try doc:name="Try" doc:id="8c8325fd-a291-4267-992f-070181756aeb" >
-			<ee:transform doc:name="Transform Message" doc:id="bd46569b-3e6d-4886-98ad-7cc89b6651ad" >
+			<ee:transform doc:name="vMethod and vPath to check for date present in Invetory Table" doc:id="bd46569b-3e6d-4886-98ad-7cc89b6651ad" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -183,87 +56,21 @@ output application/json
 				</ee:variables>
 			</ee:transform>
 			<flow-ref doc:name="inventory-common-requester-sub-flow" doc:id="56e4b181-43c1-40eb-ba2b-d03011b22db6" name="inventory-common-requester-sub-flow"/>
-			<set-variable value="#[payload.index]" doc:name="Set Variable" doc:id="55b51d93-b435-4f48-8cd3-c3ecc54269f3" variableName="existInvColIndex"/>
-			<!-- [STUDIO:"checks for date present in Inventory Table or Not"]<http:request method="GET" doc:name="checks for date present in Inventory Table or Not" doc:id="e19e6b0c-1ba1-4d96-9651-9a614431caab" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;" target="existInvColIndex" targetValue="#[payload.index&#93;">
-			<http:headers><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-		</http:request> [STUDIO] -->
+			<set-variable value="#[payload.index]" doc:name="existInvColIndex" doc:id="55b51d93-b435-4f48-8cd3-c3ecc54269f3" variableName="existInvColIndex"/>
 			<set-variable value="update" doc:name="flag=update" doc:id="389fd69a-312c-4646-969f-b6b4c4da0f96" variableName="flag" />
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50fcef09-ec79-43a4-a8b0-e093954a726d" type="HTTP:NOT_FOUND" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50fcef09-ec79-43a4-a8b0-e093954a726d" type="HTTP1:NOT_FOUND" >
 					<logger level="INFO" doc:name="Logger" doc:id="83473451-ddb4-4abe-a7e1-6a5df9a60938" message="-----ItemNotFound--------" />
 					<set-variable value="insert" doc:name="flag=insert" doc:id="ca923dae-14e9-44ce-94c0-94f6ab02e666" variableName="flag" />
 				</on-error-continue>
 			</error-handler>
 		</try>
-		<flow-ref doc:name="calling get-columnCountAndColumns-of-inventory-subflow" doc:id="5f155b2d-ae85-482a-a476-ae65a2981859" name="get-columnCountAndColumns-of-inventory-subflow" />
-		<flow-ref doc:name="calling get-Inventory-template-columns-Sub_Flow" doc:id="9dab4f3e-a7e2-497f-930f-7b331f929173" name="get-Inventory-template-columns-subflow" />
-		<flow-ref doc:name="Flow Reference" doc:id="e9f5e9f1-bd87-42f7-b1f2-fd43efed7916" name="get-crude-slate-su-flow"/>
+		<flow-ref doc:name="get-columnCountAndColumns-of-inventory-subflow" doc:id="5f155b2d-ae85-482a-a476-ae65a2981859" name="get-columnCountAndColumns-of-inventory-subflow" />
+		<flow-ref doc:name="get-Inventory-template-columns-subflow" doc:id="9dab4f3e-a7e2-497f-930f-7b331f929173" name="get-Inventory-template-columns-subflow" />
+		<flow-ref doc:name="get-meter-control-value-sub-flow" doc:id="e9f5e9f1-bd87-42f7-b1f2-fd43efed7916" name="get-meter-control-value-sub-flow"/>
 		<ee:transform doc:name="inventoryProductsData" doc:id="9f572f8e-c9f8-4b1e-843f-5e512e8dd3a9" >
 			<ee:message />
 			<ee:variables >
-				<ee:set-variable variableName="inventoryProductsData" ><![CDATA[%dw 2.0
-output application/json
-var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"}) 
-				as String {format: "EEEE"}
-
----
-{
-  "Date": vars."inventoryDate",
-  "weekday": weekday,
-  "C1001": vars."aggregatedTisData"."Elmendorf" default "0",
-  "C1002": vars."aggregatedTisData"."Crude-SAR" default "0",
-  "C1004": vars."aggregatedTisData"."JET" default "0",
-  "C1005": vars."aggregatedTisData"."JET A" default "0",
-  "C1006": vars."aggregatedTisData"."KEROSENE" default "0",
-  "C1007": vars."aggregatedTisData"."JPTS" default "0",
-  "C1008": vars."aggregatedTisData"."ULSD/Conosol" default "0",
-  "C1009": vars."aggregatedTisData"."NHT-FEED" default "0",
-  "C1010": vars."aggregatedTisData"."ASU feed" default "0",
-  "C1011": vars."aggregatedTisData"."ULSD" default "0",
-  "C1012": vars."aggregatedTisData"."DHT FEED" default "0",
-  "C1013": vars."aggregatedTisData"."GASOLINE" default "0",
-  "C1014": vars."aggregatedTisData"."Ethanol" default "0",
-  "C1015": vars."aggregatedTisData"."FULL RANGE REF" default "0",
-  "C1016": vars."aggregatedTisData"."Premium PBOB" default "0",
-  "C1017": vars."aggregatedTisData"."Light Reformate" default "0",
-  "C1018": vars."aggregatedTisData"."ISOMERATE" default "0",
-  "C1019": vars."aggregatedTisData"."ATB" default "0",
-  "C1020": vars."aggregatedTisData"."LPG" default "0",
-  "C1023": "0", // 1 BTMS
-  "C1024": "0", // 1 TOPS
-  "C1025": vars."aggregatedTisData"."SLOP" default "0",
-  "C1029": "0", // Includes DHT Feed/ LSD from Nixon
-  "C1030": "0", // Includes Naphtha purchases
-  "C1031": vars."aggregatedTMS6Data"."TMS6_Receipts_Table"."ETHANOL BASE" default "0",  // Include Ethanol purchases
-  "C1032": "0", //  Include Clear91 from 07/2020, and Toluene before 12/2019  
-  "C1033": "0", //  Include CBOB receipts      
-  "C1035": "0", // Biodiesel blended to ULSD
-  "C1036": "0", // Toluene blended to Premium/87 Clear/87 Reg
-  "C1037": -(vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE") default "0",
-  "C1038": vars."aggregatedTMS6Data".TMS6_Table."Premium" default "0",
-  "C1039": vars."aggregatedTMS6Data".TMS6_Table."REFORMATE" default "0",
-  "C1040": vars."aggregatedTMS6Data".TMS6_Table."CBOB" default "0",
-  "C1041": vars."aggregatedTMS6Data".TMS6_Table."Gasoline Blendstock" default "0",
-  "C1042": -((vars."aggregatedTMS6Data".TMS6_Table."REGULAR BASE" default "0") + (vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE" default "0")),
-  "C1043": vars."aggregatedTMS6Data".TMS6_Table."JET-A BASE" default "0",
-  "C1044": vars."aggregatedTMS6Data".TMS6_Table."KEROSENE BASE" default "0",
-  "C1045": vars."aggregatedTMS6Data".TMS6_Table."JPTS BASE" default "0",
-  "C1046": -((vars."aggregatedTMS6Data".TMS6_Table."#2 ULSD BASE") default "0") - (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume default "0",
-  "C1047": -(vars."aggregatedTMS6Data".TMS6_Table."LPG MIX BASE") default "0",
-  "C1048": vars."aggregatedTMS6Data".TMS6_Table."HSR/NAPHTHA BASE" default "0",
-  "C1049": vars."aggregatedTMS6Data".TMS6_Table."LSR/NAPHTHA BASE" default "0",
-  "C1050": -(vars."aggregatedTMS6Data".TMS6_Table."#4 OIL BASE") default "0",
-  "C1051": (vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume default "0",
-  "C1052": vars."aggregatedTMS6Data".TMS6_Table."DHT FEEDSTOCK" default "0",
-  "C1058": "0",//Product to Elmendorf
-  "C1060": "0", 
-  "C1061": vars.meterControl // METER CONTROL
-}
-]]></ee:set-variable>
 				<ee:set-variable variableName="assemblyProductsData" ><![CDATA[%dw 2.0
 output application/json
 var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"}) 
@@ -271,46 +78,108 @@ var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"})
 
 ---
 {
-  "Date": vars."inventoryDate",
-  "weekday": weekday,
-  "A1002":vars.tisTankrawData."00215" default 0,
-	"A1003":vars.tisTankrawData."00216" default 0,
-	"A1004":vars.tisTankrawData."00217" default 0,
-	"A1005":vars.tisTankrawData."00435" default 0,
-"A1006":round(vars.invForfrp.C1004[0]  + vars.invForfrp.C1005[0] + vars.invForfrp.C1011[0] ) default 0,
-//c1004+c1005+c1011
-"A1007":round(vars.invForfrp.C1019[0] default 0),
-//c1019
-"A1008":round(vars.invForfrp.C1007[0] default 0),
-//c10017
-"A1009":round(vars.invForfrp.C1042[0]-vars.invForfrp.C1037[0] default 0),
-//c1042-c1037
-"A1010":-(round(vars.invForfrp.C1040[0] default 0)),
-//c1040
-"A1011":round(vars.invForfrp.C1046[0] default 0),
-//c1046
-"A1012":-(round(vars.invForfrp.C1051[0] default 0)),
-//c1051
-"A1013":round(vars.invForfrp.C1050[0] default 0),
-//c1050
-"A1014":round(vars.invForfrp.C1045[0] default 0),
-//c1045
-"A1015":round(vars.invForfrp.C1061[0] default 0)
-//c1061
+    "Date": vars."inventoryDate",
+    "weekday": weekday,
+    "A1002":vars.tisTankrawData."00215" default 0,
+    "A1003":vars.tisTankrawData."00216" default 0,
+    "A1004":vars.tisTankrawData."00217" default 0,
+    "A1005":vars.tisTankrawData."00435" default 0,
+    "A1006":round(vars.invForfrp.C1004[0]  + vars.invForfrp.C1005[0] + vars.invForfrp.C1011[0] ) default 0,
+  	//c1004+c1005+c1011
+	"A1007":round(vars.invForfrp.C1019[0] default 0),
+	//c1019
+	"A1008":round(vars.invForfrp.C1007[0] default 0),
+	//c10017
+	"A1009":round(vars.invForfrp.C1042[0]-vars.invForfrp.C1037[0] default 0),
+	//c1042-c1037
+	"A1010":-(round(vars.invForfrp.C1040[0] default 0)),
+	//c1040
+	"A1011":round(vars.invForfrp.C1046[0] default 0),
+	//c1046
+	"A1012":(round(vars.invForfrp.C1051[0] default 0)),
+	//c1051
+	"A1013":round(vars.invForfrp.C1050[0] default 0),
+	//c1050
+	"A1014":round(vars.invForfrp.C1045[0] default 0),
+	//c1045
+	"A1015":round(vars.invForfrp.C1061[0] default 0)
+	//c1061
 }
 ]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryProductsData" ><![CDATA[%dw 2.0
+output application/json
+var weekday= (vars."inventoryDate" as Date {format: "d-MMM-yyyy"})
+				as String {format: "EEEE"}
+ 
+---
+{
+  "Date": vars."inventoryDate",
+  "weekday": weekday,
+  "C1001": (vars."aggregatedTisData"."Elmendorf" default "0") as Number,
+  "C1002": (vars."aggregatedTisData"."Crude-SAR" default "0") as Number,
+  "C1004": (vars."aggregatedTisData"."JET" default "0") as Number,
+  "C1005": (vars."aggregatedTisData"."JET A" default "0") as Number,
+  "C1006": (vars."aggregatedTisData"."KEROSENE" default "0") as Number,
+  "C1007": (vars."aggregatedTisData"."JPTS" default "0") as Number,
+  "C1008": (vars."aggregatedTisData"."ULSD/Conosol" default "0") as Number,
+  "C1009": (vars."aggregatedTisData"."NHT-FEED" default "0") as Number,
+  "C1010": (vars."aggregatedTisData"."ASU feed" default "0") as Number,
+  "C1011": (vars."aggregatedTisData"."ULSD" default "0") as Number,
+  "C1012": (vars."aggregatedTisData"."DHT FEED" default "0") as Number,
+  "C1013": (vars."aggregatedTisData"."GASOLINE" default "0") as Number,
+  "C1014": (vars."aggregatedTisData"."Ethanol" default "0") as Number,
+  "C1015": (vars."aggregatedTisData"."FULL RANGE REF" default "0") as Number,
+  "C1016": (vars."aggregatedTisData"."Premium PBOB" default "0") as Number,
+  "C1017": (vars."aggregatedTisData"."Light Reformate" default "0") as Number,
+  "C1018": (vars."aggregatedTisData"."ISOMERATE" default "0") as Number,
+  "C1019": (vars."aggregatedTisData"."ATB" default "0") as Number,
+  "C1020": (vars."aggregatedTisData"."LPG" default "0") as Number,
+  "C1023": ("0") as Number,
+  "C1024": ("0") as Number,
+  "C1025": (vars."aggregatedTisData"."SLOP" default "0") as Number,
+  "C1029": ("0") as Number,
+  "C1030": ("0") as Number,
+  "C1031": (vars."aggregatedTMS6Data"."TMS6_Receipts_Table"."ETHANOL BASE" default "0") as Number,
+  "C1032": ("0") as Number,
+  "C1033": ("0") as Number,
+  "C1035": ("0") as Number,
+  "C1036": ("0") as Number,
+  "C1037": -((vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE") default "0") as Number,
+  "C1038": (vars."aggregatedTMS6Data".TMS6_Table."Premium" default "0") as Number,
+  "C1039": (vars."aggregatedTMS6Data".TMS6_Table."REFORMATE" default "0") as Number,
+  "C1040": (vars."aggregatedTMS6Data".TMS6_Table."CBOB" default "0") as Number,
+  "C1041": (vars."aggregatedTMS6Data".TMS6_Table."Gasoline Blendstock" default "0") as Number,
+  "C1042": -(((vars."aggregatedTMS6Data".TMS6_Table."REGULAR BASE" default "0") as Number)
+                 + ((vars."aggregatedTMS6Data".TMS6_Table."ETHANOL BASE" default "0") as Number)),
+  "C1043": (vars."aggregatedTMS6Data".TMS6_Table."JET-A BASE" default "0") as Number,
+  "C1044": (vars."aggregatedTMS6Data".TMS6_Table."KEROSENE BASE" default "0") as Number,
+  "C1045": (vars."aggregatedTMS6Data".TMS6_Table."JPTS BASE" default "0") as Number,
+  "C1046": -((vars."aggregatedTMS6Data".TMS6_Table."#2 ULSD BASE" default "0") as Number)
+                 - (((vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume) default "0") as Number,
+  "C1047": -((vars."aggregatedTMS6Data".TMS6_Table."LPG MIX BASE") default "0") as Number,
+  "C1048": (vars."aggregatedTMS6Data".TMS6_Table."HSR/NAPHTHA BASE" default "0") as Number,
+  "C1049": (vars."aggregatedTMS6Data".TMS6_Table."LSR/NAPHTHA BASE" default "0") as Number,
+  "C1050": -((vars."aggregatedTMS6Data".TMS6_Table."#4 OIL BASE") default "0") as Number,
+  "C1051": -(((vars.exportTanks filter ($.productName == "#2 ULSD BASE"))[0].volume) default "0") as Number,
+  "C1052": (vars."aggregatedTMS6Data".TMS6_Table."DHT FEEDSTOCK" default "0") as Number,
+  "C1058": ("0") as Number,
+  "C1060": ("0") as Number,
+  "C1061": (vars.meterControl default "0") as Number
+}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d82e6c76-507d-4431-9c05-6e0c7d625485" message='#[vars.inventoryProductsData]'/>
 		<ee:transform doc:name="inventory-or-frpBreakout-RequestData" doc:id="e5706157-ad5b-4b38-af15-ff8b4f5819c9" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="inventoryRequestData" ><![CDATA[%dw 2.0
 output application/json
 var formulas = vars."inventoryReplacedFormulas"
+var date=vars.inventoryDate
 var data =
-    if (vars.invOrBreakoutTableName == "Assembly_Table")
+    if (vars.invOrBreakoutTableName == p('freepointBreakout.tableName'))
         vars.assemblyProductsdata
-    else if(vars.invOrBreakoutTableName == "InventoryTable")
+    else if(vars.invOrBreakoutTableName == p('inventory.tableName'))
         vars.inventoryProductsData
     else
          "not assembly table or inv table"
@@ -318,7 +187,7 @@ var data =
 formulas map (row) ->
   row map (cell) ->
     if (cell startsWith "=") cell
-    // else if (cell == "Date") (data.Date as Date {format: "yyyy-MM-dd"}) as String {format: "dd-MMM-yyyy"}
+    else if (cell == "Formulas-Column") date
     // else if (cell == "Date") 
         //(data.Date as Date { format: "d-MMM-yyyy" }) as String { format: "dd-MMM-yyyy" }
    // else if (cell == "weekday") 
@@ -329,20 +198,7 @@ formulas map (row) ->
 		</ee:transform>
 		<choice doc:name="checks for whether to update or insert the inventory sheet" doc:id="1ac36035-b0c6-4d7c-a2a9-d7856457faa6" >
 			<when expression='#[vars.flag == "update"]' >
-				<!-- [STUDIO:"Inventory-update-request"]<http:request method="PATCH" doc:name="Inventory-update-request" doc:id="c5e7ccaf-3042-4efa-85c3-8b2a3f2640b6" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/&quot; ++ vars.existInvColIndex&#93;" >
-					<http:body ><![CDATA[#[%dw 2.0
-output application/json
-&#45;&#45;-
-{ 
-	values: vars."inventoryRequestData"
-}&#93;&#93;&#93;></http:body>
-					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
-				<ee:transform doc:name="Transform Message" doc:id="47f708cb-f40a-4d4d-96e1-c8109afbf5ca" >
+				<ee:transform doc:name="vMethod, vPath and vPayload to update Inventory" doc:id="47f708cb-f40a-4d4d-96e1-c8109afbf5ca" >
 					<ee:message >
 					</ee:message>
 					<ee:variables >
@@ -363,20 +219,7 @@ output application/json
 				<flow-ref doc:name="inventory-common-requester-sub-flow" doc:id="a78fef9b-abb5-433a-81a1-9b1a2f943f40" name="inventory-common-requester-sub-flow"/>
 			</when>
 			<otherwise >
-				<!-- [STUDIO:"Inventory-insert-request"]<http:request method="POST" doc:name="Inventory-insert-request" doc:id="aee297c0-6faf-47b4-9329-96e5095bc63b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.invOrBreakoutTableName ++ &quot;/columns/add&quot;&#93;" >
-					<http:body ><![CDATA[#[%dw 2.0
-output application/json
-&#45;&#45;-
-{ 
-	values: vars."inventoryRequestData"
-}&#93;&#93;&#93;></http:body>
-					<http:headers ><![CDATA[#[output application/json
-&#45;&#45;-
-{
-	"Authorization" : "Bearer "++ vars."token" as String
-}&#93;&#93;&#93;></http:headers>
-				</http:request> [STUDIO] -->
-				<ee:transform doc:name="Transform Message" doc:id="b6f2118c-c44b-4a47-8f2b-dfe7005dfd32" >
+				<ee:transform doc:name="vMethod, vPath and vPayload to insert Inventory" doc:id="b6f2118c-c44b-4a47-8f2b-dfe7005dfd32" >
 					<ee:message >
 					</ee:message>
 					<ee:variables >
@@ -393,18 +236,127 @@ output application/json
 }]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="23434532-6fe3-444b-b0f5-d101497fcf98" name="inventory-common-requester-sub-flow"/>
+				<flow-ref doc:name="inventory-common-requester-sub-flow" doc:id="23434532-6fe3-444b-b0f5-d101497fcf98" name="inventory-common-requester-sub-flow"/>
 			</otherwise>
 		</choice>
-	</sub-flow>
-	<sub-flow name="inventory-common-requester-sub-flow" doc:id="1069c413-fd22-4a5a-9178-ee4a18d6456d" >
-		<http:request method="#[vars.vmethod]" doc:name="inventory commmon requestor" doc:id="c99523af-c38c-4278-96ca-0f15e4119ec9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<choice doc:name="Choice" doc:id="01fcb06c-0f1e-491c-ad90-167b0479e803">
+			<when expression='#[vars.invOrBreakoutTableName contains("Inventory")]'>
+				<http:request method="PATCH" doc:name="patch inv number format" doc:id="13bef65c-b6a7-4e25-8067-1efbe64132ff" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/worksheets/&quot;  ++ p('inventory.sheetName') ++ &quot;/range(address='&quot; ++ vars.numberToColumn.NextColumn ++ &quot;1:&quot; ++ vars.numberToColumn.NextColumn ++ vars.inventoryRowCount ++ &quot;')&quot;]">
+			<http:body><![CDATA[#[{
+	"numberFormat": vars.inventorySampleColumnNumberFormat
+}]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+				<logger level="INFO" doc:name="Logger" doc:id="88791c5c-3b78-4f03-add1-4a653032d64d" message='#["[INVENTORY] :: NUMBER FORMAT APPLIED SUCCESSFULLY FOR INVENTORY DATE :: " ++ vars.inventoryDate as String]'/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d58fffa0-a65c-4d64-9333-9cdddec0bf92" message="freepointbreakout table execution"/>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="inventory-update-by-the-inventory-date-subflow" doc:id="3841b857-ccac-482c-a87c-d646e949c88b" >
+		<flow-ref doc:name="get-token-subflow" doc:id="1f0383d2-8857-4aca-9872-010db9fa0df9" name="get-token-subflow"/>
+		<set-variable value='#[attributes.queryParams.inventoryDate as Date as String {format: "d-MMM-yyyy"}]' doc:name="inventoryDate" doc:id="d6420349-88d8-4cf8-aa01-ecebbff0f0ee" variableName="inventoryDate"/>
+		<ee:transform doc:name="inventoryDateInfo" doc:id="1d644bb9-86bc-4f6f-b945-2dc046a83da1">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="inventoryDateInfo"><![CDATA[%dw 2.0
+output application/json
+ 
+fun isStartDateOfMonth(date: Date) = date.day == 1
+ 
+fun getPreviousMonthLastDate(date: Date) =
+    (date as String {format: "yyyy-MM-01"} as Date) - |P1D|
+ 
+fun getCurrentMonthStartDate(date: Date) =
+    date as String {format: "yyyy-MM-01"} as Date
+ 
+fun getDaysInMonth(date: Date) =
+    ((date as String {format: "yyyy-MM-01"} as Date) + |P1M| - |P1D|).day
+ 
+var inputDate = vars.inventoryDate
+var parsedDate = inputDate as Date {format: "d-MMM-yyyy"}
+var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
+var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
+var daysInMonth = getDaysInMonth(parsedDate)
+ 
+---
+{
+    "originalDate": parsedDate,
+    "isStartDateOfMonth": isStartDateOfMonth(parsedDate),
+    "daysInMonth": daysInMonth,
+    "previousMonthLastDate": previousMonthLastDate as String {format: "d-MMM-yy"},
+    "StartDate": currentMonthStartDate as String {format: "d-MMM-yy"},
+    "date": parsedDate as String {format: "M/d/yy"},
+    "monthYear": parsedDate as String {format: "MMM"},
+    "weekday": parsedDate as String {format: "EEEE"},
+    "year": parsedDate as String {format: "yyyy"}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="var freepointInventorydateInfo" doc:id="3e060632-042d-4b1c-9036-aaba07e0c450">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="freepointInventoryDateInfo"><![CDATA[%dw 2.0
+output application/json
+var d = vars.inventoryDate //date will come here
+---
+{
+ "monthYear":(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM-yyyy"},
+ "month":(d as Date {format: "d-MMM-yyyy"}) as String {format: "MMM"},
+ "year":(d as Date {format: "d-MMM-yyyy"}) as String {format: "yyyy"},
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="check-inventory-and-sales-workbook-existense-subflow" doc:id="5ce07cb4-d0d1-4667-b230-8c59dc165053" name="check-inventory-and-sales-workbook-existense-subflow"/>
+		<flow-ref doc:name="get-tis-data-by-inventory-date-subflow" doc:id="eee44cc4-c460-49a4-9c25-34915bf54bdb" name="get-tis-data-by-inventory-date-subflow"/>
+		<logger level="INFO" doc:name="RETRIEVED TIS COMPLETED" doc:id="002b6c84-9115-4309-9da1-7d3f5750ca1a" message='#["[INVENTORY] :: RETRIEVED TIS DATA SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="get-tms6-data-by-inventory-date-subflow" doc:id="b35e3cf0-fbd1-430a-abca-22e4e2014efd" name="get-tms6-data-by-inventory-date-subflow"/>
+		<logger level="INFO" doc:name="RETRIEVED TMS6 DATA" doc:id="998a5ebc-48ac-4774-8f25-6264e6daa6d9" message='#["[INVENTORY] :: RETRIEVED TMS6 DATA SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="Inventory-main-subflow" doc:id="d44c00c1-d46e-4e61-9d33-bdd55a53a65e" name="Inventory-main-subflow"/>
+		<logger level="INFO" doc:name="INVENTORY UPDATION COMPLETED" doc:id="5ec8efdc-0da5-4ce3-bb5d-78ac1e8f4091" message='#["[INVENTORY] :: INVENTORY UPDATION COMPLETED FOR INVENTORY DATE :: " ++ vars.inventoryDate as String]'/>
+		<ee:transform doc:name="Success Response" doc:id="e46425a4-8a54-4e6c-8f57-9df3f57b1db9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA["[INVENTORY] :: INVENTORY UPDATION COMPLETED FOR INVENTORY DATE :: " ++ vars.inventoryDate as String]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="inventory-common-requester-sub-flow" doc:id="1069c413-fd22-4a5a-9178-ee4a18d6456d" >
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="4c079204-2f82-410b-bf18-d3308366452f" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="de57d2ef-ceb8-418f-a69e-3356c6157492">
+			<set-variable value='#[null]' doc:name="httpErrorType" doc:id="17bb519d-4628-4272-a224-a66cf9a0c40f" variableName="httpErrorType" />
+				<http:request method="#[vars.vmethod]" doc:name="inventory common requester" doc:id="c99523af-c38c-4278-96ca-0f15e4119ec9" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="844bb8c0-3bc4-46f1-85e9-89b074a4999b" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="2a7438cb-ce06-4424-8aa3-f840a4fd67f1" message="retrying timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2f4fe6b5-a045-4eff-959a-77c431f7e548" type="ANY" >
+						<set-variable value="#[error.errorType.identifier]" doc:name="httpErrorType" doc:id="a528352d-39ee-49de-a5e6-bc7a58bd40d4" variableName="httpErrorType" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="27ddd2d9-aed9-4bfe-941c-ed3944005d74" >
+			<when expression='#[vars.httpErrorType == "NOT_FOUND"]' >
+				<raise-error doc:name="Raise error" doc:id="9854bebf-c66e-448e-9cb1-36f05cdfa5cd" type="HTTP1:NOT_FOUND" description="not found" />
+			</when>
+			<when expression="#[vars.httpErrorType != null]" >
+				<raise-error doc:name="Raise error" doc:id="359b407f-eb04-4023-b2af-ed17d38cd795" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpErrorType default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="c03b33dc-96c9-4f56-9578-018322154b17" message="logging" />
+			</otherwise>
+		</choice>
 	</sub-flow>
 </mule>

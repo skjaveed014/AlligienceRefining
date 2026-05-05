@@ -31,7 +31,7 @@ payload]]></ee:set-payload>
 			</try>
 		</foreach>
 	</sub-flow>
-	<sub-flow name="MTD-Sub_Flow" doc:id="adf94071-5a78-4fd4-a955-be43f223d548" >
+	<sub-flow name="main-MTD-Sub-Flow" doc:id="adf94071-5a78-4fd4-a955-be43f223d548" >
 		<ee:transform doc:name="var date" doc:id="10c7be81-a5ff-4718-8288-2d8ca76f0f1d">
 			<ee:message />
 			<ee:variables>
@@ -48,6 +48,8 @@ fun getCurrentMonthStartDate(date: Date) =
 
 fun getCurrentMonthPreviousDate(date: Date) = 
     date as String {format: "yyyy-MM-dd"} as Date - |P1D|
+
+fun getPreviousYear(date: Date) = date.year - 1
 
 var inputDate = vars.inventoryDate
 var parsedDate = inputDate as Date {format: "d-MMM-yyyy"}
@@ -68,7 +70,9 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
     "previousMonth": upper(previousMonthLastDate as String {format: "MMM"}),
     "weekday": parsedDate as String {format: "EEEE"},
     "currentNumberOfDays": parsedDate.day,
-    "year": parsedDate as String {format: "yyyy"}  // Added last two digits of year
+    "year": parsedDate as String {format: "yyyy"},  // Added last two digits of year
+    "previousYear": getPreviousYear(parsedDate)
+    
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
@@ -80,7 +84,17 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets last Month End Column (MTD)" doc:id="a12c3403-22f5-4964-8d82-5bd4ebc2edc5" target="mtdPreviousMonthIndex" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/&quot; &#10;++ vars.date.previousMonth ++ &quot;-&quot; ++ vars.date.year ++ &quot;-END&quot;]">
+		<ee:transform doc:name="var mtdYear" doc:id="0ca714e6-96e7-4e8f-8f98-f2f47bcd0437" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="mtdYear" ><![CDATA[%dw 2.0
+output application/json
+---
+if (vars.date.month=="JAN") vars.date.previousYear else vars.date.year]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="gets last Month End Column (MTD)" doc:id="a12c3403-22f5-4964-8d82-5bd4ebc2edc5" target="mtdPreviousMonthIndex" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('mtd.tableName') ++ &quot;/columns/&quot; &#10;++ vars.date.previousMonth ++ &quot;-&quot; ++ vars.mtdYear ++ &quot;-END&quot;]">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -88,7 +102,7 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets previous Month LastDate Column (Inventory)" doc:id="d2fefeb7-1935-4e91-af84-422734d0a015" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.Date.previousMonthLastDate as String]" target="previousMonthLastDateIndex">
+		<http:request method="GET" doc:name="gets previous Month LastDate Column (Inventory)" doc:id="d2fefeb7-1935-4e91-af84-422734d0a015" targetValue="#[payload.index]" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.date.previousMonthLastDate as String]" target="previousMonthLastDateIndex">
 			<http:body ><![CDATA[#[""]]]></http:body>
 			<http:headers ><![CDATA[#[output application/json
 ---
@@ -96,13 +110,15 @@ var currentMonthPreviousDate = getCurrentMonthStartDate(parsedDate)
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
-		<http:request method="GET" doc:name="gets Current Month Start Date Column (Inventory)" doc:id="c0d1e5b3-a111-4157-9279-c14605059eb5" target="currentMonthStartDateIndex" targetValue="#[payload.index]" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.date.currentMonthStartDate as String]" config-ref="HTTP_Graph_API_configuration">
-			<http:headers ><![CDATA[#[output application/json
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="e5725a38-f584-493e-a2c9-325611457baa" millisBetweenRetries="5000">
+			<http:request method="GET" doc:name="gets Current Month Start Date Column (Inventory)" doc:id="c0d1e5b3-a111-4157-9279-c14605059eb5" target="currentMonthStartDateIndex" targetValue="#[payload.index]" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/&quot; ++ vars.date.currentMonthStartDate as String]" config-ref="HTTP_Graph_API_configuration">
+			<http:headers><![CDATA[#[output application/json
 ---
 {
 	"Authorization" : "Bearer "++ vars."token" as String
 }]]]></http:headers>
 		</http:request>
+		</until-successful>
 		<ee:transform doc:name="var mcolumns and newMtdHeaders" doc:id="39a429c2-c60b-4b3f-a2ab-7db3c66feba8" >
 			<ee:message />
 			<ee:variables >
@@ -262,10 +278,10 @@ headers map ((colName, colIndex) -> {
 </ee:transform>
 		<choice doc:name="checks whether the start of the month or Not" doc:id="7041abb7-5034-43fe-88d3-06435f830bc3" >
 			<when expression="#[vars.Date.isStartMonthDate == true]" >
-				<flow-ref doc:name="calling new-month-mtd-post-subflow" doc:id="8003e605-4fca-4890-a1f7-9364b3262835" name="new-month-mtd-post-subflow"/>
+				<flow-ref doc:name="new-month-mtd-post-subflow" doc:id="8003e605-4fca-4890-a1f7-9364b3262835" name="new-month-mtd-post-subflow"/>
 			</when>
 			<otherwise >
-				<flow-ref doc:name="calling mtd-update-subflow" doc:id="07e51a30-9592-40a8-8fce-eae641e17bdd" name="mtd-update-subflow"/>
+				<flow-ref doc:name="mtd-update-subflow" doc:id="07e51a30-9592-40a8-8fce-eae641e17bdd" name="mtd-update-subflow"/>
 			</otherwise>
 		</choice>
 	</sub-flow>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-freepoint-breakout-values-from-Inventory" doc:id="fecce2a4-fa87-480c-a493-f4167e0c994d" >
+		<flow-ref doc:name="get-volumes-from-inventory-by-inventory-date-subflow" doc:id="e319d35c-420b-4873-ab02-a27e76e8ac1c" name="get-volumes-from-inventory-by-inventory-date-subflow"/>
+		<ee:transform doc:name="var sheet with freepointbreakout sheet name and var inventoryandbreakouttablename" doc:id="53067e6e-23ef-4810-91fd-6b574e0c777b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[{
+	"A1002":vars.tisTankrawData."00215",
+	"A1003":vars.tisTankrawData."00216",
+	"A1004":vars.tisTankrawData."00217",
+	"A1005":vars.tisTankrawData."00435",
+"A1006":round(vars.invForfrp.C1004[0] + vars.invForfrp.C1005[0] + vars.invForfrp.C1011[0]),
+//c1004+c1005+c1011
+"A1008":round(vars.invForfrp.C1019[0]),
+//c1019
+"A1008":round(vars.invForfrp.C1017[0]),
+//c10017
+"A1009":round(vars.invForfrp.C1042[0]-vars.invForfrp.C1037[0]),
+//c1042-c1037
+"A1010":round(vars.invForfrp.C1040[0]),
+//c1040
+"A1011":round(vars.invForfrp.C1046[0]),
+//c1046
+"A1012":round(vars.invForfrp.C1051[0]),
+//c1051
+"A1013":round(vars.invForfrp.C1050[0]),
+//c1050
+"A1014":round(vars.invForfrp.C1045[0] default 0)
+//c1045
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="invOrBreakoutTableName" ><![CDATA[p('freepointBreakout.tableName')]]></ee:set-variable>
+				<ee:set-variable variableName="sheet" ><![CDATA[p('freepointBreakout.sheetName')]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="inventory-and-freepoint-breakout-post-subflow" doc:id="e8ef8725-dd0e-454c-9a67-364996d989e9" name="inventory-and-freepoint-breakout-post-subflow"/>
+	</sub-flow>
+	<sub-flow name="get-volumes-from-inventory-by-inventory-date-subflow" doc:id="3f5b27d8-a51d-41d8-ab89-f96ece0e17ee" >
+		<ee:transform doc:name="var inventoryDate" doc:id="ea58bdba-d22a-4710-9477-c866081a5898" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="inventoryDate" ><![CDATA[vars.inventoryDate]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="2e8ed01f-90be-4e56-8c58-68b5cf21e7fa" millisBetweenRetries="5000">
+			<http:request method="GET" doc:name="get sample formula column from Inventory" doc:id="a1e06e2b-e352-499c-bc09-7af30f187aea" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++ &quot;/columns/Formulas-Column&quot;]" target="inventorySampleColumnValues" targetValue="#[payload.values]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		</until-successful>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="b52b20a1-4a4b-44b8-b02c-2b9c0d2812a5" millisBetweenRetries="5000">
+			<http:request method="GET" doc:name="get date wise volumes from inventory sheet" doc:id="109a2ac3-3a94-410b-80e4-ee13c76ed25b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName')  ++ &quot;/columns/&quot; ++ vars.inventoryDate]" target="inventoryVolumes" targetValue="#[payload.values]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		</until-successful>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="f4d1e980-9e8e-4b33-84af-537ce7b5d517" millisBetweenRetries="5000">
+			<http:request method="GET" doc:name="get Products-Date column data" doc:id="6daf5793-72b3-4921-8fd8-1fc36f68c1bb" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ p('inventory.tableName') ++&quot;/columns/Products-Date&quot;]" target="inventoryProductsColumnData" targetValue="#[payload.values]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		</until-successful>
+		<ee:transform doc:name="var inventoryVolumes and var InvForfrp" doc:id="2afd8a1c-bf47-48b5-ad89-ad24456014a0" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="invForfrp" ><![CDATA[%dw 2.0
+output application/json
+var input1=vars.inventorySampleColumnValues
+var input2=vars.inventoryVolumes
+---
+input1 map (item, index) -> {
+    (item[0]): input2[index][0]
+}]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryVolumes" ><![CDATA[%dw 2.0
+output application/json
+var input1=vars.inventoryProductsColumnData
+var input2=vars.inventoryVolumes
+---
+input1 map (item, index) -> {
+    (item[0]): input2[index][0]
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="4588dbea-ca8f-4355-9966-388703d3eabd" >
+			<when expression="#[vars.inventoryUpdate == true]" >
+				<logger level="INFO" doc:name="Logger" doc:id="833aadb4-b296-4ecd-a5a7-e8483ee86db3" />
+			</when>
+			<otherwise >
+				<ee:transform doc:name="var freepointData" doc:id="e0cc1ac3-a9b8-43e2-be7e-54a111b4f065" >
+					<ee:message />
+					<ee:variables >
+						<ee:set-variable variableName="freepointData" ><![CDATA[%dw 2.0
+output application/json
+// this variable is for freepoint workbook 
+---
+{
+  "Products":
+  {
+    "Crude": {
+      "Quantity (bbls)": round(vars.inventoryVolumes."Crude Received from Pipeline"[0] default 0)
+    },
+    "Gasoline - Domestic": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes.CBOB[1] default 0)
+    },
+    "Gasoline - Export": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes."CBOB for Export"[1] default 0)
+    },
+    "ULSD - Domestic": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes.ULSD[1] default 0)
+    },
+    "ULSHO - Export": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes."ULSD for Export"[1] default 0)
+    },
+    "ATB": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes.ATB[1] default 0)
+    },
+    "JPTS (includes sales to TSAR)": {
+      "Quantity (bbls)": round(vars.freepointBreakoutVolumes."JPTS(includes Sales to TSAR)"[0] default 0)
+    },
+    "DHT Feed": {
+      "Quantity (bbls)": round(vars.inventoryVolumes."DHT feed/LSD est. production/(feed to DHT)"[0] default 0)
+    },
+    "Naphtha": {
+      "Quantity (bbls)": round(vars.inventoryVolumes."Naphtha production Tnk406"[0] default 0)
+    },
+    "Isomerate": {
+      "Quantity (bbls)": round(vars.inventoryVolumes."Isomerate/LSR/Dehex est. production"[0] default 0)
+    },
+    "Reformate": {
+      "Quantity (bbls)": round(vars.inventoryVolumes."Heavy/Full Ref. estimated production"[0] default 0)
+    }
+  }
+}
+]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

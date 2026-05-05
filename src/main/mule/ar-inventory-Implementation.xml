@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<sub-flow name="inventory-implementation-testing" doc:id="e9829011-86b7-43e1-b61a-c121f7faac52" >
+		<http:request method="GET" doc:name="Get Email" doc:id="a46b3995-503c-4c73-9f86-7adf7cb54b48" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/mailFolders/&quot; ++ p('mail.inventory.folderId') ++ &quot;/messages?filter=receivedDateTime gt &quot; ++ vars.emailReceivedFromDateTime ++ &quot; and receivedDateTime lt &quot; ++ vars.emailReceivedToDateTime ++ &quot;&amp;orderby=receivedDateTime&quot;]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<choice doc:name="Checks for new emails" doc:id="d8871758-2f53-41d0-9996-9fe04fd5dd12">
+				<when expression="#[!isEmpty(payload.value)]">
+					<foreach doc:name="For Each email" doc:id="fd861446-1e87-4760-bbbf-a355ce46b2df" collection="#[payload.value]">
+						<set-variable value="#[payload.receivedDateTime]" doc:name="vReceivedDateTime" doc:id="6afaf93e-b687-4d8d-80e4-b01464c9ad97" variableName="vReceivedDateTime" />
+					<logger level="INFO" doc:name="vReceivedDatetime" doc:id="a5897e8e-95f1-467d-9858-27e2ba19726f" message='#["vReceivedDatetime :: " ++ vars.vReceivedDatetime]' />
+					<choice doc:name="checks for the attachments in the Mail" doc:id="462b02ac-90f8-4282-afc5-a0de8ef8338a">
+							<when expression="#[payload.hasAttachments == true]">
+							<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;[]]" doc:name="Set Variable" doc:id="bd59b2ee-227c-44a5-9e20-6507120df7a6" variableName="inventoryDate"/>
+							<flow-ref doc:name="read-attachments" doc:id="c11318d6-d591-4841-a7c6-685c8b2397cc" name="read-attachments" />
+							<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun cleanJsonString(val) =&#10;    (write(val, "application/json")&#10;        replace "\n" with ""&#10;        replace "\\" with "")&#10;        &#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"&#10;    &#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "AUTOMATION PROCESS COMPLETED FOR EMAIL RECEIVED AT:" ++ formatDateTime(vars.vReceivedDateTime),&#10;	"CorrelationId": vars.vCorrelationId,&#10;	"InventoryDate": cleanJsonString(vars.inventoryDatesArray),&#10;	"DocumentName": cleanJsonString(vars.allDOCs),&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime),&#10;	"EmailReceivedDateTime(UTC)": formatDateTime(vars.vReceivedDatetime)&#10;}]' doc:name="vLog" doc:id="043a79e5-3e03-4a14-8706-f64108a2daa6" variableName="vLog" />
+							</when>
+							<otherwise>
+								<logger level="INFO" doc:name="NO ATTACHMENTS" doc:id="34bd5beb-19d3-4776-ac8b-b153bd9a0511" message='#["--------NO ATTACHMENTS FOUND IN EMAIL RECIEVED ON:" ++ vars.vReceivedDateTime ++ " --------"]' />
+							<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"	&#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "NO ATTACHMENTS FOUND IN EMAIL RECIEVED ON:" ++ formatDateTime(vars.vReceivedDateTime),&#10;	"CorrelationId": vars.vCorrelationId,&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime),&#10;	"EmailReceivedDateTime(UTC)": formatDateTime(vars.vReceivedDatetime)&#10;}]' doc:name="vLog" doc:id="9be04b73-fa7b-4e51-99de-8abc878251e7" variableName="vLog" />
+							</otherwise>
+						</choice>
+					<logger level="INFO" doc:name="Each Email End Logger" doc:id="a09eb9f7-0a79-4124-8a62-1d52a7b02a99" message='#["--------PROCESS COMPLETED FOR EMAIL RECEIVED ON: " ++ vars.vReceivedDateTime ++ " --------"]' />
+					<flow-ref doc:name="send-email-alert-success" doc:id="05737e39-4716-454b-87a5-732300013830" name="send-email-alert-success" />
+					</foreach>
+				</when>
+			<otherwise>
+				<logger level="INFO" doc:name="NO NEW MAILS RECIEVED" doc:id="55528d1e-c72c-4ea7-a63a-4acbcce95e09" message='#["--------NO NEW MAILS RECIEVED BY TIME :: " ++ vars.currentExecutionDateTime ++ " --------"]' />
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"	&#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "NO NEW MAILS RECEIVED YET",&#10;	"CorrelationId": vars.vCorrelationId,&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime)&#10;}]' doc:name="vLog" doc:id="e19593e5-41b3-4edc-85b5-af7305d7dbaa" variableName="vLog" />
+				</otherwise>
+			</choice>
+		<logger level="INFO" doc:name="End Logger" doc:id="a228c7e6-ced0-4d05-b49f-4fff3fdf6e20" message='#["--------AUTOMATION PROCESS COMPLETED::RESPONSE-&gt;" ++ write(vars.vLog,"application/json") ++ " --------"]' />
+		<ee:transform doc:name="Success Response" doc:id="6276863c-e8d6-464c-a743-4468148556d4">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.vLog]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+	</sub-flow>
+	<sub-flow name="inventory-Implementation-schedular" doc:id="307a6a04-84ad-41e5-99ae-c938fabb1e17" >
+		<http:request method="GET" doc:name="Get Emails" doc:id="9d9834fa-4f1a-490d-8cae-d8ed5033f45b" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/mailFolders/&quot; ++ p('mail.inventory.folderId') ++ &quot;/messages?filter=receivedDateTime gt &quot; ++ vars.vLastRunDatetime ++ &quot;&amp;orderby=receivedDateTime&quot;]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : "Bearer" ++ vars.token
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="EMAIL FETCHING" doc:id="994a1201-77c4-43f2-8f70-46f5fec2ad66" message='#["[INVENTORY] :: EMAIL FETCHING IS COMPLETED SUCCSSFULLY"]' />
+		
+		<choice doc:name="Checks for new emails" doc:id="f5f20ea3-ec77-4c22-9c42-609e8e13bbc8" >
+			<when expression="#[!isEmpty(payload.value)]" >
+				<foreach doc:name="For Each email" doc:id="ef20ec04-955c-468d-95d2-819f137482fa" collection="#[payload.value]" >
+					<set-variable value="#[payload.receivedDateTime]" doc:name="vReceivedDatetime" doc:id="bcf90e89-d05b-4e2a-98d4-6fe0c5cb8832" variableName="vReceivedDatetime" />
+					<logger level="INFO" doc:name="vReceivedDatetime" doc:id="eb75f2d1-1517-4f0d-83d5-6d0bce4c3339" message='#["vReceivedDatetime :: " ++ vars.vReceivedDatetime]' />
+					<choice doc:name="checks for the attachments in the Mail" doc:id="3501e8ce-c378-4813-9609-4c69625e9ed5" >
+						<when expression="#[payload.hasAttachments == true]" >
+							<flow-ref doc:name="read-attachments" doc:id="88bb3539-9cb2-4b9c-bf04-62c3dc2763aa" name="read-attachments" />
+							<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun cleanJsonString(val) =&#10;    (write(val, "application/json")&#10;        replace "\n" with ""&#10;        replace "\\" with "")&#10;        &#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"&#10;    &#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "AUTOMATION PROCESS COMPLETED FOR EMAIL RECEIVED AT:" ++ formatDateTime(vars.vReceivedDateTime),&#10;	"Correlation Id": vars.vCorrelationId,&#10;	"InventoryDate": cleanJsonString(vars.inventoryDatesArray),&#10;	"DocumentName": cleanJsonString(vars.allDOCs),&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime),&#10;	"EmailReceivedDateTime(UTC)": formatDateTime(vars.vReceivedDatetime)&#10;}]' doc:name="vLog" doc:id="72edd989-1812-43ad-91f7-9ce7fb0033b5" variableName="vLog" />
+						</when>
+						<otherwise >
+							<logger level="INFO" doc:name="NO ATTACHMENTS" doc:id="17835165-d1e1-4404-914c-d6303b524694" message='#["--------NO ATTACHMENTS FOUND IN EMAIL RECIEVED ON:" ++ vars.vReceivedDateTime ++ " --------"]' />
+							<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"	&#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "NO ATTACHMENTS FOUND IN EMAIL RECIEVED ON:" ++ formatDateTime(vars.vReceivedDateTime),&#10;	"CorrelationId": vars.vCorrelationId,&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime),&#10;	"EmailReceivedDateTime(UTC)": formatDateTime(vars.vReceivedDatetime)&#10;}]' doc:name="vLog" doc:id="90cc4c4a-9fd9-47fd-918a-7b586c07e6ac" variableName="vLog" />
+						</otherwise>
+					</choice>
+					<set-variable value="#[vars.vReceivedDatetime + |PT1S|]" doc:name="vUpdatedDateTime" doc:id="78736fb2-a7a2-42f1-af68-31a3bea03b63" variableName="vUpdatedDateTime" />
+					<os:store doc:name="Store" doc:id="f36c84b4-73a1-435d-b9db-e822dd5ace38" key="lastRunDateTime" objectStore="Object_store">
+						<os:value ><![CDATA[#[vars.vUpdatedDateTime]]]></os:value>
+					</os:store>
+					<logger level="INFO" doc:name="Each Email End Logger" doc:id="c37ec196-ce24-4294-87b8-ba7e627190db" message='#["--------PROCESS COMPLETED FOR EMAIL RECEIVED ON: " ++ vars.vReceivedDateTime ++ " --------"]' />
+					<flow-ref doc:name="send-email-alert-success" doc:id="6a0e2f0b-e8b1-4fe6-8deb-ea29fb2653a3" name="send-email-alert-success" />
+				</foreach>
+			</when>
+			<otherwise >
+				<set-variable value="#[vars.currentExecutionDateTime]" doc:name="vUpdatedDateTime" doc:id="61c8bffe-5c6a-4470-a636-87eb7fabfff8" variableName="vUpdatedDateTime" />
+				<os:store doc:name="Store vUpdatedTime" doc:id="d1ac3705-a2a2-4129-9adb-366f4157d040" key="lastRunDateTime" objectStore="Object_store">
+					<os:value ><![CDATA[#[vars.vUpdatedDateTime]]]></os:value>
+				</os:store>
+				<logger level="INFO" doc:name="NO NEW MAILS RECIEVED" doc:id="6945d0bc-9d31-45a1-9486-c41e7672f89c" message='#["--------NO NEW MAILS RECIEVED BY TIME :: " ++ vars.vUpdatedDateTime ++ " --------"]' />
+				<set-variable value='#[%dw 2.0&#10;output application/json&#10;&#10;fun formatDateTime(dt) =&#10;    if (dt != null)&#10;        ((dt as DateTime) as String {format: "yyyy-MM-dd HH:mm:ss"})&#10;    else "-"	&#10;---&#10;{&#10;	"Status": "Success",&#10;	"Message": "NO NEW MAILS RECEIVED YET",&#10;	"CorrelationId": vars.vCorrelationId,&#10;	"UpdatedDateTimeInObjectStore(UTC)": formatDateTime(vars.vUpdatedDateTime),&#10;	"ExecutionStartTime(UTC)": formatDateTime(vars.currentExecutionDateTime)&#10;}]' doc:name="vLog" doc:id="f47e2ca2-2033-4700-923c-b04ccbf63fa6" variableName="vLog" />
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Logger" doc:id="20723cb9-6c69-4802-a877-a22e1a869676" message='#["--------AUTOMATION PROCESS COMPLETED::RESPONSE-&gt;" ++ write(vars.vLog,"application/json") ++ " --------"]' />
+		<ee:transform doc:name="Success Response" doc:id="2b5fd3b7-7cb7-4222-b65b-e8c56ab40cb6">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.vLog]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+	</sub-flow>
+	<sub-flow name="idp-to-inventory-sub-flow" doc:id="ca2f84ac-ab16-4ede-b227-f7127c4de900" >
+		<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;vars.inventoryDatesArray + vars.inventoryDate]" doc:name="inventoryDatesArray" doc:id="5776e72c-4bb6-408b-8ef9-73b62e064445" variableName="inventoryDatesArray"/>
+		<set-variable value='#[vars.idpResponseData.Date as Date {format: "d-MMM-yyyy"}]' doc:name="inventoryDate" doc:id="0c499eca-42e9-4514-97ed-5962d5ea4484" variableName="inventoryDate" />
+		<logger level="INFO" doc:name="Logger" doc:id="6dea7483-c2ab-4380-b2a8-7f96d42f69ca" message='#["[INVENTORY] :: INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="check-inventory-and-sales-workbook-existense-subflow" doc:id="d4392118-8039-4e20-a1f3-b5a7f7cc4702" name="check-inventory-and-sales-workbook-existense-subflow" />
+		<flow-ref doc:name="tis-subflow" doc:id="fd45696b-5b13-4d4a-b644-41cf00fd0385" name="tis-subflow"/>
+		<logger level="INFO" doc:name="TIS" doc:id="703f3a40-6f6e-414b-83ef-759101318734" message='#["[INVENTORY] :: TIS INERTION/UPDATION COMPLETED SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="tms6-subflow" doc:id="c10c50e2-379d-4bf2-9867-1adc7dc0723d" name="tms6-subflow"/>
+		<logger level="INFO" doc:name="TMS6" doc:id="f812691f-1aa0-427c-90ce-3c174d9d8dc3" message='#["[INVENTORY] :: TMS6 INERTION/UPDATION COMPLETED SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="get-tis-data-by-inventory-date-subflow" doc:id="97b230b6-0049-45ab-b3e9-ec63e8a1a45b" name="get-tis-data-by-inventory-date-subflow"/>
+		<logger level="INFO" doc:name="RETRIEVED TIS DATA" doc:id="a972d0f7-4f48-4528-a672-17a1f8ea033f" message='#["[INVENTORY] :: RETRIEVED TIS DATA SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<flow-ref doc:name="get-tms6-data-by-inventory-date-subflow" doc:id="21471ec3-1137-4273-84d3-53a3f6d33030" name="get-tms6-data-by-inventory-date-subflow" />
+		<logger level="INFO" doc:name="RETRIEVED TMS6 DATA" doc:id="ffb0a576-9de5-4a92-9624-0ecf47abe12c" message='#["[INVENTORY] :: RETRIEVED TMS6 DATA SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+		<ee:transform doc:name="inventoryDateInfo" doc:id="a8510a31-cd3c-4afe-aaf0-7b9ca578a4f8">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="inventoryDateInfo" ><![CDATA[%dw 2.0
+output application/json
+ 
+fun isStartDateOfMonth(date: Date) = date.day == 1
+ 
+fun getPreviousMonthLastDate(date: Date) =
+    (date as String {format: "yyyy-MM-01"} as Date) - |P1D|
+ 
+fun getCurrentMonthStartDate(date: Date) =
+    date as String {format: "yyyy-MM-01"} as Date
+ 
+fun getDaysInMonth(date: Date) =
+    ((date as String {format: "yyyy-MM-01"} as Date) + |P1M| - |P1D|).day
+ 
+var inputDate = vars.inventoryDate
+var parsedDate = inputDate as Date {format: "d-MMM-yyyy"}
+var previousMonthLastDate = getPreviousMonthLastDate(parsedDate)
+var currentMonthStartDate = getCurrentMonthStartDate(parsedDate)
+var daysInMonth = getDaysInMonth(parsedDate)
+ 
+---
+{
+    "originalDate": parsedDate,
+    "isStartDateOfMonth": isStartDateOfMonth(parsedDate),
+    "daysInMonth": daysInMonth,
+    "previousMonthLastDate": previousMonthLastDate as String {format: "d-MMM-yy"},
+    "StartDate": currentMonthStartDate as String {format: "d-MMM-yy"},
+    "date": parsedDate as String {format: "M/d/yy"},
+    "monthYear": parsedDate as String {format: "MMM"},
+    "weekday": parsedDate as String {format: "EEEE"},
+    "year": parsedDate as String {format: "yyyy"}
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="Inventory-main-subflow" doc:id="3543b4ff-f691-4e96-8fad-b8b67b8e3857" name="Inventory-main-subflow" />
+		<logger level="INFO" doc:name="Logger" doc:id="54fe60f6-0d26-4534-ab91-f0b441c81ed0" message='#["[INVENTORY] :: INVENTORY LIFTING INSERTION COMPLETED SUCCESSFULLY FOR THE INVENTORY DATE :: " ++ (vars.inventoryDate as String)]'/>
+	</sub-flow>
+	<sub-flow name="inventory-update-subflow" doc:id="46f868b2-fd7f-400f-b985-6e1d102cebca">
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date= attributes.queryParams.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;date]' doc:name="inventoryDate" doc:id="efff9cc6-7742-442a-9d9f-07d0cd31ccfd" variableName="inventoryDate" />
+		<set-variable value='#[%dw 2.0&#10;output application/json&#10;var date=vars.inventoryDate as Date {format: "d-MMM-yyyy"}&#10;---&#10;"Inventory_&amp;_Sales_" ++ date.year]' doc:name="workbookName" doc:id="766ac28a-8354-40d2-b524-47d72815c425" variableName="workbookName" />
+		<flow-ref doc:name="get-token-subflow" doc:id="4e818d4d-5280-4901-8a59-1e1013efbf23" name="get-token-subflow" />
+		<set-variable value="01NVG26FRCBRAVHMCZWRDIOHKMIGJ4FZPV" doc:name="previousInventoryWorkbookId" doc:id="be38a217-5633-4255-abd2-fc08be4956df" variableName="previousInventoryWorkbookId" />
+		<http:request method="GET" doc:name="get Existing Inventory&amp;Sales workbookId" doc:id="b668ac1b-76f8-4006-b7a8-c631b2ed9cfe" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/root:/&quot; ++ p('inventory_&amp;_sales.foldername') ++&quot;/&quot; ++ vars.&quot;workbookName&quot; ++ &quot;.xlsx&quot;]" target="inventoryAndSalesWorkbookId" targetValue="#[payload.id]">
+			<http:headers><![CDATA[#[output application/json
+---
+{
+	"Authorization" : "Bearer "++ vars."token" as String
+}]]]></http:headers>
+		</http:request>
+		<flow-ref doc:name="get-tms6-data-by-inventory-date-subflow" doc:id="b9b5c4cf-d040-4a92-a058-60d574717c86" name="get-tms6-data-by-inventory-date-subflow" />
+		<flow-ref doc:name="get-tis-data-by-inventory-date-subflow" doc:id="be26b5cf-2c1f-4af5-806a-ac067977255e" name="get-tis-data-by-inventory-date-subflow" />
+		<flow-ref doc:name="Inventory-subflow" doc:id="68a624ce-c8b5-4a6e-a2ed-7853d4c47cd1" name="Inventory-main-subflow" />
+	</sub-flow>
+	
+	
+</mule>

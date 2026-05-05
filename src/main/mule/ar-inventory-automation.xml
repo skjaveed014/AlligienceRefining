@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:outlook365="http://www.mulesoft.org/schema/mule/outlook365" xmlns:idp-freepoint-invoice-idp-100="http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100"
+	xmlns:idp-elmendrof-inventory-pdf-100="http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100"
+	xmlns:excel="http://www.mulesoft.org/schema/mule/excel" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:microsoftOneDrive="http://www.mulesoft.org/schema/mule/microsoftOneDrive" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/microsoftOneDrive http://www.mulesoft.org/schema/mule/microsoftOneDrive/current/mule-microsoftOneDrive.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/excel http://www.mulesoft.org/schema/mule/excel/current/mule-excel.xsd
+http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100 http://www.mulesoft.org/schema/mule/idp-elmendrof-inventory-pdf-100/current/mule-idp-elmendrof-inventory-pdf-100.xsd
+http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100 http://www.mulesoft.org/schema/mule/idp-freepoint-invoice-idp-100/current/mule-idp-freepoint-invoice-idp-100.xsd
+http://www.mulesoft.org/schema/mule/outlook365 http://www.mulesoft.org/schema/mule/outlook365/current/mule-outlook365.xsd">
+	<flow name="inventory-schedular-main" doc:id="48b47466-5b5a-4db5-8dc2-7ea2d8dabf86" >
+		<scheduler doc:name="Every 30 minutes, between 06:00 AM and 08:59 AM" doc:id="307dbe92-bd4c-46b2-8f70-51f4ebddce42" >
+			<scheduling-strategy >
+				<cron expression="0 0/30 6-8 * * ?"/>
+			</scheduling-strategy>
+		</scheduler>
+		<set-variable value="#[uuid()]" doc:name="vCorrelationId" doc:id="75af08aa-b2ac-4bfc-a3eb-265c6f8c062b" variableName="vCorrelationId"/>
+		<flow-ref doc:name="get-token-subflow" doc:id="c57fb2f8-2461-4531-867d-d095706cf62b" name="get-token-subflow" />
+		<ee:transform doc:name="currentExecutionDateTime" doc:id="6d7cde80-cc62-4e93-89ff-d4933a104df8">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="currentExecutionDateTime" ><![CDATA[%dw 2.0
+output application/json
+---
+(now() >> "UTC") as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="currentExecutionDateTime" doc:id="dd4719c8-1429-4d73-927a-aabcab94a860" message='#["-------currentExecutionDateTime :: " ++ vars.currentExecutionDateTime]'/>
+		<ee:transform doc:name="Empty[] predefined variables" doc:id="6ac1c761-4c82-4e4a-a096-59145d11df07" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="elmendorfIdpResponse" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="tsarIdpResponse" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="tms6Data" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="freepointIdpResponse" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate" ><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="compltFreepointIdpResponse" ><![CDATA[[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<os:retrieve doc:name="Retreive lastRunDateTime" doc:id="835ab899-fba7-426a-b458-52c76ea200ae" key="lastRunDateTime" objectStore="Object_store" target="vLastRunDatetime" >
+			<os:default-value ><![CDATA[#[%dw 2.0
+output application/json
+---
+if (isEmpty(p('defaultDatetime')))
+   (now() >> "UTC") as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
+else
+   p('defaultDatetime')]]]></os:default-value>
+		</os:retrieve>
+		<logger level="INFO" doc:name="vLastRunDateTime" doc:id="0d29ffaf-d131-49d7-8059-8c8a26f84b47" message='#["[INVENTORY] vLastRunDateTime: " ++ (vars.vLastRunDateTime as String)]'/>
+		<flow-ref doc:name="inventory-Implementation-schedular" doc:id="3b9c1bf0-0a0d-4459-aed3-9fc892f8efed" name="inventory-Implementation-schedular"/>
+		<error-handler ref="global-error-handlingError_Handler" />
+	</flow>
+	<flow name="inventory-scheduler-triggering" doc:id="163adf52-da94-4b69-a54c-7197f3e31369" >
+		<http:listener doc:name="/mulesoft-ar-automation/inventory" doc:id="cd12b5e8-cc7f-4199-aec4-4a64b4b57995" config-ref="HTTP_Listener_config" path="/mulesoft-ar-automation/inventory"/>
+		<flow-ref doc:name="inventory-schedular-main" doc:id="58ae6566-af35-43f0-8494-9110ec3fb455" name="inventory-schedular-main"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="bc68f41b-4433-41c3-826d-c9055eda632b" >
+				<logger level="INFO" doc:name="Logger" doc:id="b7e03d53-705a-49fd-90e4-e82da566d877" message="ERRORS ARE HANDLED GLOBALLY"/>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="inventory-testing" doc:id="4c9a0563-6e4b-4af2-9cbf-33ea44a1571e" >
+		<http:listener doc:name="/mulesoft-ar-automation/inventory/test" doc:id="5c92cf59-ab86-4fb3-9a2a-f9888cce470f" path="/mulesoft-ar-automation/inventory/test" config-ref="HTTP_Listener_config">
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<set-variable value="#[uuid()]" doc:name="vCorrelationId" doc:id="2a347bcd-1c89-456b-9617-6cfb7a2b458e" variableName="vCorrelationId" />
+		<set-variable value="#[attributes.queryParams.emailReceivedDate]" doc:name="emailReceivedDate" doc:id="31339270-9142-45bb-be69-cf2750407d4d" variableName="emailReceivedDate" />
+		<flow-ref doc:name="get-token-subflow" doc:id="32a0af1b-5bfe-4f5f-a8e9-87b1a5c9237d" name="get-token-subflow" />
+		<ee:transform doc:name="currentExecutionDateTime" doc:id="63670444-4888-4ce0-bba2-dd13c7d61461">
+			<ee:message>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="currentExecutionDateTime" ><![CDATA[%dw 2.0
+output application/json
+---
+(now() >> "UTC") as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="currentExecutionDateTime" doc:id="7eafb332-aa0e-4ab3-87b4-6cd956c65bdf" message='#["-------currentExecutionDateTime :: " ++ vars.currentExecutionDateTime]' />
+		<ee:transform doc:name="emailReceivedFromDateTime" doc:id="32634a7a-7b31-46b2-baf8-f70e07835a22" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="emailReceivedFromDateTime" ><![CDATA[%dw 2.0
+output application/json
+var date = vars.emailReceivedDate as Date
+var time = p('mail.fetch.startTime') as LocalTime
+var dateTime = date ++ time
+---
+(dateTime >> "UTC")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="emailReceivedFromDateTime" doc:id="92fdd14f-cff5-4c34-aa5f-a28a14a8376e" message='#["emailReceivedFromDateTime :: " ++ vars.emailReceivedFromDateTime]'/>
+		<ee:transform doc:name="emailReceivedToDateTime" doc:id="68b47276-831e-46b2-928c-2f799ce3d4c0" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="emailReceivedToDateTime" ><![CDATA[%dw 2.0
+output application/json
+var date = vars.emailReceivedDate as Date
+var time = p('mail.fetch.endTime') as LocalTime
+var dateTime = date ++ time
+---
+(dateTime >> "UTC")]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="emailReceivedToDateTime" doc:id="79bed102-852f-4e80-9df8-ff3ca00dde1e" message='#["emailReceivedToDateTime :: " ++ vars.emailReceivedToDateTime]'/>
+		<ee:transform doc:name="Empty[] predefined variables" doc:id="a9919963-58c9-4af1-aa06-129fc256a4f1">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable variableName="elmendorfIdpResponse"><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="tsarIdpResponse"><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="tms6Data"><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="freepointIdpResponse"><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryDate"><![CDATA[[]]]></ee:set-variable>
+				<ee:set-variable variableName="compltFreepointIdpResponse"><![CDATA[[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="inventory-implementation-testing" doc:id="eb34e101-62a3-4b4e-be6d-48f128c5f397" name="inventory-implementation-testing" />
+		<error-handler ref="global-error-handlingError_Handler" />
+	</flow>
+	<flow name="ar-inventory-automationFlow" doc:id="8231b52c-2576-4dd6-9cd7-473abf41d27f" >
+		<http:listener doc:name="/mulesoft-ar-automation/inventory/update" doc:id="baee28ca-f01a-4ed4-b2e5-0d72d1a31c05" config-ref="HTTP_Listener_config" path="/mulesoft-ar-automation/inventory/update">
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<flow-ref doc:name="inventory-update-by-the-inventory-date-subflow" doc:id="04263114-5bd4-4364-8f9d-5e6937752a37" name="inventory-update-by-the-inventory-date-subflow"/>
+		<error-handler ref="global-error-handlingError_Handler" />
+	</flow>
+	<flow name="inventory-obj-store" doc:id="d6f70d40-7e96-40df-88b4-a22f70acc6a2" >
+		<http:listener doc:name="/mulesoft-ar-automation/inventory/os/*" doc:id="73b76270-666c-4839-80a9-e0c5810c4918" config-ref="HTTP_Listener_config" path="/mulesoft-ar-automation/inventory/os/*" >
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json --- payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<choice doc:name="Object Store Operations" doc:id="c75c40e6-116a-424b-8f4e-c45481873ca3" >
+			<when expression='#[attributes.relativePath == "/mulesoft-ar-automation/inventory/os/clear"]' >
+				<os:clear doc:name="Clear" doc:id="caa9a07b-7922-45b9-a23b-6f9131108065" objectStore="Object_store" />
+				<logger level="INFO" doc:name="Logger" doc:id="3967119f-d3ee-4ee6-a614-e63ac95550eb" message="-------OBJECT STORE IS CLEARED--------" />
+			</when>
+			<when expression='#[attributes.relativePath == "/mulesoft-ar-automation/inventory/os/retrieve"]' >
+				<os:retrieve doc:name="Retrieve" doc:id="8ed41071-f28a-45cb-8a62-a774b5c96b94" key="lastRunDateTime" objectStore="Object_store" target="vLastRunDateTime">
+					<os:default-value ><![CDATA[#[""]]]></os:default-value>
+				</os:retrieve>
+				<logger level="INFO" doc:name="Logger" doc:id="7695ec1b-02aa-4531-abaa-cb78b2aac8fd" message='#["-------OBJECT STORE RETRIEVED DATA:" ++ payload ++ "--------"]' />
+				<ee:transform doc:name="vLastRunDateTime" doc:id="8c6a7d7a-c598-491e-aade-992a67e9a7ab" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.vLastRunDateTime]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[attributes.relativePath == "/mulesoft-ar-automation/inventory/os/remove"]' >
+				<os:remove doc:name="Remove" doc:id="faaa775e-2233-4f37-8fff-9d2e16b33f85" key="lastRunDateTime" objectStore="Object_store" />
+				<logger level="INFO" doc:name="Logger" doc:id="1e205b34-f730-4c88-928c-4868028c6a49" message='#["-------OBJECT STORE REMOVED DATA:" ++ payload ++ "--------"]' />
+			</when>
+			<when expression='#[attributes.relativePath == "/mulesoft-ar-automation/inventory/os/store"]' >
+				<os:store doc:name="Store" doc:id="eaff2df2-f209-4bab-aa3d-dbd929b35dc4" key="lastRunDateTime" objectStore="Object_store" >
+					<os:value ><![CDATA[#[attributes.queryParams.lastRunDateTime]]]></os:value>
+				</os:store>
+				<logger level="INFO" doc:name="Logger" doc:id="6f6f4bea-cc68-4ee1-a703-cef821301f79" message='#["-------OBJECT STORE INSERTED DATA:" ++ payload ++ "--------"]' />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="f694d65b-7ac5-433b-bad0-0b78c5104d7a" />
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c5c24d2e-aefe-499f-bec4-eca46bcb199b" >
+				<ee:transform doc:name="Transform Message" doc:id="4034d70c-a3ca-45e8-a49c-e4afd53c88a5">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="ar-inventory-automation-workbook-creation-test" doc:id="3b3f3fd6-0036-4c81-9392-f326e28dd175" >
+		<http:listener doc:name="Listener" doc:id="b5abfb75-7ab1-429f-ae53-fa8f596f3fc5" config-ref="HTTP_Listener_config" path="/inv-workbook-creation"/>
+		<set-variable value="#[payload]" doc:name="idpResponseData" doc:id="92859428-97f6-4d1b-b77a-22f297fb2691" variableName="idpResponseData"/>
+		<flow-ref doc:name="get-token-subflow" doc:id="a1d41de3-6d19-4196-b267-797defa29039" name="get-token-subflow"/>
+		<flow-ref doc:name="idp-to-inventory-sub-flow" doc:id="19f2f105-ef00-40a5-994c-3fc470d6f405" name="idp-to-inventory-sub-flow"/>
+		<ee:transform doc:name="Transform Message" doc:id="441bced0-eff1-4a78-9948-3a7c76d40d5f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"done"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e728c51c-ff28-49d9-8983-d7d997a5ecde" >
+				<ee:transform doc:name="Transform Message" doc:id="665285f4-49e5-4f06-90a3-ff2a1de04aa1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"An error occurred"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

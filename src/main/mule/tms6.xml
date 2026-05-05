@@ -21,7 +21,7 @@ output application/json
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="var receipts-data" doc:id="2802b919-a9c4-4b1c-b367-6f5580be546e" >
+		<ee:transform doc:name="var receiptsData" doc:id="2802b919-a9c4-4b1c-b367-6f5580be546e" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="receiptsData" ><![CDATA[%dw 2.0
@@ -43,10 +43,10 @@ output application/json
 			<set-variable value="#[payload]" doc:name="tableName" doc:id="2c97a74d-219c-429a-94aa-e221ba79900d" variableName="tableName" />
 			<choice doc:name="checks for exports table" doc:id="3418a464-f188-45cb-ad81-d4c0fa897d85" >
 				<when expression='#[payload=="TMS6_Exports_Table"]' >
-					<flow-ref doc:name="calling tms6-exports-data-Sub_Flow" doc:id="de9cb3e5-e791-483f-bf73-fc0bf996f64b" name="tms6-exports-data-subflow" />
+					<flow-ref doc:name="tms6-exports-data-subflow" doc:id="de9cb3e5-e791-483f-bf73-fc0bf996f64b" name="tms6-exports-data-subflow" />
 				</when>
 				<when expression='#[payload == "TMS6_Receipts_Table"]'>
-					<flow-ref doc:name="calling receipts-sub-flow" doc:id="d9ce0aec-3aed-4ed1-880a-ce7254d73048" name="receipts-sub-flow"/>
+					<flow-ref doc:name="tms6-receipts-data-sub-flow" doc:id="d9ce0aec-3aed-4ed1-880a-ce7254d73048" name="tms6-receipts-data-sub-flow"/>
 				</when>
 				<otherwise >
 					<logger level="INFO" doc:name="Logger" doc:id="aba291f8-2bd6-44e0-8bbe-465002633ce0" />
@@ -78,7 +78,7 @@ if(vars.tableName != p('tms6.exports.tableName'))
 ]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<ee:transform doc:name="get existTanks" doc:id="5679f99f-4ea0-4a69-baad-3fd97073ca82" >
+			<ee:transform doc:name="vMethod and vPath to get existTanks in TMS6" doc:id="5679f99f-4ea0-4a69-baad-3fd97073ca82" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -91,7 +91,7 @@ output application/json
 				</ee:variables>
 			</ee:transform>
 			<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="2e871cfb-e895-4036-8446-421a09225d7b" name="tms6-common-requestor-Sub_Flow"/>
-			<set-variable value="#[flatten((payload.values) - (payload.values[0]))]" doc:name="Set Variable" doc:id="715b29a6-a57f-4409-ab11-e647a679a96f" variableName="existTanks"/>
+			<set-variable value="#[flatten((payload.values) - (payload.values[0]))]" doc:name="existTanks" doc:id="715b29a6-a57f-4409-ab11-e647a679a96f" variableName="existTanks"/>
 			<!-- [STUDIO:"gets existTanks "]<http:request method="GET" doc:name="gets existTanks " doc:id="83e5f17d-9495-4ba9-a408-142f5473cd6f" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/1&quot;&#93;" target="existTanks" targetValue="#[flatten((payload.values) - (payload.values[0&#93;))&#93;" >
 				<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
 				<http:headers ><![CDATA[#[output application/json
@@ -100,7 +100,7 @@ output application/json
 	"Authorization" : "Bearer" ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 			</http:request> [STUDIO] -->
-			<ee:transform doc:name="var newTanks(came in tms6 pdf)" doc:id="e13041e9-2817-4abb-8213-9fdee9fe4c03" >
+			<ee:transform doc:name="var newTanks(came in TMS6 pdf)" doc:id="e13041e9-2817-4abb-8213-9fdee9fe4c03" >
 				<ee:message />
 				<ee:variables >
 					<ee:set-variable variableName="newTanks" ><![CDATA[%dw 2.0
@@ -111,11 +111,11 @@ output application/json
 vars.data[0] filter (p) -> not (vars.existTanks contains (p.tank as String))]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<flow-ref doc:name="calling check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="7ce55dee-af37-4798-ae0d-b979315b9f35" name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" />
-			<flow-ref doc:name="calling tms6-post-subflow" doc:id="a43ce17e-0163-48b3-bc60-e071d38d767c" name="tms6-post-subflow" />
+			<flow-ref doc:name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="7ce55dee-af37-4798-ae0d-b979315b9f35" name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" />
+			<flow-ref doc:name="tms6-post-subflow" doc:id="a43ce17e-0163-48b3-bc60-e071d38d767c" name="tms6-post-subflow" />
 		</foreach>
 	</sub-flow>
-	<sub-flow name="receipts-sub-flow" doc:id="550f540e-cdf5-4aaf-bcfa-6862083eb94e" >
+	<sub-flow name="tms6-receipts-data-sub-flow" doc:id="550f540e-cdf5-4aaf-bcfa-6862083eb94e" >
 		<ee:transform doc:name="gets stockholderLookupValues" doc:id="a13565ce-84a4-48db-84e4-16c007d7a729" >
 			<ee:message >
 			</ee:message>
@@ -124,12 +124,12 @@ vars.data[0] filter (p) -> not (vars.existTanks contains (p.tank as String))]]><
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ p('workbook.stockholders-Lookup.workbookId') ++ "/workbook/tables/" ++ p('stockholdersLookup.tableName') ++ "/rows?\$select=values"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ p('stockholdersLookup.workbookId') ++ "/workbook/tables/" ++ p('stockholdersLookup.tableName') ++ "/rows?\$select=values"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="a8e674e4-55ed-401a-85d4-3641e9868491" name="tms6-common-requestor-Sub_Flow"/>
-		<set-variable value="#[payload.value]" doc:name="Set Variable" doc:id="bd399fcd-c36d-490d-a407-af9476a4ed6b" variableName="stockholderLookupValues"/>
+		<set-variable value="#[payload.value]" doc:name="stockholderLookupValues" doc:id="bd399fcd-c36d-490d-a407-af9476a4ed6b" variableName="stockholderLookupValues"/>
 		<!-- [STUDIO:"gets stockholderLookupValues"]<http:request method="GET" doc:name="gets stockholderLookupValues" doc:id="fde1ca10-0329-4491-b9ef-181c2981ced2" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.stockholders-Lookup.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('stockholdersLookup.tableName') ++ &quot;/rows?\$select=values&quot;&#93;" target="stockholderLookupValues" targetValue="#[payload.value&#93;" >
 			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
 			<http:headers ><![CDATA[#[output application/json
@@ -184,9 +184,9 @@ filter ((item) ->
 		</ee:transform>
 	</sub-flow>
 	<sub-flow name="check-for-new-tanks-and-post-new-tanks-data-in-tms6-sheet-subflow" doc:id="586972d7-3bb1-4819-adbb-7f2df84d5d3e" >
-		<choice doc:name="Choice" doc:id="1daec891-1fb1-4eed-ad36-151358431bc9" >
+		<choice doc:name="Checks for Any new tank came in TMS6" doc:id="1daec891-1fb1-4eed-ad36-151358431bc9" >
 			<when expression="#[!isEmpty(vars.newTanks)]" >
-				<ee:transform doc:name="get tms6 column count" doc:id="105311f9-cf73-4703-b976-1f1dcc9f5b0c">
+				<ee:transform doc:name="vMethod and vPath to get TMS6 column count" doc:id="105311f9-cf73-4703-b976-1f1dcc9f5b0c">
 					<ee:message>
 					</ee:message>
 					<ee:variables >
@@ -199,7 +199,7 @@ output application/json
 					</ee:variables>
 				</ee:transform>
 				<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="5d55417e-7289-4e30-a7c6-826849f6486f" name="tms6-common-requestor-Sub_Flow"/>
-				<set-variable value="#[payload.value]" doc:name="Set Variable" doc:id="c1ce3833-8e30-4c75-abc5-a7ec9921fd25" variableName="columnCount"/>
+				<set-variable value="#[payload.value]" doc:name="tms6ColumnCount" doc:id="c1ce3833-8e30-4c75-abc5-a7ec9921fd25" variableName="tms6ColumnCount"/>
 				<!-- [STUDIO:"get tms6 column count"]<http:request method="GET" doc:name="get tms6 column count" doc:id="e96e958e-3ce7-49e3-971c-05534927fd81" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/count&quot;&#93;" target="columnCount" targetValue="#[payload.value&#93;" >
 					<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
 					<http:headers ><![CDATA[#[output application/json
@@ -219,7 +219,7 @@ output application/json
 var newTanks = vars.newTanks
 
 // total number of columns
-var columnCount = vars.columnCount
+var columnCount = vars.tms6ColumnCount
 
 // main logic
 ---
@@ -236,7 +236,7 @@ else
 				</ee:transform>
 				<foreach doc:name="For Each newTanksRowPayload" doc:id="48ae167b-73d4-4397-b453-a3a23cdd32f9" collection="#[vars.newTanksRowPayload]" >
 					<set-variable value="#[vars.existTanks ++ [payload.values[0][0]]]" doc:name="add new tanks to existTanks" doc:id="e9e1396e-3c8c-41b2-8103-5ff996bde4d2" variableName="existTanks" />
-					<ee:transform doc:name="adding new product row in tms6" doc:id="f966e4db-624b-4bb9-bbf3-032dab5371cd" >
+					<ee:transform doc:name="vMethod and vPath to add new products row in TMS6" doc:id="f966e4db-624b-4bb9-bbf3-032dab5371cd" >
 						<ee:message >
 						</ee:message>
 						<ee:variables >
@@ -264,14 +264,14 @@ output application/json
 		</choice>
 	</sub-flow>
 	<sub-flow name="tms6-post-subflow" doc:id="13c902ee-0ae2-4664-9d6c-c8e810cf89be" >
-		<ee:transform doc:name="order set" doc:id="ce905add-c5d8-446b-b313-4d202d5cce84" >
+		<ee:transform doc:name="var orderSet" doc:id="ce905add-c5d8-446b-b313-4d202d5cce84" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="orderSet" ><![CDATA[%dw 2.0
 output application/json
 
 // This gives output of products in json by comparing the existTanks and if present
-// assing value to that tank from the data if not found then null will be asigned
+// assining value to that tank from the data if not found then null will be assigned
 
 // tank order
 var order = vars.existTanks
@@ -292,9 +292,9 @@ fun normalize(t) = (upper(t default "")) replace /^0+/ with ""
         else 
             {
                 tank: t,
-                productName: null,
-                volume: null,
-                stockAdjust: null
+                productName: "",
+                volume: 0,
+                stockAdjust: 0
             }
     }
   
@@ -302,7 +302,7 @@ fun normalize(t) = (upper(t default "")) replace /^0+/ with ""
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="column payload" doc:id="07ac40d8-5d05-4b01-99fd-3d65f6d68ddb" >
+		<ee:transform doc:name="var columnPayload" doc:id="07ac40d8-5d05-4b01-99fd-3d65f6d68ddb" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="columnPayload" ><![CDATA[%dw 2.0
@@ -322,7 +322,7 @@ output application/json
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="request-data" doc:id="30d68b43-8e69-42f3-9b0b-4645888bbfd5" >
+		<ee:transform doc:name="var tms6RequestData" doc:id="30d68b43-8e69-42f3-9b0b-4645888bbfd5" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="tms6RequestData" ><![CDATA[%dw 2.0
@@ -338,7 +338,7 @@ var data = vars.columnPayload.values
 			</ee:variables>
 		</ee:transform>
 		<try doc:name="Try" doc:id="99ec1686-be85-4eec-8a51-3162714877f6" >
-			<ee:transform doc:name="checks for date col present in tms6 sheet or not" doc:id="d32edcdb-4b38-4c3a-8110-88017fdc1389" >
+			<ee:transform doc:name="vMethod and vPath to checks for date col present in TMS6 sheet or not" doc:id="d32edcdb-4b38-4c3a-8110-88017fdc1389" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -350,7 +350,7 @@ output application/json
 					<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<flow-ref doc:name="Flow Reference" doc:id="5af21c98-f797-4eaa-b7bd-219481a2c656" name="tms6-common-requestor-Sub_Flow"/>
+			<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="5af21c98-f797-4eaa-b7bd-219481a2c656" name="tms6-common-requestor-Sub_Flow"/>
 			<!-- [STUDIO:"checks for date col present in tms6 sheet or not"]<http:request method="GET" doc:name="checks for date col present in tms6 sheet or not" doc:id="1368006b-ef81-4495-ba1b-072488624453" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/&quot; ++ vars.&quot;inventoryDate&quot; as String&#93;">
 			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
 			<http:headers><![CDATA[#[output application/java
@@ -362,7 +362,7 @@ output application/json
 			<set-variable value="update" doc:name="flag=update" doc:id="bd25d897-e120-4a4d-b09a-3c3d8ad7f5ad" variableName="flag" />
 			<set-variable value="#[payload.id]" doc:name="columnId to update" doc:id="883cdd31-8a8c-4fba-8d54-014228cde3dc" variableName="columnId" />
 			<error-handler >
-				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fdb38e2b-e6eb-4cf2-897a-08eae0a200a2" type="HTTP:NOT_FOUND" >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="fdb38e2b-e6eb-4cf2-897a-08eae0a200a2" type="HTTP1:NOT_FOUND" >
 					<logger level="INFO" doc:name="Logger" doc:id="8755c0bb-483e-4df5-93ad-aca4ebf4ee65" message="-----ItemNotFound--------" />
 					<set-variable value="insert" doc:name="flag=insert" doc:id="578a421e-ae6a-44a3-a403-9660c2fef981" variableName="flag" />
 				</on-error-continue>
@@ -370,7 +370,7 @@ output application/json
 		</try>
 		<choice doc:name="checks for tis sheet update or insert" doc:id="0202232f-3d83-4df0-88b3-942cf4531149" >
 			<when expression='#[vars.flag == "update"]'>
-				<ee:transform doc:name="Transform Message" doc:id="ff84e219-52e7-44a4-b96d-c58b4997ddce">
+				<ee:transform doc:name="vMethod and vPath to update TMS6" doc:id="ff84e219-52e7-44a4-b96d-c58b4997ddce">
 					<ee:message>
 					</ee:message>
 					<ee:variables >
@@ -396,7 +396,7 @@ vars."tms6RequestData"]]></ee:set-variable>
 				</http:request> [STUDIO] -->
 			</when>
 			<otherwise >
-				<ee:transform doc:name="Transform Message" doc:id="94c2754a-a629-42b8-8791-f2d20bb165d7" >
+				<ee:transform doc:name="vMethod and vPath to insert TMS6" doc:id="94c2754a-a629-42b8-8791-f2d20bb165d7" >
 					<ee:message >
 					</ee:message>
 					<ee:variables >
@@ -408,7 +408,7 @@ output application/json
 						<ee:set-variable variableName="vpayload" ><![CDATA[vars."tms6RequestData"]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="07df68a2-fb8e-401d-be33-340412f6d190" name="tms6-common-requestor-Sub_Flow"/>
+				<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="07df68a2-fb8e-401d-be33-340412f6d190" name="tms6-common-requestor-Sub_Flow"/>
 				<!-- [STUDIO:"tms6 insert request"]<http:request method="POST" doc:name="tms6 insert request" doc:id="a53c2ce9-6b51-45da-bb28-b1e080a3c5ba" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/add&quot;&#93;">
 			<http:body><![CDATA[#[vars."tms6RequestData"&#93;&#93;&#93;></http:body>
 			<http:headers><![CDATA[#[output application/java
@@ -429,12 +429,12 @@ output application/json
 				<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ p('workbook.stockholders-Lookup.workbookId') ++ "/workbook/tables/" ++ p('stockholdersLookup.tableName') ++ "/rows?\$select=values"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ p('stockholdersLookup.workbookId') ++ "/workbook/tables/" ++ p('stockholdersLookup.tableName') ++ "/rows?\$select=values"]]></ee:set-variable>
 				<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="0b056029-7b25-4ec5-8ef9-1bfd294d492b" name="tms6-common-requestor-Sub_Flow"/>
-		<set-variable value="#[payload.value]" doc:name="Set Variable" doc:id="e9ec84ca-6547-4951-b00e-1f573afb3991" variableName="stockholderLookupValues"/>
+		<set-variable value="#[payload.value]" doc:name="stockholderLookupValues" doc:id="e9ec84ca-6547-4951-b00e-1f573afb3991" variableName="stockholderLookupValues"/>
 		<!-- [STUDIO:"gets stockholderLookupValues"]<http:request method="GET" doc:name="gets stockholderLookupValues" doc:id="2c04d55b-2f2f-4e17-b523-f98b1a2dc7db" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ p('workbook.stockholders-Lookup.workbookId') ++ &quot;/workbook/tables/&quot; ++ p('stockholdersLookup.tableName') ++ &quot;/rows?\$select=values&quot;&#93;" target="stockholderLookupValues" targetValue="#[payload.value&#93;" >
 			<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
 			<http:headers ><![CDATA[#[output application/json
@@ -497,7 +497,7 @@ flatten(
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="exportTanks" doc:id="2bbb40a3-e1f7-4c92-b4df-b0baa4428162" >
+		<ee:transform doc:name="var exportTanks" doc:id="2bbb40a3-e1f7-4c92-b4df-b0baa4428162" >
 			<ee:message />
 			<ee:variables >
 				<ee:set-variable variableName="exportTanks" ><![CDATA[%dw 2.0
@@ -528,8 +528,8 @@ output application/json
 			</ee:variables>
 		</ee:transform>
 		<foreach doc:name="For Each tms6TableNames" doc:id="921c6715-e58c-43a8-ad97-dd278a57cd1d" collection="#[vars.tms6TableNames]">
-			<set-variable value="#[payload]" doc:name="tableName" doc:id="8e41c010-755a-45d5-88b2-00737191b199" variableName="tableName"/>
-			<ee:transform doc:name="gets tms6 product-names" doc:id="dcabe858-cb65-4502-9143-7e33ba7b8695" >
+			<set-variable value="#[payload]" doc:name="tms6TableName" doc:id="8e41c010-755a-45d5-88b2-00737191b199" variableName="tms6TableName"/>
+			<ee:transform doc:name="vMethod and vPath to gets TMS6 product-names" doc:id="dcabe858-cb65-4502-9143-7e33ba7b8695" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -537,12 +537,12 @@ output application/json
 					<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.tableName ++ "/columns/2"]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.tms6TableName ++ "/columns/2"]]></ee:set-variable>
 					<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<flow-ref doc:name="Flow Reference" doc:id="27f9960c-1ba5-4c88-ade4-67bcee0d58bc" name="tms6-common-requestor-Sub_Flow"/>
-			<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="c209f971-f981-45a2-89d6-7ba2f7c58e85" variableName="tms6SheetProducts"/>
+			<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="27f9960c-1ba5-4c88-ade4-67bcee0d58bc" name="tms6-common-requestor-Sub_Flow"/>
+			<set-variable value="#[payload.values]" doc:name="tms6SheetProducts" doc:id="c209f971-f981-45a2-89d6-7ba2f7c58e85" variableName="tms6SheetProducts"/>
 			<!-- [STUDIO:"gets tms6 product-names"]<http:request method="GET" doc:name="gets tms6 product-names" doc:id="f55c600a-78f5-4387-b62f-4070f5faac68" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ vars.tableName ++ &quot;/columns/2&quot;&#93;" target="tms6SheetProducts" targetValue="#[payload.values&#93;">
 			<http:body><![CDATA[#[""&#93;&#93;&#93;></http:body>
 			<http:headers><![CDATA[#[output application/json
@@ -551,7 +551,7 @@ output application/json
 	"Authorization" : "Bearer " ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 		</http:request> [STUDIO] -->
-			<ee:transform doc:name="gets tms6 values by date" doc:id="c4594552-d9d2-4075-b068-35f5df7e0de7" >
+			<ee:transform doc:name="vMethod and vPath to get TMS6 values by inventoryDate" doc:id="c4594552-d9d2-4075-b068-35f5df7e0de7" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -559,12 +559,12 @@ output application/json
 					<ee:set-variable variableName="vpath" ><![CDATA[%dw 2.0
 output application/json
 ---
-"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.tableName ++ "/columns/" ++ vars.inventoryDate]]></ee:set-variable>
+"/v1.0/users/" ++ p('graphApi.emailId') ++ "/drive/items/" ++ vars.inventoryAndSalesWorkbookId ++ "/workbook/tables/" ++ vars.tms6TableName ++ "/columns/" ++ vars.inventoryDate]]></ee:set-variable>
 					<ee:set-variable variableName="vpayload" ><![CDATA[""]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<flow-ref doc:name="Flow Reference" doc:id="1dbb4de6-4c7b-44f1-92e8-24a3808bb236" name="tms6-common-requestor-Sub_Flow"/>
-			<set-variable value="#[payload.values]" doc:name="Set Variable" doc:id="f4919a66-48f5-44b8-99cd-f3bebea0741e" variableName="tms6SheetValues"/>
+			<flow-ref doc:name="tms6-common-requestor-Sub_Flow" doc:id="1dbb4de6-4c7b-44f1-92e8-24a3808bb236" name="tms6-common-requestor-Sub_Flow"/>
+			<set-variable value="#[payload.values]" doc:name="tms6SheetValues" doc:id="f4919a66-48f5-44b8-99cd-f3bebea0741e" variableName="tms6SheetValues"/>
 			<!-- [STUDIO:"gets tms6 values by date"]<http:request method="GET" doc:name="gets tms6 values by date" doc:id="894c1797-74ae-4c07-9275-da710aba4c9a" config-ref="HTTP_Graph_API_configuration" path="#[&quot;/v1.0/users/&quot; ++ p('graphApi.emailId') ++ &quot;/drive/items/&quot; ++ vars.inventoryAndSalesWorkbookId ++ &quot;/workbook/tables/&quot; ++ payload ++ &quot;/columns/&quot; ++ vars.inventoryDate&#93;" target="tms6SheetValues" targetValue="#[payload.values&#93;">
 				<http:body ><![CDATA[#[""&#93;&#93;&#93;></http:body>
 				<http:headers ><![CDATA[#[output application/json
@@ -573,7 +573,7 @@ output application/json
 	"Authorization" : "Bearer " ++ vars.token
 }&#93;&#93;&#93;></http:headers>
 			</http:request> [STUDIO] -->
-			<ee:transform doc:name="product and values combined" doc:id="6d7094a4-cc71-4e18-8bec-f65538623495" >
+			<ee:transform doc:name="tms6ProductsAndValuesCombined" doc:id="6d7094a4-cc71-4e18-8bec-f65538623495" >
 				<ee:message >
 				</ee:message>
 				<ee:variables >
@@ -591,13 +591,37 @@ var values=vars."tms6SheetValues"
 		</foreach>
 	</sub-flow>
 	<sub-flow name="tms6-common-requestor-Sub_Flow" doc:id="b044054f-c354-4190-9843-26813927a851" >
-		<http:request method="#[vars.vmethod]" doc:name="Request" doc:id="8cd71e70-6338-4798-b0bc-2f3c54946805" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
-			<http:body ><![CDATA[#[vars.vpayload]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+		<until-successful maxRetries="5" doc:name="Until Successful" doc:id="8cc44505-fd31-4000-8c9f-6f277d6a594e" millisBetweenRetries="5000">
+			<try doc:name="Try" doc:id="d214fdcd-eb2b-40bf-9b30-313c469b9e80">
+			<set-variable value='#[null]' doc:name="httpErrorType" doc:id="28114543-777d-42fa-8056-08a2a9aa7957" variableName="httpErrorType" />
+				<http:request method="#[vars.vmethod]" doc:name="TMS6 Request" doc:id="8cd71e70-6338-4798-b0bc-2f3c54946805" config-ref="HTTP_Graph_API_configuration" path="#[vars.vpath]">
+			<http:body><![CDATA[#[vars.vpayload]]]></http:body>
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Authorization" : "Bearer" ++ vars.token
 }]]]></http:headers>
 		</http:request>
+				<error-handler>
+					<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dbb8c3e1-0018-435d-9329-3a6824c3e89e" type="HTTP:CONNECTIVITY, HTTP:TIMEOUT">
+						<logger level="INFO" doc:name="Logger" doc:id="253751c7-a0d4-4222-a550-04269d7495fc" message="retring timeout error"/>
+					</on-error-propagate>
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a6ed0b27-38b2-4233-96ff-c4983b0c1224" type="ANY">
+						<set-variable value="#[error.errorType.identifier]" doc:name="httpErrorType" doc:id="459715dd-655b-48c5-88fe-f5aa55251eb1" variableName="httpErrorType" />
+					</on-error-continue>
+			</error-handler>
+		</try>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="daef8245-a703-4f71-8c0b-b71438bad9a0" >
+			<when expression='#[vars.httpErrorType == "NOT_FOUND"]' >
+				<raise-error doc:name="Raise error" doc:id="f570f3fd-15ed-4cf6-8494-d6b6a225ed8a" type="HTTP1:NOT_FOUND" description="not found" />
+			</when>
+			<when expression="#[vars.httpErrorType != null]" >
+				<raise-error doc:name="Raise error" doc:id="bc8e372b-27dd-4067-9309-b5dde6e72c90" type="APP:HTTP_REQUEST_FAILED" description="#['HTTP error: ' ++ (vars.httpErrorType default 'UNKNOWN')]" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="e7cedd53-798b-4985-8cee-32d6eee2cc7a" message="logging" />
+			</otherwise>
+		</choice>
 	</sub-flow>
 </mule>
